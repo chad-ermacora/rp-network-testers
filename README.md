@@ -3,8 +3,10 @@ Python 3 application that turns 2x Raspberry Pi 3B+ into Ethernet Cable & Cable 
 
 How to use 
 ====================
-Get a fresh updated copy of Raspbian running on the two Raspberry Pi's
-Run ```sudo apt-get install mtr iperf3``` on both Raspberry Pi's
+Get a fresh copy of Raspbian running on the two Raspberry Pi's
+Update and install mtr/iperf3 on both systems with 
+
+```sudo apt-get update && sudo apt-get upgrade && sudo apt-get install mtr iperf3```
 
 On the Raspberry Pi with E-Ink display Waveshare e-Paper 2.7" Raspberry HAT (Black & White version)
 ---------------------
