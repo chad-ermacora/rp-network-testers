@@ -1,11 +1,13 @@
 # rp-network-testers
 Python 3 application that turns 2x Raspberry Pi 3B+ into Ethernet Cable & Cable Run Testers
 
-How to use
+How to use 
+====================
 Get a fresh updated copy of Raspbian running on the two Raspberry Pi's
 Run ```sudo apt-get install mtr iperf3``` on both Raspberry Pi's
 
 On the Raspberry Pi with E-Ink display Waveshare e-Paper 2.7" Raspberry HAT (Black & White version)
+---------------------
   https://www.waveshare.com/wiki/2.7inch_e-Paper_HAT
 
 Files needed from repository
@@ -28,6 +30,7 @@ iface eth0 inet static
 
 
 Raspberry Pi running as the Server
+---------------------
 Files needed from repository
 network_server.py
 
