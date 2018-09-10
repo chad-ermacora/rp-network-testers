@@ -1,7 +1,13 @@
 # rp-network-testers
 Python 3 application that turns 2x Raspberry Pi 3B+ into Ethernet Cable & Cable Run Testers
 
-How to use 
+Once the instructions are followed bellow and the devices rebooted, they will automatically start the programs in about 15-25 seconds and be ready to use.
+
+How to Use Devices - WIP
+====================
+
+
+How to Install 
 ====================
 Get a fresh copy of Raspbian running on the two Raspberry Pi's then Update and install mtr/iperf3 on both systems 
 
