@@ -1,4 +1,4 @@
-# rp-network-testers
+# Raspberry Pi Cat5/6 Network Testers
 Python 3 application that turns 2x Raspberry Pi 3B+ into Ethernet Cable & Cable Run Testers
 
 Once the instructions are followed bellow and the devices rebooted, they will automatically start the programs in about 15-25 seconds and be ready to use.
