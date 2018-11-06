@@ -3,9 +3,16 @@ Python 3 application that turns 2x Raspberry Pi 3B+ into Ethernet Cable & Cable 
 
 Once the instructions are followed bellow and the devices rebooted, they will automatically start the programs in about 15-25 seconds and be ready to use.
 
-How to Use Devices - WIP
+How to Use Devices
 ====================
+After getting everything setup (see bellow), simply connect the 2 Pi's to a cable or local network then press the buttons to operate.  
+* Note: The buttons have a bit of a delay, so hold it down for at least 1/2 a second before releasing
 
+The 4 buttons are as follows.
+1. Run MTR tests - www.bitwizard.nl/mtr/
+2. Run iPerf3 tests - www.iperf.fr/iperf-doc.php
+3. Shutdown Remote Unit
+4. Shutdown Local Unit
 
 How to Install 
 ====================
