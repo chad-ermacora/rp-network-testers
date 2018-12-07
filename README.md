@@ -1,66 +1,39 @@
 # KootNet Ethernet Testers
-This Python 3 program turns 2x Raspberry Pis into Cat5/6 Network Testers. 
+These Python 3 programs turn 2x Raspberry Pis into Cat5/6 Network Testers. 
+Use it to test individual cables or network routes on the same LAN.
+[MTR](https://www.bitwizard.nl/mtr/) & [iPerf3](https://iperf.fr/) are used to test latency and throughput.
 
-Once the instructions are followed bellow and the devices rebooted, they will automatically start shortly after you power them on.
+_Note: throughput is limited to the RP3B+'s 300Mbps network adapter_
 
-How to Use Devices
+Using KootNet Ethernet Testers
 ====================
-After getting everything setup (see bellow), simply connect the 2 Pi's to a cable or local network then press the buttons to operate.  
-* Note: The buttons have a bit of a delay, so hold it down for at least 1/2 a second before releasing
+Connect the 2 Pi's to a cable or local network then press the appropriate buttons to operate.  
+
+_Note: Hold the buttons down for 1 second before releasing_
 
 The 4 buttons are as follows.
-1. Run MTR tests - www.bitwizard.nl/mtr/
-2. Run iPerf3 tests - www.iperf.fr/iperf-doc.php
-3. Shutdown Remote Unit
-4. Shutdown Local Unit
+1. Run & Display [MTR](https://www.bitwizard.nl/mtr/) tests
+2. Run & Display [iPerf3](https://iperf.fr/) tests
+3. Shutdown Remote "Server" Unit
+4. Shutdown Local "Display" Unit
 
-How to Install 
+Install & Setup
 ====================
-Get a fresh copy of Raspbian running on the two Raspberry Pi's then Update and install mtr/iperf3 on both systems 
+Get a fresh copy of Raspbian running on both the Raspberry Pis.  
+The display Pi requires a
+[Waveshare e-Paper 2.7" Raspberry HAT](https://www.waveshare.com/wiki/2.7inch_e-Paper_HAT) (Black & White version)
+to be installed before proceeding with installation. There is no special hardware required for the Server Pi.
+Once the instructions are followed bellow and the devices rebooted, a message will display on the display Pi
+ letting you know its ready to operate.
 
-```sudo apt-get update && sudo apt-get upgrade && sudo apt-get install mtr iperf3```
-
-On the Raspberry Pi with E-Ink display
+E-Ink display Pi - Install Command
 ---------------------
-Waveshare e-Paper 2.7" Raspberry HAT (Black & White version) - https://www.waveshare.com/wiki/2.7inch_e-Paper_HAT
+Run the following command in a terminal window.
 
-Files needed from repository
-```
-waveshare_library/epd2in7.py
-waveshare_library/epdif.py
-epsimplelib.py
-network_display.py
-```
+```wget http://kootenay-networks.com/utils/koot_net_eth_testers/display_pi_installer.sh && chmod +x display_pi_installer.sh && sudo bash display_pi_installer.sh && sudo reboot```
 
-Modify /etc/rc.local and Add the following between "fi" and "exit 0"
-```
-python3 /WHERE-EVER-YOU-PUT-IT/network_display.py &
-```
-
-Modify /etc/network/interfaces and add
-```
-iface eth0 inet static
-    address 192.168.169.249
-    netmask 255.255.255.0
-```
-
-
-Raspberry Pi running as the Server
+ Server Pi - Install Command
 ---------------------
-Files needed from repository
-```
-network_server.py
-```
+Run the following command in a terminal window.
 
-Modify /etc/rc.local and Add the following between "fi" and "exit 0"
-```
-iperf3 -s -p 9000 &
-python3 /WHERE-EVER-YOU-PUT-IT/network_server.py &
-```
-
-Modify /etc/network/interfaces and add
-```
-iface eth0 inet static
-    address 192.168.169.251
-    netmask 255.255.255.0
-```
+```wget http://kootenay-networks.com/utils/koot_net_eth_testers/server_installer.sh && chmod +x server_installer.sh && sudo bash server_installer.sh && sudo reboot```
