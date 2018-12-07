@@ -1,7 +1,7 @@
-# Raspberry Pi Cat5/6 Network Testers
-Python 3 application that turns 2x Raspberry Pi 3B+ into Ethernet Cable & Cable Run Testers
+# KootNet Ethernet Testers
+This Python 3 program turns 2x Raspberry Pis into Cat5/6 Network Testers. 
 
-Once the instructions are followed bellow and the devices rebooted, they will automatically start the programs in about 15-25 seconds and be ready to use.
+Once the instructions are followed bellow and the devices rebooted, they will automatically start shortly after you power them on.
 
 How to Use Devices
 ====================
