@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # HTTP Server Options
 HTTP_SERVER="http://kootenay-networks.com"
-HTTP_FOLDER="/utils/koot_net_sensors/Installers/raspbian"
+HTTP_FOLDER="/utils/koot_net_eth_testers"
 HTTP_ZIP="/KootNetEthTesters.zip"
 # Other Option
-APT_GET_INSTALL="python3-pip fonts-freefont-ttf mtr iperf3 wget"
+APT_GET_INSTALL="fonts-freefont-ttf mtr iperf3 wget"
 # Don't change INSTALL_DIR
 INSTALL_DIR="/opt/kootnet-network-testers"
 # Make sure its running with root
