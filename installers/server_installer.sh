@@ -36,6 +36,12 @@ wget ${HTTP_SERVER}${HTTP_FOLDER}${HTTP_ZIP} -P /tmp/
 printf "Downloads complete\nUnzipping & installing files\n"
 unzip /tmp/KootNetEthTesters.zip -d /tmp/KootNetEthTesters_files
 cp -f -R /tmp/KootNetEthTesters_files/* ${INSTALL_DIR}
+# Install needed programs and dependencies
+printf '\nStarting system update & upgrade. This may take awhile ...\n\n'
+apt-get update
+apt-get -y upgrade
+printf '\nChecking dependencies\n'
+apt-get -y install ${APT_GET_INSTALL}
 printf "copying & enabling KootNet Ethernet Tester Display Services\n"
 cp /opt/kootnet-network-testers/auto_start/KootNetEthServer.service /etc/systemd/system
 cp /opt/kootnet-network-testers/auto_start/KootNetEthiPerf.service /etc/systemd/system
