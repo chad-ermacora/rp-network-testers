@@ -86,10 +86,9 @@ while True:
                       "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "Time: " + str(strftime("%H:%M"))
             esp_message(message)
-        except ConnectionError:
-            esp_message("MTR Failed\nUnit Offline?\nTime: " + str(strftime("%H:%M")))
         except Exception as error:
             print(str(error))
+            esp_message("MTR Failed\nUnit Offline?\nTime: " + str(strftime("%H:%M")))
 
     elif not key2state:
         print("Key2 Pressed")
@@ -106,10 +105,9 @@ while True:
                       "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "Time: " + str(strftime("%H:%M"))
             esp_message(message)
-        except ConnectionError:
-            esp_message("iPerf3 Failed\nUnit Offline?\nTime: " + str(strftime("%H:%M")))
         except Exception as error:
             print(str(error))
+            esp_message("iPerf3 Failed\nUnit Offline?\nTime: " + str(strftime("%H:%M")))
 
     elif not key3state:
         print("Key3 Pressed")
@@ -119,8 +117,8 @@ while True:
             sockG.connect(server_address)
             esp_message("Shutting Down\nRemote Unit\nTime: " + str(strftime("%H:%M")))
         except Exception as error:
-            esp_message("Shut Down Failed\nRemote N/A\nOffline : " + str(strftime("%H:%M")))
             print(str(error))
+            esp_message("Shut Down Failed\nRemote N/A\nOffline : " + str(strftime("%H:%M")))
 
     elif not key4state:
         print("Key4 Pressed")
@@ -128,7 +126,7 @@ while True:
             esp_message("Shutting Down\nLocal Unit\nTime: " + str(strftime("%H:%M")))
             os.system("shutdown now -h")
         except Exception as error:
-            esp_message("Shut Down Failed?\nTime: " + str(strftime("%H:%M")))
             print(str(error))
+            esp_message("Shut Down Failed?\nTime: " + str(strftime("%H:%M")))
 
     sleep(1)
