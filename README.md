@@ -28,7 +28,7 @@ Once the instructions are followed bellow and the devices rebooted, a message wi
 
 E-Ink display Pi - Install Command
 ---------------------
-Run the following command in a terminal window.
+Be sure to enable SPI on the Pi first, then run the following command in a terminal window.
 
 ```wget http://kootenay-networks.com/utils/koot_net_eth_testers/display_pi_installer.sh && chmod +x display_pi_installer.sh && sudo bash display_pi_installer.sh && sudo reboot```
 

@@ -18,14 +18,16 @@
 """
 import os
 import socket
+import subprocess
 from time import sleep, strftime
 
 import RPi.GPIO as GPIO
+from PIL import Image, ImageDraw, ImageFont
 
-import epsimplelib
+import epd2in7
 
-mtr_cli_command = "mtr -c 10 -r -n 192.168.169.251 > /home/pi/MTR_Results.txt"
-iperf_cli_command = "iperf3 -c 192.168.169.251 -O 1 -p 9000 > /home/pi/iperf_Results.txt"
+mtr_cli_command = "mtr -c 10 -r -n 192.168.169.251"
+iperf_cli_command = "iperf3 -c 192.168.169.251 -O 1 -p 9000"
 start_message = "Device Ready\n\n" + \
                 "Be sure to\n" + \
                 "Give 15 Seconds\n" + \
@@ -35,18 +37,16 @@ start_message = "Device Ready\n\n" + \
 
 
 def esp_message(display_message):
-    esp.add_text((1, 1), display_message)
-    esp.update_screen()
+    display_image = Image.new("1", (epd2in7.EPD_WIDTH, epd2in7.EPD_HEIGHT), 255)  # 255: clear the frame
+    draw = ImageDraw.Draw(display_image)
+    font18 = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 16)
+    draw.text((2, 0), display_message, font=font18, fill=0)
     print(display_message)
+    esp.display(esp.getbuffer(display_image))
 
 
 def run_cli_command(command):
-    os.system(command)
-
-
-def get_text_file_content(file_location):
-    local_file = open(file_location, "r")
-    return local_file.read()
+    return subprocess.check_output(command, shell=True)
 
 
 key1 = 5
@@ -59,10 +59,10 @@ GPIO.setup(key1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(key2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(key3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(key4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-esp = epsimplelib.EPScreen("portrait")  # eps = e-Ink Paper Screen
+esp = epd2in7.EPD()
+esp.init()
 
 esp_message(start_message)
-
 while True:
     key1state = GPIO.input(key1)
     key2state = GPIO.input(key2)
@@ -73,47 +73,43 @@ while True:
         print("Key1 Pressed")
         esp_message("Starting MTR\nPlease Wait ...")
         try:
-            run_cli_command(mtr_cli_command)
-            cli_results = get_text_file_content("/home/pi/MTR_Results.txt")
+            cli_results = run_cli_command(mtr_cli_command)
             message = "MTR Results\n" + \
-                      "Sent: " + str(cli_results)[-34:-30] + "\n" + \
-                      "Loss: " + str(cli_results)[-43:-35] + "\n" + \
-                      "Avg: " + str(cli_results)[-23:-18] + "ms" + "\n" + \
-                      "Worst: " + str(cli_results)[-10:-6] + "ms" + "\n" + \
-                      "Best: " + str(cli_results)[-17:-12] + "ms" + "\n" + \
-                      "Last: " + str(cli_results)[-29:-24] + "ms" + "\n" + \
-                      "StDev: " + str(cli_results)[-5:-1] + "ms" + "\n\n" + \
+                      "Sent: " + str(cli_results)[-36:-30] + "\n" + \
+                      "Loss: " + str(cli_results)[-45:-38] + "\n" + \
+                      "Avg: " + str(cli_results)[-26:-20] + "ms" + "\n" + \
+                      "Worst: " + str(cli_results)[-12:-8] + "ms" + "\n" + \
+                      "Best: " + str(cli_results)[-19:-14] + "ms" + "\n" + \
+                      "Last: " + str(cli_results)[-31:-26] + "ms" + "\n" + \
+                      "StDev: " + str(cli_results)[-6:-3] + " ms" + "\n\n" + \
                       " Day/Month/Year" + "\n\n" + \
                       "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "Time: " + str(strftime("%H:%M"))
             esp_message(message)
         except ConnectionError:
             esp_message("MTR Failed\nUnit Offline?\nTime: " + str(strftime("%H:%M")))
-        else:
-            esp_message("Unknown Error")
+        except Exception as error:
+            print(str(error))
 
     elif not key2state:
         print("Key2 Pressed")
         esp_message("Starting iPerf\nPlease Wait ...")
         try:
-            cli_results = get_text_file_content("/home/pi/iperf_Results.txt")
-            message = "iPerf3 Results\n" + \
-                      "Max device\n" + \
-                      "Bandwidth\n" + \
-                      " 220Mbps-230Mbps\n\n" + \
-                      "Transferred:\n" + \
-                      str(cli_results)[-68:-55] + "\n" + \
+            cli_results = run_cli_command(iperf_cli_command)
+            message = "iPerf3 Results\nMax device Bandwidth:\n" + \
+                      " 220Mbps-230Mbps\n\nTransferred:\n" + \
+                      str(cli_results)[-71:-57] + "\n" + \
                       "Bandwidth:\n" + \
-                      str(cli_results)[-55:-40] + "\n" + \
-                      "Over " + str(cli_results)[-79:-68] + "\n\n" + \
+                      str(cli_results)[-58:-42] + "\n" + \
+                      "Over " + str(cli_results)[-83:-70] + "\n\n" + \
                       " Day/Month/Year" + "\n" + \
                       "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "Time: " + str(strftime("%H:%M"))
             esp_message(message)
         except ConnectionError:
             esp_message("iPerf3 Failed\nUnit Offline?\nTime: " + str(strftime("%H:%M")))
-        else:
-            esp_message("Unknown Error")
+        except Exception as error:
+            print(str(error))
 
     elif not key3state:
         print("Key3 Pressed")

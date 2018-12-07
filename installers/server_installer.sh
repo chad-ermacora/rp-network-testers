@@ -27,6 +27,7 @@ fi
 cp -f /etc/network/interfaces ${INSTALL_DIR}/backup/ 2>/dev/null
 cat >> /etc/network/interfaces << "EOF"
 
+allow-hotplug eth0
 iface eth0 inet static
     address 192.168.169.251
     netmask 255.255.255.0

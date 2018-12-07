@@ -27,6 +27,7 @@ fi
 cp -f /etc/network/interfaces ${INSTALL_DIR}/backup/ 2>/dev/null
 cat >> /etc/network/interfaces << "EOF"
 
+allow-hotplug eth0
 iface eth0 inet static
     address 192.168.169.249
     netmask 255.255.255.0
@@ -42,8 +43,9 @@ apt-get update
 apt-get -y upgrade
 printf '\nChecking dependencies\n'
 apt-get -y install ${APT_GET_INSTALL}
+pip3 install PIL
 printf "copying & enabling KootNet Ethernet Tester Display Services\n"
-cp /opt/kootnet-network-testers/auto_start/KootEthDisplay.service /etc/systemd/system
+cp /opt/kootnet-network-testers/auto_start/KootNetEthDisplay.service /etc/systemd/system
 systemctl daemon-reload
-systemctl enable KootEthDisplay 2>/dev/null
+systemctl enable KootNetEthDisplay 2>/dev/null
 printf "\nInstall Complete, Please Reboot\n"
