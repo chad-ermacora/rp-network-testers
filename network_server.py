@@ -21,24 +21,22 @@ import os
 from time import sleep
 
 network_wait = True
-
 while network_wait:
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ('192.168.169.251', 10062)
-        print('starting up on {} port {}'.format(*server_address))
+        server_address = ("192.168.169.251", 10062)
+        print("starting up on {} port {}".format(*server_address))
         sock.bind(server_address)
         sock.listen(1)
         while True:
-            print('\nwaiting for a connection ... \n')
+            print("\nwaiting for a connection ... \n")
             connection, client_address = sock.accept()
             try:
-                print('connection from', client_address)
+                print("connection from", client_address)
                 os.system("sudo shutdown -h now")
             except Exception as error:
                 print("Connection Failed: " + str(error))
             finally:
-                # Clean up the connection
                 connection.close()
     except Exception as error:
         print(str(error))

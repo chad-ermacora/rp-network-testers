@@ -29,7 +29,7 @@ class EPScreen():
 	Manager of the screen
 	"""
 
-	def __init__(self, screen_orientation):
+	def __init__(self, screen_orientation: object) -> object:
 		self.device = waveshare_library.epd2in7.EPD()
 		self.device.init()
 
