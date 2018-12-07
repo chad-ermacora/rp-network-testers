@@ -1,5 +1,6 @@
 """
-    KootNet Network Testers is a programs to test a Network Connection
+    'KootNet Ethernet Testers' is a collection of scripts and programs
+    to test Ethernet cables and or network routes.
     Copyright (C) 2018  Chad Ermacora  chad.ermacora@gmail.com
 
     This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
 import socket
 import os
 from time import sleep
