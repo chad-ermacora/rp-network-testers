@@ -70,10 +70,9 @@ while True:
     key4state = GPIO.input(key4)
 
     if not key1state:
-        print("Key1 Pressed")
         esp_message("Starting MTR\nPlease Wait ...")
-        try:
-            cli_results = run_cli_command(mtr_cli_command)
+        cli_results = run_cli_command(mtr_cli_command)
+        if str(cli_results)[-45:-41] != "Loss":
             message = "MTR Results\n" + \
                       "Sent: " + str(cli_results)[-36:-30] + "\n" + \
                       "Loss: " + str(cli_results)[-45:-38] + "\n" + \
@@ -86,12 +85,10 @@ while True:
                       "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "Time: " + str(strftime("%H:%M"))
             esp_message(message)
-        except Exception as error:
-            print(str(error))
-            esp_message("MTR Failed\nUnit Offline?\nTime: " + str(strftime("%H:%M")))
+        else:
+            esp_message("MTR Failed\nServer Unit Offline?\nOr\nBad Network\nTime: " + str(strftime("%H:%M")))
 
     elif not key2state:
-        print("Key2 Pressed")
         esp_message("Starting iPerf\nPlease Wait ...")
         try:
             cli_results = run_cli_command(iperf_cli_command)
@@ -107,11 +104,10 @@ while True:
             esp_message(message)
         except Exception as error:
             print(str(error))
-            esp_message("iPerf3 Failed\nUnit Offline?\nTime: " + str(strftime("%H:%M")))
+            esp_message("iPerf3 Failed\nServer Unit Offline?\nOr\nBad Network\nTime: " + str(strftime("%H:%M")))
 
     elif not key3state:
-        print("Key3 Pressed")
-        server_address = ('192.168.169.251', 10062)
+        server_address = ("192.168.169.251", 10062)
         try:
             sockG = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sockG.connect(server_address)
@@ -121,7 +117,6 @@ while True:
             esp_message("Shut Down Failed\nRemote N/A\nOffline : " + str(strftime("%H:%M")))
 
     elif not key4state:
-        print("Key4 Pressed")
         try:
             esp_message("Shutting Down\nLocal Unit\nTime: " + str(strftime("%H:%M")))
             os.system("shutdown now -h")
