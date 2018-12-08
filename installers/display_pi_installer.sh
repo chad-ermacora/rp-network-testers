@@ -43,7 +43,7 @@ apt-get update
 apt-get -y upgrade
 printf '\nChecking dependencies\n'
 apt-get -y install ${APT_GET_INSTALL}
-pip3 install PIL
+pip3 install pillow
 printf "copying & enabling KootNet Ethernet Tester Display Services\n"
 cp /opt/kootnet-network-testers/auto_start/KootNetEthDisplay.service /etc/systemd/system
 systemctl daemon-reload

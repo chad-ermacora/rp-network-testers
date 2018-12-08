@@ -32,7 +32,9 @@ start_message = "Device Ready\n\n" + \
                 "Be sure to\n" + \
                 "Give 15 Seconds\n" + \
                 "For Remote\n" + \
-                "Device to boot\n" + \
+                "Device to boot\n\n" + \
+                "  Day/Month/Year\n\n" + \
+                "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                 "Time: " + str(strftime("%H:%M"))
 
 
@@ -70,58 +72,89 @@ while True:
     key4state = GPIO.input(key4)
 
     if not key1state:
-        esp_message("Starting MTR\nPlease Wait ...")
+        esp_message("Starting MTR\n\n" +
+                    "Please Wait ...")
         cli_results = run_cli_command(mtr_cli_command)
         if str(cli_results)[-45:-41] != "Loss":
             message = "MTR Results\n" + \
                       "Sent: " + str(cli_results)[-36:-30] + "\n" + \
                       "Loss: " + str(cli_results)[-45:-38] + "\n" + \
-                      "Avg: " + str(cli_results)[-26:-20] + "ms" + "\n" + \
-                      "Worst: " + str(cli_results)[-12:-8] + "ms" + "\n" + \
-                      "Best: " + str(cli_results)[-19:-14] + "ms" + "\n" + \
-                      "Last: " + str(cli_results)[-31:-26] + "ms" + "\n" + \
-                      "StDev: " + str(cli_results)[-6:-3] + " ms" + "\n\n" + \
-                      " Day/Month/Year" + "\n\n" + \
+                      "Avg: " + str(cli_results)[-26:-20] + "ms\n" + \
+                      "Worst: " + str(cli_results)[-12:-8] + "ms\n" + \
+                      "Best: " + str(cli_results)[-19:-14] + "ms\n" + \
+                      "Last: " + str(cli_results)[-31:-26] + "ms\n" + \
+                      "StDev: " + str(cli_results)[-6:-3] + " ms\n\n" + \
+                      "  Day/Month/Year\n\n" + \
                       "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "Time: " + str(strftime("%H:%M"))
             esp_message(message)
         else:
-            esp_message("MTR Failed\nServer Unit Offline?\nOr\nBad Network\nTime: " + str(strftime("%H:%M")))
+            esp_message("MTR Failed\n" +
+                        "Remote Unit Offline?\n" +
+                        "  Or\n" +
+                        "Bad Network\n\n" +
+                        "  Day/Month/Year\n\n" +
+                        "Date: " + str(strftime("%d/%m/%y")) + "\n" +
+                        "Time: " + str(strftime("%H:%M")))
 
     elif not key2state:
-        esp_message("Starting iPerf\nPlease Wait ...")
+        esp_message("Starting iPerf\n\n" +
+                    "Please Wait ...")
         try:
             cli_results = run_cli_command(iperf_cli_command)
-            message = "iPerf3 Results\nMax device Bandwidth:\n" + \
-                      " 220Mbps-230Mbps\n\nTransferred:\n" + \
+            message = "iPerf3 Results\n" + \
+                      "Max device Bandwidth:\n" + \
+                      "  220Mbps-230Mbps\n\n" + \
+                      "Transferred:\n  " + \
                       str(cli_results)[-71:-57] + "\n" + \
-                      "Bandwidth:\n" + \
+                      "Bandwidth:\n  " + \
                       str(cli_results)[-58:-42] + "\n" + \
                       "Over " + str(cli_results)[-83:-70] + "\n\n" + \
-                      " Day/Month/Year" + "\n" + \
+                      "  Day/Month/Year\n\n" + \
                       "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "Time: " + str(strftime("%H:%M"))
             esp_message(message)
         except Exception as error:
             print(str(error))
-            esp_message("iPerf3 Failed\nServer Unit Offline?\nOr\nBad Network\nTime: " + str(strftime("%H:%M")))
+            esp_message("iPerf3 Failed\n" +
+                        "Remote Unit Offline?\n" +
+                        "  Or\n" +
+                        "Bad Network\n\n" +
+                        "  Day/Month/Year\n\n" +
+                        "Date: " + str(strftime("%d/%m/%y")) + "\n" +
+                        "Time: " + str(strftime("%H:%M")))
 
     elif not key3state:
         server_address = ("192.168.169.251", 10062)
         try:
             sockG = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sockG.connect(server_address)
-            esp_message("Shutting Down\nRemote Unit\nTime: " + str(strftime("%H:%M")))
+            esp_message("Shutting Down\n" +
+                        "Remote Unit\n\n" +
+                        "  Day/Month/Year\n\n" +
+                        "Date: " + str(strftime("%d/%m/%y")) + "\n" +
+                        "Time: " + str(strftime("%H:%M")))
         except Exception as error:
             print(str(error))
-            esp_message("Shut Down Failed\nRemote N/A\nOffline : " + str(strftime("%H:%M")))
+            esp_message("Shut Down Failed\n" +
+                        "Remote Unit Offline\n\n" +
+                        "  Day/Month/Year\n\n" +
+                        "Date: " + str(strftime("%d/%m/%y")) + "\n" +
+                        "Time: " + str(strftime("%H:%M")))
 
     elif not key4state:
         try:
-            esp_message("Shutting Down\nLocal Unit\nTime: " + str(strftime("%H:%M")))
+            esp_message("Shutting Down\n" +
+                        "Local Unit\n\n" +
+                        "  Day/Month/Year\n\n" +
+                        "Date: " + str(strftime("%d/%m/%y")) + "\n" +
+                        "Time: " + str(strftime("%H:%M")))
             os.system("shutdown now -h")
         except Exception as error:
             print(str(error))
-            esp_message("Shut Down Failed?\nTime: " + str(strftime("%H:%M")))
+            esp_message("Local Shut Down Failed?\n\n" +
+                        "  Day/Month/Year\n\n" +
+                        "Date: " + str(strftime("%d/%m/%y")) + "\n" +
+                        "Time: " + str(strftime("%H:%M")))
 
     sleep(1)
