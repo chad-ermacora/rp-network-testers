@@ -5,18 +5,6 @@ Use it to test individual cables or network routes on the same LAN.
 
 _Note: throughput is limited to the RP3B+'s 300Mbps network adapter_
 
-Using KootNet Ethernet Testers
-====================
-Connect the 2 Pi's to a cable or local network then press the appropriate buttons to operate.  
-
-_Note: Hold the buttons down for 1 second before releasing_
-
-The 4 buttons are as follows.
-1. Run & Display [MTR](https://www.bitwizard.nl/mtr/) tests
-2. Run & Display [iPerf3](https://iperf.fr/) tests
-3. Shutdown Remote "Server" Unit
-4. Shutdown Local "Display" Unit
-
 Install & Setup
 ====================
 Get a fresh copy of Raspbian running on both the Raspberry Pis.  
@@ -37,3 +25,15 @@ Be sure to enable SPI on the Pi first, then run the following command in a termi
 Run the following command in a terminal window.
 
 ```wget http://kootenay-networks.com/utils/koot_net_eth_testers/server_installer.sh && chmod +x server_installer.sh && sudo bash server_installer.sh && sudo reboot```
+
+Using KootNet Ethernet Testers
+====================
+Connect the 2 Pi's to a cable or local network then press the appropriate buttons to operate.  
+
+_Note: Hold the buttons down for 1 second before releasing_
+
+The 4 buttons are as follows.
+1. Run & Display [MTR](https://www.bitwizard.nl/mtr/) tests
+2. Run & Display [iPerf3](https://iperf.fr/) tests
+3. Shutdown Remote "Server" Unit
+4. Shutdown Local "Display" Unit
