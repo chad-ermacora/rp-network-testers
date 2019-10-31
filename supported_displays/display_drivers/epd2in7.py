@@ -48,8 +48,7 @@
 #
 
 
-import epdconfig
-from PIL import Image
+from supported_displays.display_drivers import epdconfig
 import RPi.GPIO as GPIO
 
 # Display resolution
@@ -148,15 +147,15 @@ class EPD:
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    ]    
+    ]
     # Hardware reset
     def reset(self):
         epdconfig.digital_write(self.reset_pin, GPIO.HIGH)
-        epdconfig.delay_ms(200) 
+        epdconfig.delay_ms(200)
         epdconfig.digital_write(self.reset_pin, GPIO.LOW)         # module reset
         epdconfig.delay_ms(200)
         epdconfig.digital_write(self.reset_pin, GPIO.HIGH)
-        epdconfig.delay_ms(200)   
+        epdconfig.delay_ms(200)
 
     def send_command(self, command):
         epdconfig.digital_write(self.dc_pin, GPIO.LOW)
@@ -165,11 +164,11 @@ class EPD:
     def send_data(self, data):
         epdconfig.digital_write(self.dc_pin, GPIO.HIGH)
         epdconfig.spi_writebyte([data])
-        
-    def wait_until_idle(self):        
+
+    def wait_until_idle(self):
         while(epdconfig.digital_read(self.busy_pin) == 0):      # 0: idle, 1: busy
             self.send_command(0x71)
-        epdconfig.delay_ms(100)    
+        epdconfig.delay_ms(100)
 
     def set_lut(self):
         self.send_command(LUT_FOR_VCOM)               # vcom
@@ -187,7 +186,7 @@ class EPD:
         self.send_command(LUT_BLACK_TO_BLACK)         # bb b
         for count in range(0, 42):
             self.send_data(self.lut_wb[count])
-            
+
     def init(self):
         if (epdconfig.module_init() != 0):
             return -1
@@ -277,9 +276,9 @@ class EPD:
         self.send_command(DATA_START_TRANSMISSION_2)
         for i in range(0, self.width * self.height // 8):
             self.send_data(image[i])
-        self.send_command(DISPLAY_REFRESH) 
+        self.send_command(DISPLAY_REFRESH)
         self.wait_until_idle()
-        
+
     def Clear(self, color):
         self.send_command(DATA_START_TRANSMISSION_1)
         for i in range(0, self.width * self.height // 8):
@@ -287,7 +286,7 @@ class EPD:
         self.send_command(DATA_START_TRANSMISSION_2)
         for i in range(0, self.width * self.height // 8):
             self.send_data(0xFF)
-        self.send_command(DISPLAY_REFRESH) 
+        self.send_command(DISPLAY_REFRESH)
         self.wait_until_idle()
 
     def sleep(self):
@@ -297,4 +296,3 @@ class EPD:
         self.send_command(0X07)
         self.send_data(0xA5)
 ### END OF FILE ###
-
