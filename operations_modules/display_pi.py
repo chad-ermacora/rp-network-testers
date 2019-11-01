@@ -18,19 +18,18 @@
 """
 import os
 import socket
-import RPi.GPIO
 import subprocess
 from time import sleep, strftime
-from configuration_modules import pi_config
-from supported_displays import waveshare_2_7_e_paper
+from operations_modules import config_pi
 from supported_displays import save_to_file
 
-mtr_cli_command = "mtr -c 10 -r -n 192.168.169.251"
-iperf_cli_command = "iperf3 -c 192.168.169.251 -O 1 -p 9000"
-server_address = ("192.168.169.251", 10062)
+mtr_cli_command = "mtr -c 10 -r -n " + config_pi.remote_tester_ip
+iperf_cli_command = "iperf3 -c " + config_pi.remote_tester_ip + " -O 1 -p " + config_pi.iperf_port
+server_address = (config_pi.remote_tester_ip, 10062)
 
 
 def start_display_server():
+    rpi_gpio_import = __import__('RPi.GPIO')
     display_access = get_initialized_display()
 
     key1 = 5
@@ -38,18 +37,18 @@ def start_display_server():
     key3 = 13
     key4 = 19
 
-    RPi.GPIO.setmode(RPi.GPIO.BCM)
-    RPi.GPIO.setup(key1, RPi.GPIO.IN, pull_up_down=RPi.GPIO.PUD_UP)
-    RPi.GPIO.setup(key2, RPi.GPIO.IN, pull_up_down=RPi.GPIO.PUD_UP)
-    RPi.GPIO.setup(key3, RPi.GPIO.IN, pull_up_down=RPi.GPIO.PUD_UP)
-    RPi.GPIO.setup(key4, RPi.GPIO.IN, pull_up_down=RPi.GPIO.PUD_UP)
+    rpi_gpio_import.setmode(rpi_gpio_import.BCM)
+    rpi_gpio_import.setup(key1, rpi_gpio_import.IN, pull_up_down=rpi_gpio_import.PUD_UP)
+    rpi_gpio_import.setup(key2, rpi_gpio_import.IN, pull_up_down=rpi_gpio_import.PUD_UP)
+    rpi_gpio_import.setup(key3, rpi_gpio_import.IN, pull_up_down=rpi_gpio_import.PUD_UP)
+    rpi_gpio_import.setup(key4, rpi_gpio_import.IN, pull_up_down=rpi_gpio_import.PUD_UP)
 
     display_access.display_message(get_start_message())
     while True:
-        key1state = RPi.GPIO.input(key1)
-        key2state = RPi.GPIO.input(key2)
-        key3state = RPi.GPIO.input(key3)
-        key4state = RPi.GPIO.input(key4)
+        key1state = rpi_gpio_import.input(key1)
+        key2state = rpi_gpio_import.input(key2)
+        key3state = rpi_gpio_import.input(key3)
+        key4state = rpi_gpio_import.input(key4)
 
         if not key1state:
             display_access.display_message("Starting MTR\n\nPlease Wait ...")
@@ -139,7 +138,8 @@ def start_display_server():
 
 
 def get_initialized_display():
-    if pi_config.installed_displays["WaveShare27"]:
+    waveshare_2_7_e_paper = __import__('supported_displays.waveshare_2_7_e_paper')
+    if config_pi.installed_displays["WaveShare27"]:
         return waveshare_2_7_e_paper.CreateWaveShare27EPaper()
     return save_to_file.CreateSaveToFileDisplay()
 

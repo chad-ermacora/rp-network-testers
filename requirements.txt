@@ -1,1 +1,5 @@
-PIL
+Pillow
+RPi.GPIO
+Flask
+Flask-Compress
+gevent

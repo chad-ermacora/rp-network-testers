@@ -16,3 +16,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from platform import system
+# Current Version of the program
+version = "0.1.1"
+remote_tester_ip = "192.168.169.251"
+iperf_port = "9000"
+
+running_on_rpi = False
+full_system_text = system()
+print("Running on " + str(full_system_text))
+print("PiCheck: " + str(full_system_text[:12]))
+if full_system_text[:12] == "Raspberry Pi":
+    running_on_rpi = True
+
+installed_displays = {"WaveShare27": False, "SaveToFile": False}
+is_iperf_server = False

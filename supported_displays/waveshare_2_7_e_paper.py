@@ -17,17 +17,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from PIL import Image, ImageDraw, ImageFont
-from supported_displays.display_drivers import epd2in7
 
 
 class CreateWaveShare27EPaper:
     def __init__(self):
-        self.esp = epd2in7.EPD()
+        self.rpi_gpio_import = __import__("supported_displays.display_drivers.waveshare.epd2in7")
+        self.esp = self.rpi_gpio_import.EPD()
         self.esp.init()
 
     def display_message(self, text_message):
         # 255 to clear the frame
-        display_image = Image.new("1", (epd2in7.EPD_WIDTH, epd2in7.EPD_HEIGHT), 255)
+        display_image = Image.new("1", (self.rpi_gpio_import.EPD_WIDTH, self.rpi_gpio_import.EPD_HEIGHT), 255)
         draw = ImageDraw.Draw(display_image)
         font18 = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 16)
         draw.text((2, 0), text_message, font=font18, fill=0)

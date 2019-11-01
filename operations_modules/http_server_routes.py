@@ -16,5 +16,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-installed_displays = {"WaveShare27": False, "Other": False}
-is_secondary_server = False
+from flask import Blueprint, render_template, send_file
+
+http_routes = Blueprint("http_routes", __name__)
+
+
+@http_routes.route("/")
+def html_root():
+    return "Working on it!"
