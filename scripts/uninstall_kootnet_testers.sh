@@ -6,6 +6,9 @@ if [[ $EUID != 0 ]]; then
   sudo "$0" "$@"
   exit $?
 fi
-rm ${SYSTEM_D_FILE}
-rm -f -r ${INSTALL_DIR}
-printf "\n\nUninstall Complete\n"
+printf "Uninstall Started ... "
+systemctl disable KootnetEthServer 2>/dev/null
+systemctl stop KootnetEthServer 2>/dev/null
+rm ${SYSTEM_D_FILE} 2>/dev/null
+rm -f -r ${INSTALL_DIR} 2>/dev/null
+printf "Uninstall Complete\n"
