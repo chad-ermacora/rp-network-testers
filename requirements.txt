@@ -1,3 +1,4 @@
+requests
 Pillow
 RPi.GPIO
 Flask

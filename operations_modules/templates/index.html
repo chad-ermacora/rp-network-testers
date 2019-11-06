@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .mui-container-fluid {
+        color: red;
+    }
+
+    .mui-form {
+        background-color: #00B0FF;
+    }
+</style>
+
+<ul class="mui-tabs__bar">
+    <li class="mui--is-active"><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+                                  data-mui-controls="tests-tab">
+        Test & View Results
+    </a>
+    </li>
+    <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+           data-mui-controls="system-info-tab">
+        System Information
+    </a></li>
+    <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+           data-mui-controls="configuration-tab">
+        Configuration
+    </a></li>
+    <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+           data-mui-controls="about-tab">
+        About
+    </a></li>
+</ul>
+
+
+<div class="mui-tabs__pane mui--is-active" id="tests-tab">
+    <br>
+    <div class="mui-container-fluid">
+        <h3><u><strong><a style="color: red;" href="/">
+            Run Tests & View Results
+        </a></strong></u></h3>
+
+        <form class="mui-form" method="POST" action="/StartTests">
+            <fieldset style="text-align: center;">
+                <div class="mui-textfield">
+                    <label style="color: black;">
+                        Command Line Options
+                        <br>
+                        <input style="width: 175px" type="text" maxlength="100" name="cli_options"
+                               value="{{ cli_command }}" disabled>
+                    </label>
+                </div>
+                <br>
+                <button type="submit" class="mui-btn mui-btn--raised">Start New Test</button>
+            </fieldset>
+        </form>
+        <br>
+        <span style="color: greenyellow; white-space: pre-wrap;">{{ PreviousTestResults }}</span>
+    </div>
+</div>
+
+<div class="mui-tabs__pane" id="system-info-tab">
+    <br>
+    <div class="mui-container-fluid">
+        <fieldset style="text-align: center;">
+            <h3><u><strong><a href="/">
+                System Information
+            </a></strong></u></h3>
+        </fieldset>
+    </div>
+</div>
+
+<div class="mui-tabs__pane" id="configuration-tab">
+    <br>
+    <div class="mui-container-fluid">
+        <form class="mui-form" method="POST" action="/EditConfiguration">
+            <fieldset style="text-align: center;">
+                <h3><u><strong><a href="/">
+                    Configurations
+                </a></strong></u></h3>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<div class="mui-tabs__pane" id="about-tab">
+    <br>
+    <div class="mui-container-fluid">
+        <fieldset style="text-align: center;">
+            <h3><u><strong><a>
+                About Kootnet Ethernet Testers
+            </a></strong></u></h3>
+        </fieldset>
+    </div>
+</div>
+
+{% endblock %}

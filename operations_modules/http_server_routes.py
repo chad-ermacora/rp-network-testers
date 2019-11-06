@@ -17,10 +17,33 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from flask import Blueprint, render_template, send_file
+from operations_modules import file_locations
 
 http_routes = Blueprint("http_routes", __name__)
 
 
 @http_routes.route("/")
+@http_routes.route("/index.html")
 def html_root():
-    return "Working on it!"
+    return render_template("index.html")
+
+
+@http_routes.route("/mui.min.css")
+def mui_min_css():
+    return send_file(file_locations.mui_min_css)
+
+
+@http_routes.route("/mui.min.js")
+def mui_min_js():
+    return send_file(file_locations.mui_min_js)
+
+
+@http_routes.route("/mui-colors.min.css")
+def mui_colors_min_css():
+    return send_file(file_locations.mui_colors_min_css)
+
+
+@http_routes.route("/StartTests", methods=["POST"])
+def start_tests():
+
+    html_root()

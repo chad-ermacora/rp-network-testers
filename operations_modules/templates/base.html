@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kootnet Sensor</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/mui.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/mui-colors.min.css" rel="stylesheet" type="text/css"/>
+    <script src="/mui.min.js"></script>
+
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            font-size: medium;
+            width: 250px;
+            background-color: darkblue;
+            color: greenyellow;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            top: 100%;
+            left: 0;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body style="background-color: black;">
+    {% block content %}{% endblock %}
+</body>
+</html>

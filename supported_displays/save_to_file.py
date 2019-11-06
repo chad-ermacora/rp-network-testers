@@ -17,8 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import time
-
-save_to_file_location = "/home/pi/kootnet_ethernet_results-"
+from operations_modules.config_pi import current_config
 
 
 class CreateSaveToFileDisplay:
@@ -29,6 +28,41 @@ class CreateSaveToFileDisplay:
     def display_message(text_message):
         print(text_message)
         text_time_sec = str(time.time()).split(".")[0]
-        new_file_location = save_to_file_location + text_time_sec + ".txt"
+        new_file_location = current_config.script_folder_path + "/kootnet_ethernet_results-" + text_time_sec + ".txt"
         with open(new_file_location, "w") as open_file:
             open_file.write(text_message)
+
+    @staticmethod
+    def get_start_message():
+        start_message = "Device Ready Be sure to Give 15 Seconds For Remote Device to boot.\n" + \
+                        "Date - Day/Month/Year: " + str(time.strftime("%d/%m/%y")) + "\n" + \
+                        "Time: " + str(time.strftime("%H:%M"))
+        return start_message
+
+    @staticmethod
+    def get_mtr_message(cli_results):
+        return cli_results
+
+    @staticmethod
+    def get_iperf_message(cli_results, cli_ok=True):
+        return cli_results
+
+    @staticmethod
+    def shutdown_remote_unit_message(cli_ok):
+        if cli_ok:
+            message = "Shutting Down Remote Unit\n" + \
+                      "Date - Day/Month/Year: " + str(time.strftime("%d/%m/%y")) + "\n" + \
+                      "Time: " + str(time.strftime("%H:%M"))
+        else:
+
+            message = "ShutDown Failed on Remote Unit\n" + \
+                      "Date - Day/Month/Year: " + str(time.strftime("%d/%m/%y")) + "\n" + \
+                      "Time: " + str(time.strftime("%H:%M"))
+        return message
+
+    @staticmethod
+    def shutdown_local_unit_message():
+        message = "Shutting Down Local Unit\n" + \
+                  "Date -  Day/Month/Year: " + str(time.strftime("%d/%m/%y")) + "\n" + \
+                  "Time: " + str(time.strftime("%H:%M"))
+        return message

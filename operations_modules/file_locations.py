@@ -16,26 +16,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from flask import Flask
-from flask_compress import Compress
-from gevent.pywsgi import WSGIServer
-from operations_modules import http_server_routes
+import os
+import sys
 
-flask_http_ip = ""
-flask_http_port = 10066
+script_folder_path = os.path.dirname(sys.argv[0])
+config_file_location = script_folder_path + "/config.txt"
+print(config_file_location)
 
+location_save_report_folder = "/home/pi"
+location_truetype_font = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
 
-class CreateSensorHTTP:
-    def __init__(self):
-        app = Flask(__name__)
-        Compress(app)
-
-        app.register_blueprint(http_server_routes.http_routes)
-
-        try:
-            http_server = WSGIServer((flask_http_ip, flask_http_port), app)
-            print(" -- HTTP Server Started on port " + str(flask_http_port))
-            http_server.serve_forever()
-        except Exception as error:
-            print("--- Failed to Start HTTP Server: " + str(error))
-            pass
+# Flask HTTP files
+menu_js = script_folder_path + "/operations_modules/extras/menu.js"
+menu_css_style = script_folder_path + "/operations_modules/extras/style.css"
+j_query_js = script_folder_path + "/operations_modules/extras/jquery-3.4.1.min.js"
+mui_min_css = script_folder_path + "/operations_modules/extras/mui.min-ver-0.9.43.css"
+mui_min_js = script_folder_path + "/operations_modules/extras/mui.min-ver-0.9.43.js"
+mui_colors_min_css = script_folder_path + "/operations_modules/extras/mui-colors.min-ver-0.9.43.css"
