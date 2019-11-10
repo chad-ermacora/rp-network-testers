@@ -10,6 +10,18 @@
     .mui-form {
         background-color: #00B0FF;
     }
+
+    .mui-col-md-3 {
+        background-color: #00ffff;
+        color: black;
+        width: 275px;
+    }
+
+    .mui-col-md-4 {
+        background-color: #0BB10D;
+        color: black;
+        width: 275px;
+    }
 </style>
 
 <ul class="mui-tabs__bar">
@@ -42,20 +54,15 @@
 
         <form class="mui-form" method="POST" action="/StartTests">
             <fieldset style="text-align: center;">
-                <div class="mui-textfield">
-                    <label style="color: black;">
-                        Command Line Options
-                        <br>
-                        <input style="width: 175px" type="text" maxlength="100" name="cli_options"
-                               value="{{ cli_command }}" disabled>
-                    </label>
-                </div>
                 <br>
-                <button type="submit" class="mui-btn mui-btn--raised">Start New Test</button>
+                <button type="submit" class="mui-btn mui-btn--raised" {{ DisabledButton }}>Start New Test</button>
             </fieldset>
         </form>
-        <br>
-        <span style="color: greenyellow; white-space: pre-wrap;">{{ PreviousTestResults }}</span>
+        <h3 id="blink_shadow" style="color: red; text-align: center;">{{ TestsRunning }}</h3>
+        <fieldset style="text-align: center; color: greenyellow; white-space: pre-wrap;">
+            <h3 style="color: red;"><u>MTR Results</u></h3>{{ Results_MTR|safe }}
+            <h3 style="color: red;"><u>iPerf3 Results</u></h3>{{ Results_iPerf|safe }}
+        </fieldset>
     </div>
 </div>
 
@@ -63,9 +70,18 @@
     <br>
     <div class="mui-container-fluid">
         <fieldset style="text-align: center;">
-            <h3><u><strong><a href="/">
-                System Information
-            </a></strong></u></h3>
+            <h3><u><strong><a href="/">System Information</a></strong></u></h3>
+            <div class="mui-container-fluid">
+                <div class="mui-row">
+                    <div class="mui-col-md-3"><b>Operating System</b></div>
+                    <div class="mui-col-md-4"><b>{{ OSVersion }}</b></div>
+                </div>
+
+                <div class="mui-row">
+                    <div class="mui-col-md-3"><b>Kootnet Ethernet Testers Version</b></div>
+                    <div class="mui-col-md-4"><b>{{ KootnetVersion }}</b></div>
+                </div>
+            </div>
         </fieldset>
     </div>
 </div>
@@ -93,5 +109,23 @@
         </fieldset>
     </div>
 </div>
+
+<script type="text/javascript">
+    (function () {
+        if (document.getElementById("blink_shadow").textContent.length > 0) {
+            var blinks = document.getElementById("blink_shadow");
+            var shadow_colour = "green";
+            window.setTimeout(refresh_page_timed, 10000);
+            window.setInterval(function () {
+                blinks.style.color = shadow_colour;
+                shadow_colour = (shadow_colour === "green") ? "red" : "green";
+            }, 1000);
+        }
+    })();
+
+    function refresh_page_timed() {
+        window.location = "/";
+    }
+</script>
 
 {% endblock %}

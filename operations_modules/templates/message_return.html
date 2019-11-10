@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <meta http-equiv="refresh" content="30; url = {{ URL }}"/>
+
+    <h2>
+        <a style="color: red" href="{{ URL }}">{{ TextMessage }}</a>
+    </h2>
+
+    <h2 style="color: #90CAF9">
+        {{ TextMessage2 }}
+    </h2>
+
+{% endblock %}

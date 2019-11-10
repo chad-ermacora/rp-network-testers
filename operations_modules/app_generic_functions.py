@@ -17,7 +17,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
+import subprocess
+import platform
 import time
+import socket
 import requests
 from threading import Thread
 
@@ -68,6 +71,34 @@ class CreateMonitoredThread:
                     print(log_msg + " Times.  No further restart attempts will be made.")
                     while True:
                         time.sleep(600)
+
+
+def thread_function(function, args=None):
+    if args:
+        system_thread = Thread(target=function, args=[args])
+    else:
+        system_thread = Thread(target=function)
+    system_thread.daemon = True
+    system_thread.start()
+
+
+def get_subprocess_str_output(command):
+    return str(subprocess.check_output(command, shell=True)).replace("\\n", "\n")
+
+
+def get_os_name_version():
+    """ Returns sensors Operating System Name and Version. """
+    try:
+        os_release_content_lines = get_file_content("/etc/os-release").split("\n")
+        os_release_name = ""
+        for line in os_release_content_lines:
+            name_and_value = line.split("=")
+            if name_and_value[0].strip() == "PRETTY_NAME":
+                os_release_name = name_and_value[1].strip()[1:-1]
+        return os_release_name
+    except Exception as error:
+        print("Linux System - Unable to get Raspbian OS Version: " + str(error))
+        return "Error retrieving OS information"
 
 
 def get_file_content(load_file, open_type="r"):

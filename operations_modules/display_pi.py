@@ -24,9 +24,6 @@ from operations_modules import app_generic_functions
 from operations_modules.http_server import flask_http_port
 from supported_displays import save_to_file
 
-mtr_cli_command = "mtr -c 10 -r -n " + current_config.remote_tester_ip
-iperf_cli_command = "iperf3 -c " + current_config.remote_tester_ip + " -O 1 -p " + current_config.iperf_port
-
 
 class CreateDisplayServer:
     def __init__(self):

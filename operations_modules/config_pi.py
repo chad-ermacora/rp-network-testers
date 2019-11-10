@@ -29,8 +29,11 @@ class CreateConfiguration:
         print("Running on " + str(self.full_system_text))
         print("PiCheck: " + str(self.full_system_text[:12]))
 
+        self.tests_running = False
+
         self.display_ip = "192.168.169.249"
-        self.remote_tester_ip = "192.168.169.251"
+        self.remote_tester_ip = "192.168.7.194"
+        # self.remote_tester_ip = "192.168.169.251"
         self.iperf_port = "9000"
 
         self.running_on_rpi = False
@@ -40,7 +43,8 @@ class CreateConfiguration:
         self.installed_displays = {"WaveShare27": 0, "SaveToFile": 0}
         self.is_iperf_server = False
 
-        self.load_config_from_file()
+        # Disabled temporarily for testing.  ReEnable!
+        # self.load_config_from_file()
 
     def _get_config_as_str(self):
         current_config_str = "Kootnet Ethernet Testers Configuration - Enable = 1 & Disable = 0\n" + \
@@ -63,7 +67,7 @@ class CreateConfiguration:
 
                 self.display_ip = config_list[1]
                 self.remote_tester_ip = config_list[2]
-                self.iperf_port = config_list[3]
+                self.iperf_port = config_list[5]
             except Exception as error:
                 print("Unable to load Configuration File: " + str(error))
         else:
