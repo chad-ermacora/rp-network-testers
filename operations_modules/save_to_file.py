@@ -17,20 +17,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import time
-from operations_modules.config_pi import current_config
+from operations_modules.file_locations import script_folder_path
+from operations_modules import app_variables
+from operations_modules.app_generic_functions import write_file_to_disk
 
 
-class CreateSaveToFileDisplay:
+class CreateHardwareAccess:
     def __init__(self):
-        pass
+        self.key_states = [True, True, True, True]
+
+    @staticmethod
+    def get_key_states():
+        return [1]
 
     @staticmethod
     def display_message(text_message):
         print(text_message)
-        text_time_sec = str(time.time()).split(".")[0]
-        new_file_location = current_config.script_folder_path + "/kootnet_ethernet_results-" + text_time_sec + ".txt"
-        with open(new_file_location, "w") as open_file:
-            open_file.write(text_message)
 
     @staticmethod
     def get_start_message():
@@ -41,28 +43,34 @@ class CreateSaveToFileDisplay:
 
     @staticmethod
     def get_mtr_message(cli_results):
-        return cli_results
+        pass
 
     @staticmethod
     def get_iperf_message(cli_results, cli_ok=True):
-        return cli_results
+        pass
 
     @staticmethod
     def shutdown_remote_unit_message(cli_ok):
         if cli_ok:
-            message = "Shutting Down Remote Unit\n" + \
-                      "Date - Day/Month/Year: " + str(time.strftime("%d/%m/%y")) + "\n" + \
-                      "Time: " + str(time.strftime("%H:%M"))
+            message = "Shutting Down Remote Unit"
         else:
-
-            message = "ShutDown Failed on Remote Unit\n" + \
-                      "Date - Day/Month/Year: " + str(time.strftime("%d/%m/%y")) + "\n" + \
-                      "Time: " + str(time.strftime("%H:%M"))
+            message = "ShutDown Failed on Remote Unit"
         return message
 
     @staticmethod
     def shutdown_local_unit_message():
-        message = "Shutting Down Local Unit\n" + \
-                  "Date -  Day/Month/Year: " + str(time.strftime("%d/%m/%y")) + "\n" + \
-                  "Time: " + str(time.strftime("%H:%M"))
-        return message
+        return "Shutting Down Local Unit"
+
+
+def save_mtr_results_to_file():
+    print(app_variables.raw_previous_mtr)
+    text_time_sec = str(time.time()).split(".")[0]
+    new_file_location = script_folder_path + "/test_results/kootnet_ethernet_results-mtr-" + text_time_sec + ".txt"
+    write_file_to_disk(new_file_location, app_variables.raw_previous_mtr)
+
+
+def save_iperf_results_to_file():
+    print(app_variables.raw_previous_iperf)
+    text_time_sec = str(time.time()).split(".")[0]
+    new_file_location = script_folder_path + "/test_results/kootnet_ethernet_results-iperf-" + text_time_sec + ".txt"
+    write_file_to_disk(new_file_location, app_variables.raw_previous_iperf)

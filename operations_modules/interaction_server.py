@@ -16,28 +16,26 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import socket
-import os
 from time import sleep
+from operations_modules.config_primary import current_config
+from operations_modules import run_commands
+from operations_modules.hardware_access import hardware_access
 
-network_wait = True
-while network_wait:
-    try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ("192.168.169.251", 10062)
-        print("starting up on {} port {}".format(*server_address))
-        sock.bind(server_address)
-        sock.listen(1)
+
+class CreateInteractiveServer:
+    def __init__(self):
+        if not current_config.has_hardware_interactive:
+            print("No Interactive Hardware Detected.  Using Web Access Only.")
+            while True:
+                sleep(300)
+        print("\nStarting Interactive Server\n")
         while True:
-            print("\nwaiting for a connection ... \n")
-            connection, client_address = sock.accept()
-            try:
-                print("connection from", client_address)
-                os.system("sudo shutdown -h now")
-            except Exception as error:
-                print("Connection Failed: " + str(error))
-            finally:
-                connection.close()
-    except Exception as error:
-        print(str(error))
-        sleep(5)
+            if current_config.tests_running:
+                sleep(1)
+            count = 0
+            for key_state in hardware_access.get_key_states():
+                if not key_state:
+                    run_commands.run_command(count)
+                    break
+                count += 1
+            sleep(1)

@@ -1,3 +1,4 @@
+spidev
 requests
 Pillow
 RPi.GPIO

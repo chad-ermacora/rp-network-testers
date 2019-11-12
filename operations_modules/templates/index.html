@@ -31,10 +31,6 @@
     </a>
     </li>
     <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
-           data-mui-controls="system-info-tab">
-        System Information
-    </a></li>
-    <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
            data-mui-controls="configuration-tab">
         Configuration
     </a></li>
@@ -48,14 +44,23 @@
 <div class="mui-tabs__pane mui--is-active" id="tests-tab">
     <br>
     <div class="mui-container-fluid">
-        <h3><u><strong><a style="color: red;" href="/">
-            Run Tests & View Results
-        </a></strong></u></h3>
-
         <form class="mui-form" method="POST" action="/StartTests">
-            <fieldset style="text-align: center;">
+            <fieldset style="text-align: center; color: black;">
+                <h3><u><strong><a style="color: black;" href="/">Run Tests & View Results</a></strong></u></h3>
+                <div class="mui-checkbox" style="display: inline-block;">
+                    <label class="container_checkbox">
+                        <input type="checkbox" name="mtr" value="" checked>
+                        Run MTR
+                    </label>
+                </div>
+                <div class="mui-checkbox" style="display: inline-block;">
+                    <label class="container_checkbox">
+                        <input type="checkbox" name="iperf" value="" checked>
+                        Run iPerf 3
+                    </label>
+                </div>
                 <br>
-                <button type="submit" class="mui-btn mui-btn--raised" {{ DisabledButton }}>Start New Test</button>
+                <button type="submit" class="mui-btn mui-btn--raised" {{ DisabledButton }}>Run Test(s)</button>
             </fieldset>
         </form>
         <h3 id="blink_shadow" style="color: red; text-align: center;">{{ TestsRunning }}</h3>
@@ -66,34 +71,46 @@
     </div>
 </div>
 
-<div class="mui-tabs__pane" id="system-info-tab">
-    <br>
-    <div class="mui-container-fluid">
-        <fieldset style="text-align: center;">
-            <h3><u><strong><a href="/">System Information</a></strong></u></h3>
-            <div class="mui-container-fluid">
-                <div class="mui-row">
-                    <div class="mui-col-md-3"><b>Operating System</b></div>
-                    <div class="mui-col-md-4"><b>{{ OSVersion }}</b></div>
-                </div>
-
-                <div class="mui-row">
-                    <div class="mui-col-md-3"><b>Kootnet Ethernet Testers Version</b></div>
-                    <div class="mui-col-md-4"><b>{{ KootnetVersion }}</b></div>
-                </div>
-            </div>
-        </fieldset>
-    </div>
-</div>
-
 <div class="mui-tabs__pane" id="configuration-tab">
     <br>
     <div class="mui-container-fluid">
         <form class="mui-form" method="POST" action="/EditConfiguration">
             <fieldset style="text-align: center;">
-                <h3><u><strong><a href="/">
-                    Configurations
-                </a></strong></u></h3>
+                <h3><u><strong><a style="color: black;" href="/">Configurations</a></strong></u></h3>
+                <div class="mui-textfield">
+                    <label style="color: black">Interactive Unit IP
+                        <br>
+                        <input style="width: 125px;" type="text" maxlength="15" name="iPerfPort"
+                               value="{{ InteractiveIP }}">
+                    </label>
+                </div>
+                <br>
+                <div class="mui-textfield">
+                    <label style="color: black">Remote iPerf 3 Server IP
+                        <br>
+                        <input style="width: 125px;" type="text" maxlength="15" name="iPerfPort"
+                               value="{{ ServerIP }}">
+                    </label>
+                </div>
+                <br>
+                <div class="mui-textfield">
+                    <label style="color: black">iPerf 3 Server Port #
+                        <br>
+                        <input style="width: 75px;" type="number" min="1" max="65535" name="iPerfPort"
+                               value="{{ iPerfPort }}">
+                    </label>
+                </div>
+                <br>
+                <div class="mui-textfield">
+                    <label style="color: black;">MTR Run Count
+                        <br>
+                        <input style="width: 75px;" type="number" min="1" max="1000" name="MTRCount"
+                               value="{{ MTRCount }}">
+                    </label>
+                </div>
+                <br>
+                <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+                <br>
             </fieldset>
         </form>
     </div>
@@ -101,12 +118,16 @@
 
 <div class="mui-tabs__pane" id="about-tab">
     <br>
-    <div class="mui-container-fluid">
-        <fieldset style="text-align: center;">
-            <h3><u><strong><a>
-                About Kootnet Ethernet Testers
-            </a></strong></u></h3>
-        </fieldset>
+    <div class="mui-container-fluid" style="align-items: center;">
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Operating System</b></div>
+            <div class="mui-col-md-4"><b>{{ OSVersion }}</b></div>
+        </div>
+
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Kootnet Ethernet Testers Version</b></div>
+            <div class="mui-col-md-4"><b>{{ KootnetVersion }}</b></div>
+        </div>
     </div>
 </div>
 

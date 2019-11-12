@@ -48,7 +48,7 @@
 #
 
 
-from supported_displays.display_drivers.waveshare import epdconfig
+from supported_hardware.drivers.waveshare import epdconfig
 import RPi.GPIO as GPIO
 
 # Display resolution

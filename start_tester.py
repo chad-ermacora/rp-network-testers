@@ -16,23 +16,30 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import os
 from time import sleep
-from os import system
+from operations_modules import file_locations
+from operations_modules.config_primary import current_config
 from operations_modules.app_generic_functions import CreateMonitoredThread
-from operations_modules import threads_access, config_pi, http_server
-from operations_modules.display_pi import CreateDisplayServer
+from operations_modules import threads_access, config_primary, http_server
+from operations_modules.interaction_server import CreateInteractiveServer
+from operations_modules.hardware_access import hardware_access
 
 
 def start_iperf_server():
-    system("/usr/bin/iperf3 -s -p 9000")
+    os.system("/usr/bin/iperf3 -s -p " + current_config.iperf_port)
 
+
+if not os.path.isdir(file_locations.script_folder_path + "/test_results"):
+    os.mkdir(file_locations.script_folder_path + "/test_results")
 
 threads_access.http_server = CreateMonitoredThread(http_server.CreateSensorHTTP, thread_name="HTTPS Server")
-if config_pi.current_config.is_iperf_server:
+if config_primary.current_config.is_iperf_server:
     threads_access.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name="iPerf3 Server")
 else:
-    if config_pi.current_config.running_on_rpi:
-        threads_access.display_server = CreateMonitoredThread(CreateDisplayServer, thread_name="Display Server")
+    if config_primary.current_config.running_on_rpi:
+        threads_access.display_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="Display Server")
 
+hardware_access.display_message(hardware_access.get_start_message())
 while True:
     sleep(600)

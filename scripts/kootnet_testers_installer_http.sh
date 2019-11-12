@@ -8,12 +8,6 @@ else
   printf '\n-- HTTP UPGRADE OR INSTALL --\n'
   HTTP_FOLDER="/utils/koot_net_eth_testers"
 fi
-if [[ "$2" == "skip" ]]
-then
-  SKIP="true"
-else
-  SKIP="false"
-fi
 # HTTP Server Options
 HTTP_SERVER="http://kootenay-networks.com"
 HTTP_ZIP="/KootNetEthTesters.zip"
@@ -26,11 +20,19 @@ if [[ $EUID != 0 ]]; then
   sudo "$0" "$@"
   exit $?
 fi
-# Start Install
+# Start Install - Make sure directories are made
 mkdir ${INSTALL_DIR} 2>/dev/null
 mkdir ${INSTALL_DIR}/backup 2>/dev/null
-rm /root/KootNetEthTesters.zip
-printf "\nConfiguring Network\n"
+# Remove Previous Downloads
+rm /root${HTTP_ZIP}
+rm -f -r /root/KootNetEthTesters_files
+# Check for previous install
+PREVIOUS_INSTALL="no"
+if [[ -f ${INSTALL_DIR}/requirements.txt ]]
+then
+  PREVIOUS_INSTALL="yes"
+fi
+# printf "\nConfiguring Network\n"
 # Add and edit TCP/IP v4 Network + Wireless
 #if [[ -f ${INSTALL_DIR}/backup/interfaces ]]
 #then
@@ -47,12 +49,12 @@ printf "\nConfiguring Network\n"
 #EOF
 printf "\n\nDownloads started\n"
 wget ${HTTP_SERVER}${HTTP_FOLDER}${HTTP_ZIP} -P /root/
-printf "Downloads complete\nUnzipping & installing files\n"
-rm -f -r /root/KootNetEthTesters_files
-unzip -q /root/KootNetEthTesters.zip -d /root/KootNetEthTesters_files
+printf "Downloads complete\nUnzipping & Installing Files\n"
+unzip -q /root${HTTP_ZIP} -d /root/KootNetEthTesters_files
 cp -f -R /root/KootNetEthTesters_files/rp-network-testers/* ${INSTALL_DIR}
 # Install needed programs and dependencies
-if [[ ${SKIP} == "true" ]]; then
+if [[ ${PREVIOUS_INSTALL} == "yes" ]]
+then
   printf '\nSkipping Dependincie Installs\n\n'
 else
   printf '\nChecking dependencies\n\n'
@@ -70,6 +72,6 @@ printf "copying & enabling KootNet Ethernet Tester Display Services\n"
 cp ${INSTALL_DIR}/auto_start/KootnetEthServer.service /etc/systemd/system
 systemctl daemon-reload
 systemctl enable KootnetEthServer 2>/dev/null
-systemctl start KootnetEthServer 2>/dev/null
+systemctl restart KootnetEthServer 2>/dev/null
 printf "\nInstall Complete\n"
 cd || exit

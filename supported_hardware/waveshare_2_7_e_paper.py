@@ -19,29 +19,43 @@
 from time import strftime
 from PIL import Image, ImageDraw, ImageFont
 from operations_modules import file_locations
-
-key1 = 5
-key2 = 6
-key3 = 13
-key4 = 19
+from operations_modules.app_generic_functions import get_raspberry_pi_model
 
 
-class CreateWaveShare27EPaper:
+class CreateHardwareAccess:
     def __init__(self):
-        self.rpi_gpio_import = __import__('RPi.GPIO')
-        self.epd2in7_import = __import__("supported_displays.display_drivers.waveshare.epd2in7")
-        self.esp = self.epd2in7_import.EPD()
-        self.esp.init()
+        try:
+            self.full_system_text = get_raspberry_pi_model()
+            self.band_width_message = "Max Bandwidth:\n Unknown"
+            if self.full_system_text == "Raspberry Pi 3 Model B Plus":
+                self.band_width_message = "Max Bandwidth:\n 290-300Mbps"
+            elif self.full_system_text == "Raspberry Pi 4 Model B":
+                self.band_width_message = "Max Bandwidth:\n 900-1000Mbps"
 
-        self.rpi_gpio_import.setmode(self.rpi_gpio_import.BCM)
+            # GPIO key to Pin #s
+            self.key1 = 5
+            self.key2 = 6
+            self.key3 = 13
+            self.key4 = 19
+            self.rpi_gpio_import = __import__('RPi.GPIO', fromlist=["setmode", "BCM", "setup",
+                                                                    "IN", "PUD_UP", "input"])
+            self.epd2in7_import = __import__("supported_hardware.drivers.waveshare.epd2in7",
+                                             fromlist=["EPD", "EPD_WIDTH", "EPD_HEIGHT"])
+            self.esp = self.epd2in7_import.EPD()
+            self.esp.init()
 
-        self.rpi_gpio_import.setup(key1, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
-        self.rpi_gpio_import.setup(key2, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
-        self.rpi_gpio_import.setup(key3, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
-        self.rpi_gpio_import.setup(key4, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+            self.rpi_gpio_import.setmode(self.rpi_gpio_import.BCM)
 
-        self.key_states = [self.rpi_gpio_import.input(key1), self.rpi_gpio_import.input(key1),
-                           self.rpi_gpio_import.input(key1), self.rpi_gpio_import.input(key1)]
+            self.rpi_gpio_import.setup(self.key1, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+            self.rpi_gpio_import.setup(self.key2, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+            self.rpi_gpio_import.setup(self.key3, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+            self.rpi_gpio_import.setup(self.key4, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+        except Exception as error:
+            print("Problems!: " + str(error))
+
+    def get_key_states(self):
+        return [self.rpi_gpio_import.input(self.key1), self.rpi_gpio_import.input(self.key2),
+                self.rpi_gpio_import.input(self.key3), self.rpi_gpio_import.input(self.key4)]
 
     def display_message(self, text_message):
         # 255 to clear the frame
@@ -56,20 +70,19 @@ class CreateWaveShare27EPaper:
     def get_start_message():
         start_message = "Device Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n" + \
                         "  Day/Month/Year\n\nDate: " + str(strftime("%d/%m/%y")) + "\nTime: " + str(strftime("%H:%M"))
-
         return start_message
 
     @staticmethod
     def get_mtr_message(cli_results):
-        if cli_results[-45:-41] != "Loss":
+        if cli_results[-42:-38] != "Loss":
             message = "MTR Results\n" + \
-                      "Sent: " + cli_results[-36:-30] + "\n" + \
-                      "Loss: " + cli_results[-45:-38] + "\n" + \
-                      "Avg: " + cli_results[-26:-20] + "ms\n" + \
-                      "Worst: " + cli_results[-12:-8] + "ms\n" + \
-                      "Best: " + cli_results[-19:-14] + "ms\n" + \
-                      "Last: " + cli_results[-31:-26] + "ms\n" + \
-                      "StDev: " + cli_results[-6:-3] + " ms\n\n" + \
+                      "Sent: " + cli_results[-33:-27] + "\n" + \
+                      "Loss: " + cli_results[-42:-35] + "\n" + \
+                      "Avg: " + cli_results[-23:-17] + "ms\n" + \
+                      "Worst: " + cli_results[-9:-5] + "ms\n" + \
+                      "Best: " + cli_results[-16:-11] + "ms\n" + \
+                      "Last: " + cli_results[-28:-23] + "ms\n" + \
+                      "StDev: " + cli_results[-3:] + " ms\n\n" + \
                       "  Day/Month/Year\n\n" + \
                       "Date: " + strftime("%d/%m/%y") + "\n" + \
                       "Time: " + strftime("%H:%M")
@@ -83,18 +96,19 @@ class CreateWaveShare27EPaper:
                       "Time: " + str(strftime("%H:%M"))
         return message
 
-    @staticmethod
-    def get_iperf_message(cli_results, cli_ok=True):
+    def get_iperf_message(self, cli_results, cli_ok=True):
         if cli_ok:
+            print(cli_results)
             message = "iPerf3 Results\n" + \
-                      "Max device Bandwidth:\n" + \
-                      "  220Mbps-230Mbps\n\n" + \
-                      "Transferred:\n  " + \
-                      cli_results[-71:-57] + "\n" + \
-                      "Bandwidth:\n  " + \
-                      cli_results[-58:-42] + "\n" + \
-                      "Over " + cli_results[-83:-70] + "\n\n" + \
-                      "  Day/Month/Year\n\n" + \
+                      self.band_width_message + "\n" + \
+                      "Amount Transferred:\nIn:" + \
+                      cli_results[-68:-54] + "\nOut:" + \
+                      cli_results[-144:-130] + "\n" + \
+                      "Average Bandwidth:\nIn:" + \
+                      cli_results[-55:-39] + "\nOut:" + \
+                      cli_results[-131:-115] + "\n" + \
+                      "Over: " + cli_results[-80:-67] + "\n" + \
+                      "  Day/Month/Year\n" + \
                       "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "Time: " + str(strftime("%H:%M"))
         else:

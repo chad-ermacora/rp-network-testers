@@ -20,10 +20,8 @@ from flask import Blueprint, render_template, send_file
 from operations_modules import file_locations
 from operations_modules import app_generic_functions
 from operations_modules import app_variables
-from operations_modules.config_pi import current_config
-
-mtr_cli_command = "mtr -c 10 -r -n " + current_config.remote_tester_ip
-iperf_cli_command = "iperf3 -c " + current_config.remote_tester_ip + " -O 1 -p " + current_config.iperf_port
+from operations_modules import run_commands
+from operations_modules.config_primary import current_config
 
 http_routes = Blueprint("http_routes", __name__)
 
@@ -31,12 +29,6 @@ http_routes = Blueprint("http_routes", __name__)
 @http_routes.route("/")
 @http_routes.route("/index.html")
 def html_root():
-    results_mtr = ""
-    results_iperf = ""
-    if app_variables.raw_previous_iperf and app_variables.raw_previous_mtr:
-        results_mtr = app_variables.raw_previous_mtr
-        results_iperf = app_variables.raw_previous_iperf
-
     tests_running_msg = ""
     button_disabled = ""
     if current_config.tests_running:
@@ -47,8 +39,12 @@ def html_root():
                            DisabledButton=button_disabled,
                            OSVersion=app_generic_functions.get_os_name_version(),
                            KootnetVersion=current_config.app_version,
-                           Results_MTR=results_mtr,
-                           Results_iPerf=results_iperf)
+                           Results_MTR=str(app_variables.raw_previous_mtr),
+                           Results_iPerf=str(app_variables.raw_previous_iperf),
+                           InteractiveIP=current_config.display_ip,
+                           ServerIP=current_config.remote_tester_ip,
+                           iPerfPort=current_config.iperf_port,
+                           MTRCount=current_config.mtr_run_count)
 
 
 @http_routes.route("/mui.min.css")
@@ -74,20 +70,5 @@ def start_tests():
                                URL="https://" + current_config.display_ip,
                                TextMessage="Re-Directing to Display Server")
     else:
-        app_generic_functions.thread_function(_run_tests)
+        app_generic_functions.thread_function(run_commands.start_all_tests)
     return html_root()
-
-
-def _run_tests():
-    current_config.tests_running = True
-    try:
-        print(mtr_cli_command)
-        app_variables.raw_previous_mtr = app_generic_functions.get_subprocess_str_output(mtr_cli_command)[2:-2]
-    except Exception as error:
-        print(str(error))
-    try:
-        print(iperf_cli_command)
-        app_variables.raw_previous_iperf = app_generic_functions.get_subprocess_str_output(iperf_cli_command)[2:-2]
-    except Exception as error:
-        print(str(error))
-    current_config.tests_running = False
