@@ -12,11 +12,11 @@ This has been tested on Raspbian Buster & Ubuntu but in theory should work on ot
 
 You do not need any special hardware when used only through the web interface but it does support the following additional Displays and Interactive Hardware when installed on a Raspberry Pi.
 
-[Waveshare e-Paper 2.7" Raspberry HAT](https://www.waveshare.com/wiki/2.7inch_e-Paper_HAT) (Any version)
+[Waveshare e-Paper 2.7" Raspberry HAT](https://www.waveshare.com/wiki/2.7inch_e-Paper_HAT) (Both BW & BWR versions)
 
 1. Get a fresh copy of Raspbian running on both the Raspberry Pis.
-2. Optional: Enable any requirements for special hardware (Such as SPI, IC2, etc.  Driver are included in the program)
-3. Run the following command in a Terminal - Raspberry Pi 4B Recommended
+2. Optional: Enable any requirements for special hardware (Such as SPI, IC2, etc.)
+3. Run the following command in a Terminal - _Raspberry Pi 4B Recommended_
 
 ```wget http://kootenay-networks.com/utils/koot_net_eth_testers/kootnet_testers_installer_http.sh && sudo bash kootnet_testers_installer_http.sh```
 

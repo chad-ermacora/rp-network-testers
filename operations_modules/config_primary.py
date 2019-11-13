@@ -23,7 +23,7 @@ from operations_modules.app_generic_functions import get_file_content, write_fil
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.20"
+        self.app_version = "0.1.22"
         self.full_system_text = get_raspberry_pi_model()
         print("Running on " + str(self.full_system_text))
         self.running_on_rpi = False

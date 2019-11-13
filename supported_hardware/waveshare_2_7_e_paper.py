@@ -28,9 +28,9 @@ class CreateHardwareAccess:
             self.full_system_text = get_raspberry_pi_model()
             self.band_width_message = "Max Bandwidth:\n Unknown"
             if self.full_system_text == "Raspberry Pi 3 Model B Plus":
-                self.band_width_message = "Max Bandwidth:\n 290-300Mbps"
+                self.band_width_message = "Max Bandwidth:\n 290-298 Mbps Avg."
             elif self.full_system_text == "Raspberry Pi 4 Model B":
-                self.band_width_message = "Max Bandwidth:\n 900-1000Mbps"
+                self.band_width_message = "Max Bandwidth:\n 935-955 Mbps Avg."
 
             # GPIO key to Pin #s
             self.key1 = 5
@@ -69,80 +69,81 @@ class CreateHardwareAccess:
     @staticmethod
     def get_start_message():
         start_message = "Device Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n" + \
-                        "  Day/Month/Year\n\nDate: " + str(strftime("%d/%m/%y")) + "\nTime: " + str(strftime("%H:%M"))
+                        "   Day/Month/Year\n     Date: " + str(strftime("%d/%m/%y")) + \
+                        "\n       Time: " + str(strftime("%H:%M"))
         return start_message
 
     @staticmethod
     def get_mtr_message(cli_results):
         if cli_results[-42:-38] != "Loss":
-            message = "MTR Results\n" + \
-                      "Sent: " + cli_results[-33:-27] + "\n" + \
-                      "Loss: " + cli_results[-42:-35] + "\n" + \
-                      "Avg: " + cli_results[-23:-17] + "ms\n" + \
-                      "Worst: " + cli_results[-9:-5] + "ms\n" + \
-                      "Best: " + cli_results[-16:-11] + "ms\n" + \
-                      "Last: " + cli_results[-28:-23] + "ms\n" + \
-                      "StDev: " + cli_results[-3:] + " ms\n\n" + \
-                      "  Day/Month/Year\n\n" + \
-                      "Date: " + strftime("%d/%m/%y") + "\n" + \
-                      "Time: " + strftime("%H:%M")
+            message = " MTR Results\n" + \
+                      " Sent: " + cli_results[-33:-27] + "\n" + \
+                      " Loss: " + cli_results[-42:-35] + "\n" + \
+                      " Avg: " + cli_results[-23:-17] + "ms\n" + \
+                      " Worst: " + cli_results[-9:-5] + "ms\n" + \
+                      " Best: " + cli_results[-16:-11] + "ms\n" + \
+                      " Last: " + cli_results[-28:-23] + "ms\n" + \
+                      " StDev: " + cli_results[-3:] + " ms\n\n" + \
+                      "   Day/Month/Year\n" + \
+                      "     Date: " + strftime("%d/%m/%y") + "\n" + \
+                      "       Time: " + strftime("%H:%M")
         else:
-            message = "MTR Failed\n" + \
-                      "Remote Unit Offline?\n" + \
-                      "  Or\n" + \
-                      "Bad Network\n\n" + \
-                      "  Day/Month/Year\n\n" + \
-                      "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      "Time: " + str(strftime("%H:%M"))
+            message = " MTR Failed\n" + \
+                      " Remote Unit Offline?\n" + \
+                      "   Or\n" + \
+                      " Bad Network\n\n" + \
+                      "   Day/Month/Year\n\n" + \
+                      " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
+                      " Time: " + str(strftime("%H:%M"))
         return message
 
     def get_iperf_message(self, cli_results, cli_ok=True):
         if cli_ok:
             print(cli_results)
-            message = "iPerf3 Results\n" + \
+            message = " iPerf3 Results\n" + \
                       self.band_width_message + "\n" + \
-                      "Amount Transferred:\nIn:" + \
+                      " Amount Transferred:\nIn:" + \
                       cli_results[-68:-54] + "\nOut:" + \
                       cli_results[-144:-130] + "\n" + \
-                      "Average Bandwidth:\nIn:" + \
+                      " Average Bandwidth:\nIn:" + \
                       cli_results[-55:-39] + "\nOut:" + \
                       cli_results[-131:-115] + "\n" + \
-                      "Over: " + cli_results[-80:-67] + "\n" + \
-                      "  Day/Month/Year\n" + \
-                      "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      "Time: " + str(strftime("%H:%M"))
+                      " Over: " + cli_results[-80:-67] + "\n\n" + \
+                      "   Day/Month/Year\n" + \
+                      "     Date: " + str(strftime("%d/%m/%y")) + "\n" + \
+                      "       Time: " + str(strftime("%H:%M"))
         else:
-            message = "iPerf3 Failed\n" + \
-                      "Remote Unit Offline?\n" + \
-                      "  Or\n" + \
-                      "Bad Network\n\n" + \
-                      "  Day/Month/Year\n\n" + \
-                      "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      "Time: " + str(strftime("%H:%M"))
+            message = " iPerf3 Failed\n" + \
+                      " Remote Unit Offline?\n" + \
+                      "   Or\n" + \
+                      " Bad Network\n\n" + \
+                      "   Day/Month/Year\n\n" + \
+                      " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
+                      " Time: " + str(strftime("%H:%M"))
         return message
 
     @staticmethod
     def shutdown_remote_unit_message(cli_ok):
         if cli_ok:
-            message = "Shutting Down\n" + \
-                      "Remote Unit\n\n" + \
-                      "  Day/Month/Year\n\n" + \
-                      "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      "Time: " + str(strftime("%H:%M"))
+            message = " Shutting Down\n" + \
+                      " Remote Unit\n\n" + \
+                      "   Day/Month/Year\n\n" + \
+                      " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
+                      " Time: " + str(strftime("%H:%M"))
         else:
 
-            message = "Shut Down Failed\n" + \
-                      "Remote Unit Offline\n\n" + \
-                      "  Day/Month/Year\n\n" + \
-                      "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      "Time: " + str(strftime("%H:%M"))
+            message = " Shut Down Failed\n" + \
+                      " Remote Unit Offline\n\n" + \
+                      "   Day/Month/Year\n\n" + \
+                      " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
+                      " Time: " + str(strftime("%H:%M"))
         return message
 
     @staticmethod
     def shutdown_local_unit_message():
-        message = "Shutting Down\n" + \
-                  "Local Unit\n\n" + \
-                  "  Day/Month/Year\n\n" + \
-                  "Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                  "Time: " + str(strftime("%H:%M"))
+        message = " Shutting Down\n" + \
+                  " Local Unit\n\n" + \
+                  "   Day/Month/Year\n\n" + \
+                  " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
+                  " Time: " + str(strftime("%H:%M"))
         return message
