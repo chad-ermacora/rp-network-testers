@@ -20,7 +20,6 @@ import os
 import subprocess
 import time
 import requests
-from platform import system
 from threading import Thread
 
 
@@ -135,18 +134,14 @@ def send_command(url):
 
 
 def get_raspberry_pi_model():
-    try:
+    if os.path.isfile("/proc/device-tree/model"):
         pi_version = str(subprocess.check_output("cat /proc/device-tree/model", shell=True))
-    except:
-        pi_version = "Bad"
-    if len(pi_version) > 10:
-        pi_version = pi_version[2:-5]
-        print("Pi Version: " + pi_version)
-        if pi_version[:17] == "Raspberry Pi Zero":
-            return "Raspberry Pi Zero"
-        elif pi_version[:27] == "Raspberry Pi 3 Model B Plus":
-            return "Raspberry Pi 3 Model B Plus"
-        elif pi_version[:22] == "Raspberry Pi 4 Model B":
-            return "Raspberry Pi 4 Model B"
-    print("Not running on a Raspberry Pi")
-    return system()
+        if len(pi_version) > 10:
+            pi_version = pi_version[2:-5]
+            if pi_version[:17] == "Raspberry Pi Zero":
+                return "Raspberry Pi Zero"
+            elif pi_version[:27] == "Raspberry Pi 3 Model B Plus":
+                return "Raspberry Pi 3 Model B Plus"
+            elif pi_version[:22] == "Raspberry Pi 4 Model B":
+                return "Raspberry Pi 4 Model B"
+    return get_os_name_version()

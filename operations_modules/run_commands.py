@@ -41,7 +41,7 @@ def start_all_tests():
 def _start_mtr():
     current_config.tests_running = True
     try:
-        print(current_config.get_mtr_command_str())
+        print("MTR Command Line: " + current_config.get_mtr_command_str() + "\n")
         thread_function(hardware_access.display_message("Starting MTR Test\n\nPlease Wait ..."))
         temp_lines = get_subprocess_str_output(current_config.get_mtr_command_str()).strip().split("\n")
         temp_lines = temp_lines[1:]
@@ -50,7 +50,7 @@ def _start_mtr():
             new_str += line + "\n"
         app_variables.raw_previous_mtr = new_str.strip()[:-2]
     except Exception as error:
-        print(str(error))
+        print("MTR Command Error: " + str(error))
     current_config.tests_running = False
     save_to_file.save_mtr_results_to_file()
     hardware_access.display_message(hardware_access.get_mtr_message(app_variables.raw_previous_mtr))
@@ -59,11 +59,11 @@ def _start_mtr():
 def _start_iperf():
     current_config.tests_running = True
     try:
-        print(current_config.get_iperf_command_str())
+        print("iPerf 3 Command Line: " + current_config.get_iperf_command_str() + "\n")
         thread_function(hardware_access.display_message("Starting iPerf3 Test\n\nPlease Wait ..."))
         app_variables.raw_previous_iperf = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
     except Exception as error:
-        print(str(error))
+        print("iPerf Command Error: " + str(error))
     current_config.tests_running = False
     save_to_file.save_iperf_results_to_file()
     hardware_access.display_message(hardware_access.get_iperf_message(app_variables.raw_previous_iperf))

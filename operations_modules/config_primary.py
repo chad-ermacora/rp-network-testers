@@ -23,9 +23,9 @@ from operations_modules.app_generic_functions import get_file_content, write_fil
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.22"
+        self.app_version = "0.1.26"
         self.full_system_text = get_raspberry_pi_model()
-        print("Running on " + str(self.full_system_text))
+        print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
         if self.full_system_text[:12] == "Raspberry Pi":
             self.running_on_rpi = True
@@ -53,6 +53,7 @@ class CreateConfiguration:
     def load_config_from_file(self):
         """ Writes provided configuration file to local disk. The provided configuration can be string or object. """
         if os.path.isfile(file_locations.config_file_location):
+            print("Loading Configuration from: " + file_locations.config_file_location + "\n")
             try:
                 config_file_lines = get_file_content(file_locations.config_file_location).split("\n")
                 config_list = []

@@ -26,11 +26,11 @@ class CreateHardwareAccess:
     def __init__(self):
         try:
             self.full_system_text = get_raspberry_pi_model()
-            self.band_width_message = "Max Bandwidth:\n Unknown"
+            self.band_width_message = "Expected Bandwidth:\n Unknown"
             if self.full_system_text == "Raspberry Pi 3 Model B Plus":
-                self.band_width_message = "Max Bandwidth:\n 290-298 Mbps Avg."
+                self.band_width_message = "Expected Bandwidth:\n 290-298 Mbps"
             elif self.full_system_text == "Raspberry Pi 4 Model B":
-                self.band_width_message = "Max Bandwidth:\n 935-955 Mbps Avg."
+                self.band_width_message = "Expected Bandwidth:\n 935-955 Mbps"
 
             # GPIO key to Pin #s
             self.key1 = 5
@@ -70,7 +70,7 @@ class CreateHardwareAccess:
     def get_start_message():
         start_message = "Device Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n" + \
                         "   Day/Month/Year\n     Date: " + str(strftime("%d/%m/%y")) + \
-                        "\n       Time: " + str(strftime("%H:%M"))
+                        "\n       Time: " + str(strftime("%H:%M") + "\n")
         return start_message
 
     @staticmethod
@@ -78,7 +78,7 @@ class CreateHardwareAccess:
         if cli_results[-42:-38] != "Loss":
             message = " MTR Results\n" + \
                       " Sent: " + cli_results[-33:-27] + "\n" + \
-                      " Loss: " + cli_results[-42:-35] + "\n" + \
+                      " Lost: " + cli_results[-42:-35] + "\n" + \
                       " Avg: " + cli_results[-23:-17] + "ms\n" + \
                       " Worst: " + cli_results[-9:-5] + "ms\n" + \
                       " Best: " + cli_results[-16:-11] + "ms\n" + \

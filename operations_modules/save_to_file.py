@@ -38,7 +38,7 @@ class CreateHardwareAccess:
     def get_start_message():
         start_message = "Device Ready Be sure to Give 15 Seconds For Remote Device to boot.\n" + \
                         "Date - Day/Month/Year: " + str(time.strftime("%d/%m/%y")) + "\n" + \
-                        "Time: " + str(time.strftime("%H:%M"))
+                        "Time: " + str(time.strftime("%H:%M") + "\n")
         return start_message
 
     @staticmethod

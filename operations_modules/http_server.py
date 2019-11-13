@@ -34,8 +34,8 @@ class CreateSensorHTTP:
 
         try:
             http_server = WSGIServer((flask_http_ip, flask_http_port), app)
-            print(" -- HTTP Server Started on port " + str(flask_http_port))
+            print("\n -- HTTP Server Started on port " + str(flask_http_port) + "\n")
             http_server.serve_forever()
         except Exception as error:
-            print("--- Failed to Start HTTP Server: " + str(error))
+            print("\n --- Failed to Start HTTP Server: " + str(error) + "\n")
             pass

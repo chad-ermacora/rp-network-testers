@@ -21,7 +21,6 @@ import sys
 
 script_folder_path = os.path.dirname(sys.argv[0])
 config_file_location = script_folder_path + "/config.txt"
-print(config_file_location)
 
 location_save_report_folder = "/home/pi"
 location_truetype_font = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
