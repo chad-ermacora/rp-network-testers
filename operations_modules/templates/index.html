@@ -35,6 +35,10 @@
         Configuration
     </a></li>
     <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+           data-mui-controls="hardware-tab">
+        Hardware
+    </a></li>
+    <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
            data-mui-controls="network-eth-tab">
         Network - Eth
     </a></li>
@@ -95,8 +99,16 @@
                     </label>
                 </div>
                 <br>
+                <div class="mui-checkbox" style="display: inline-block;">
+                    <label style="color: black;">
+                        <input type="checkbox" name="checkbox_iperf_server" value="" {{ CheckediPerfServer }}>
+                        Enable iPerf 3 Server
+                    </label>
+                </div>
+                <br>
+                <br>
                 <div class="mui-textfield">
-                    <label style="color: black">Remote Test Unit IP
+                    <label style="color: black;">Remote Test Unit IP
                         <br>
                         <input style="width: 125px;" type="text" maxlength="15" name="iperf_server_ip"
                                value="{{ ServerIP }}">
@@ -104,7 +116,7 @@
                 </div>
                 <br>
                 <div class="mui-textfield">
-                    <label style="color: black">iPerf 3 Server Port #
+                    <label style="color: black;">iPerf 3 Server Port #
                         <br>
                         <input style="width: 75px;" type="number" min="1" max="65535" name="iperf_port"
                                value="{{ iPerfPort }}">
@@ -126,6 +138,25 @@
     </div>
 </div>
 
+<div class="mui-tabs__pane" id="hardware-tab">
+    <br>
+    <div class="mui-container-fluid">
+        <form class="mui-form" method="POST" action="/EditInstalledHardware">
+            <fieldset style="text-align: center;">
+                <h3><u><strong><a style="color: black;" href="/">Installed Hardware</a></strong></u></h3>
+                <div class="mui-checkbox" style="display: inline-block;">
+                    <label style="color: black;">
+                        <input type="checkbox" name="checkbox_waveshare_2_7_e_ink" value="" {{ CheckedWaveShare27EInk }}>
+                        WaveShare 2.7" E-Ink Display (BW or RBW)
+                    </label>
+                </div>
+                <br>
+                <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
 <div class="mui-tabs__pane" id="network-eth-tab">
     <br>
     <form class="mui-form" method="POST" style="min-height: 300px;" action="/EditEthernetIPv4">
@@ -133,7 +164,7 @@
             <h2><u><a style="color: black" href="{{ PageURL }}">Ethernet Configuration</a></u></h2>
             <div class="mui-checkbox" style="display: inline-block;">
                 <label class="container_checkbox">
-                    <input type="checkbox" id="IP_DHCP" name="ip_dhcp" value="" {{ CheckedDHCP }}>
+                    <input type="checkbox" id="IP_DHCP" name="ethernet_ip_dhcp" value="" {{ EthernetCheckedDHCP }}>
                     DHCP
                     <span class="checkmark_checkbox"></span>
                 </label>
@@ -143,9 +174,9 @@
                 <label style="color: black">
                     IPv4 Address
                     <br>
-                    <input style="width: 125px" type="text" name="ip_address"
+                    <input style="width: 125px" type="text" name="ethernet_ip_address"
                            placeholder="eg. 192.168.10.11" minlength="7"
-                           value="{{ IPv4Address }}" {{ IPv4AddressDisabled }}>
+                           value="{{ EthernetIPv4Address }}" {{ EthernetIPv4AddressDisabled }}>
                 </label>
             </div>
 
@@ -156,9 +187,9 @@
                         Subnet mask
                     </a>
                     <br>
-                    <input style="width: 50px" type="text" name="ip_subnet"
+                    <input style="width: 50px" type="text" name="ethernet_ip_subnet"
                            placeholder="eg. /24" minlength="2" maxlength="3"
-                           value="{{ IPv4Subnet }}" {{ IPv4SubnetDisabled }}>
+                           value="{{ EthernetIPv4Subnet }}" {{ EthernetIPv4SubnetDisabled }}>
                 </label>
             </div>
 
@@ -166,9 +197,9 @@
                 <label style="color: black">
                     Gateway
                     <br>
-                    <input style="width: 125px" type="text" name="ip_gateway"
+                    <input style="width: 125px" type="text" name="ethernet_ip_gateway"
                            placeholder="eg. 192.168.10.1" minlength="7" maxlength="15"
-                           value="{{ IPGateway }}" {{ IPGatewayDisabled }}>
+                           value="{{ EthernetIPGateway }}" {{ EthernetIPGatewayDisabled }}>
                 </label>
             </div>
 
@@ -176,9 +207,9 @@
                 <label style="color: black">
                     Primary DNS
                     <br>
-                    <input style="width: 125px" type="text" name="ip_dns1"
+                    <input style="width: 125px" type="text" name="ethernet_ip_dns1"
                            placeholder="eg. 8.8.8.8" minlength="7" maxlength="15"
-                           value="{{ IPDNS1 }}" {{ IPDNS1Disabled }}>
+                           value="{{ EthernetIPDNS1 }}" {{ EthernetIPDNS1Disabled }}>
                 </label>
             </div>
 
@@ -186,9 +217,9 @@
                 <label style="color: black">
                     Secondary DNS
                     <br>
-                    <input style="width: 125px" type="text" name="ip_dns2"
+                    <input style="width: 125px" type="text" name="ethernet_ip_dns2"
                            placeholder="eg. 8.8.4.4" minlength="7" maxlength="15"
-                           value="{{ IPDNS2 }}" {{ IPDNS2Disabled }}>
+                           value="{{ EthernetIPDNS2 }}" {{ EthernetIPDNS2Disabled }}>
                 </label>
             </div>
             <br>
@@ -204,7 +235,7 @@
             <h2><u><a style="color: black" href="{{ PageURL }}">Wireless Configuration</a></u></h2>
             <div class="mui-checkbox" style="display: inline-block;">
                 <label class="container_checkbox">
-                    <input type="checkbox" id="wifi_IP_DHCP" name="wifi_ip_dhcp" value="" {{ CheckedDHCP }}>
+                    <input type="checkbox" id="wifi_IP_DHCP" name="wifi_ip_dhcp" value="" {{ WirelessCheckedDHCP }}>
                     DHCP
                     <span class="checkmark_checkbox"></span>
                 </label>
@@ -214,9 +245,9 @@
                 <label style="color: black">
                     IPv4 Address
                     <br>
-                    <input style="width: 125px" type="text" name="ip_address"
+                    <input style="width: 125px" type="text" name="wifi_ip_address"
                            placeholder="eg. 192.168.10.11" minlength="7"
-                           value="{{ IPv4Address }}" {{ IPv4AddressDisabled }}>
+                           value="{{ WirelessIPv4Address }}" {{ WirelessIPv4AddressDisabled }}>
                 </label>
             </div>
 
@@ -227,9 +258,9 @@
                         Subnet mask
                     </a>
                     <br>
-                    <input style="width: 50px" type="text" name="ip_subnet"
+                    <input style="width: 50px" type="text" name="wifi_ip_subnet"
                            placeholder="eg. /24" minlength="2" maxlength="3"
-                           value="{{ IPv4Subnet }}" {{ IPv4SubnetDisabled }}>
+                           value="{{ WirelessIPv4Subnet }}" {{ WirelessIPv4SubnetDisabled }}>
                 </label>
             </div>
 
@@ -237,9 +268,9 @@
                 <label style="color: black">
                     Gateway
                     <br>
-                    <input style="width: 125px" type="text" name="ip_gateway"
+                    <input style="width: 125px" type="text" name="wifi_ip_gateway"
                            placeholder="eg. 192.168.10.1" minlength="7" maxlength="15"
-                           value="{{ IPGateway }}" {{ IPGatewayDisabled }}>
+                           value="{{ WirelessIPGateway }}" {{ WirelessIPGatewayDisabled }}>
                 </label>
             </div>
 
@@ -247,9 +278,9 @@
                 <label style="color: black">
                     Primary DNS
                     <br>
-                    <input style="width: 125px" type="text" name="ip_dns1"
+                    <input style="width: 125px" type="text" name="wifi_ip_dns1"
                            placeholder="eg. 8.8.8.8" minlength="7" maxlength="15"
-                           value="{{ IPDNS1 }}" {{ IPDNS1Disabled }}>
+                           value="{{ WirelessIPDNS1 }}" {{ WirelessIPDNS1Disabled }}>
                 </label>
             </div>
 
@@ -257,9 +288,9 @@
                 <label style="color: black">
                     Secondary DNS
                     <br>
-                    <input style="width: 125px" type="text" name="ip_dns2"
+                    <input style="width: 125px" type="text" name="wifi_ip_dns2"
                            placeholder="eg. 8.8.4.4" minlength="7" maxlength="15"
-                           value="{{ IPDNS2 }}" {{ IPDNS2Disabled }}>
+                           value="{{ WirelessIPDNS2 }}" {{ WirelessIPDNS2Disabled }}>
                 </label>
             </div>
             <br>
@@ -296,6 +327,15 @@
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                 onclick="window.location.href = '/UpdateProgramDev';">
             Development Upgrade
+        </button>
+        <br>
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                onclick="window.location.href = '/Shutdown';">
+            Shutdown Local Unit
+        </button>
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                onclick="window.location.href = 'http://{{ RemoteIPandPort }}/Shutdown';">
+            Shutdown Remote Unit
         </button>
     </div>
 </div>

@@ -21,7 +21,7 @@ from operations_modules import app_generic_functions
 from operations_modules.config_primary import current_config
 
 
-def check_for_dhcp(dhcpcd_config_lines):
+def check_for_dhcp(dhcpcd_config_lines, wireless=False):
     dhcp_status = True
     for line in dhcpcd_config_lines:
         line_stripped = line.strip()

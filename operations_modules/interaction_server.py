@@ -24,7 +24,7 @@ from operations_modules.hardware_access import hardware_access
 
 class CreateInteractiveServer:
     def __init__(self):
-        if not current_config.has_hardware_interactive:
+        if current_config.using_dummy_access:
             print("No Interactive Hardware Detected.  Using Web Access Only.\n")
             while True:
                 sleep(300)

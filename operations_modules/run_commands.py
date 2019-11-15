@@ -16,10 +16,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from time import strftime
+import time
 from operations_modules.config_primary import current_config
-from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function
-from operations_modules import app_variables, save_to_file
+from operations_modules import file_locations
+from operations_modules import app_variables
+from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function, write_file_to_disk
 from operations_modules.hardware_access import hardware_access
 
 
@@ -49,13 +50,13 @@ def start_mtr():
         new_str = ""
         for line in temp_lines:
             new_str += line + "\n"
-        app_variables.raw_previous_mtr = new_str.strip()[:-2]
-        app_variables.last_run_mtr = strftime("%d/%m/%y - %H:%M")
+        start_results_text = "Run on " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
+        app_variables.previous_mtr_results = start_results_text + new_str.strip()[:-2]
     except Exception as error:
         print("MTR Command Error: " + str(error))
     current_config.tests_running = False
-    save_to_file.save_mtr_results_to_file()
-    hardware_access.display_message(hardware_access.get_mtr_message(app_variables.raw_previous_mtr))
+    save_mtr_results_to_file()
+    hardware_access.display_message(hardware_access.get_mtr_message(app_variables.previous_mtr_results))
 
 
 def start_iperf():
@@ -63,10 +64,25 @@ def start_iperf():
     try:
         print("iPerf 3 Command Line: " + current_config.get_iperf_command_str() + "\n")
         thread_function(hardware_access.display_message("Starting iPerf3 Test\n\nPlease Wait ..."))
-        app_variables.raw_previous_iperf = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
-        app_variables.last_run_iperf = strftime("%d/%m/%y - %H:%M")
+        start_results_text = "Run on " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
+        raw_iperf = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
+        app_variables.previous_iperf_results = start_results_text + raw_iperf
     except Exception as error:
         print("iPerf Command Error: " + str(error))
     current_config.tests_running = False
-    save_to_file.save_iperf_results_to_file()
-    hardware_access.display_message(hardware_access.get_iperf_message(app_variables.raw_previous_iperf))
+    save_iperf_results_to_file()
+    hardware_access.display_message(hardware_access.get_iperf_message(app_variables.previous_iperf_results))
+
+
+def save_mtr_results_to_file():
+    print(app_variables.previous_mtr_results)
+    text_time_sec = str(time.time()).split(".")[0]
+    new_file_location = file_locations.script_folder_path + "/test_results/kootnet_ethernet_results-mtr-" + text_time_sec + ".txt"
+    write_file_to_disk(new_file_location, app_variables.previous_mtr_results)
+
+
+def save_iperf_results_to_file():
+    print(app_variables.previous_iperf_results)
+    text_time_sec = str(time.time()).split(".")[0]
+    new_file_location = file_locations.script_folder_path + "/test_results/kootnet_ethernet_results-iperf-" + text_time_sec + ".txt"
+    write_file_to_disk(new_file_location, app_variables.previous_iperf_results)

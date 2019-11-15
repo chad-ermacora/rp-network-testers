@@ -191,3 +191,9 @@ def wireless_ssid_is_valid(text_ssid):
         return True
     else:
         return False
+
+
+def check_for_none_and_blank(check_variable):
+    if check_variable is None or check_variable == "":
+        return True
+    return False

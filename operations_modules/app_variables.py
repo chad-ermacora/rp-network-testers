@@ -17,8 +17,5 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-raw_previous_mtr = False
-raw_previous_iperf = False
-
-last_run_mtr = ""
-last_run_iperf = ""
+previous_mtr_results = False
+previous_iperf_results = False

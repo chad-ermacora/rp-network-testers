@@ -36,6 +36,8 @@ if not os.path.isdir(file_locations.script_folder_path + "/test_results"):
 threads_access.http_server = CreateMonitoredThread(http_server.CreateSensorHTTP, thread_name="HTTPS Server")
 if config_primary.current_config.is_iperf_server:
     threads_access.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name="iPerf3 Server")
+else:
+    print("iPerf 3 Server not started.  Disabled in Configuration.")
 if config_primary.current_config.running_on_rpi:
     threads_access.interactive_hardware_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="Display Server")
     hardware_access.display_message(hardware_access.get_start_message())

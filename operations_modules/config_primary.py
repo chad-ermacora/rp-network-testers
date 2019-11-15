@@ -23,7 +23,7 @@ from operations_modules.app_generic_functions import get_file_content, write_fil
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.38"
+        self.app_version = "0.1.42"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -33,14 +33,28 @@ class CreateConfiguration:
         self.is_iperf_server = 0
         self.tests_running = False
 
-        self.interactive_unit_ip = "192.168.169.249"
+        self.local_ethernet_dhcp = False
+        self.local_ethernet_adapter_name = "eth0"
+        self.local_ethernet_ip = "192.168.169.249"
+        self.local_ethernet_subnet = "/24"
+        self.local_ethernet_gateway = ""
+        self.local_ethernet_dns1 = "8.8.8.8"
+        self.local_ethernet_dns2 = "8.8.4.4"
+
+        self.local_wireless_dhcp = True
+        self.local_wireless_adapter_name = "wlan0"
+        self.local_wireless_ip = "192.168.10.222"
+        self.local_wireless_subnet = "/24"
+        self.local_wireless_gateway = "192.168.10.1"
+        self.local_wireless_dns1 = "8.8.8.8"
+        self.local_wireless_dns2 = "8.8.4.4"
+
         self.remote_tester_ip = "192.168.7.194"  # "192.168.169.251"
         self.iperf_port = "9000"
         self.mtr_run_count = "10"
 
-        self.has_hardware_interactive = False
-        self.has_hardware_display = False
         self.installed_interactive_hw = {"WaveShare27": 0}
+        self.using_dummy_access = False
 
         self.load_config_from_file()
 
@@ -66,7 +80,7 @@ class CreateConfiguration:
                     print("Error loading iPerf 3 config setting: " + str(error))
                     self.is_iperf_server = 0
 
-                self.interactive_unit_ip = config_list[2]
+                self.local_ethernet_ip = config_list[2]
                 self.remote_tester_ip = config_list[3]
                 self.iperf_port = config_list[4]
                 self.mtr_run_count = config_list[5]
@@ -76,9 +90,6 @@ class CreateConfiguration:
                 except Exception as error:
                     print("Error loading WaveShare27 Installed config setting: " + str(error))
                     self.installed_interactive_hw["WaveShare27"] = 0
-                for hardware in self.installed_interactive_hw:
-                    if hardware:
-                        self.has_hardware_interactive = True
             except Exception as error:
                 print("Unable to load Configuration File: " + str(error))
         else:
@@ -92,7 +103,7 @@ class CreateConfiguration:
     def _get_config_as_str(self):
         return_config = "Kootnet Ethernet Testers - Ver." + self.app_version + " - Enable = 1 & Disable = 0\n" + \
                         str(self.is_iperf_server) + " = Start as iPerf 3 Server\n" + \
-                        str(self.interactive_unit_ip) + " = Display/Interactive Unit IP\n" + \
+                        str(self.local_ethernet_ip) + " = Display/Interactive Unit IP\n" + \
                         str(self.remote_tester_ip) + " = Test Server IP\n" + \
                         str(self.iperf_port) + " = iPerf Server Port\n" + \
                         str(self.mtr_run_count) + " = Number of MTR Runs\n" + \

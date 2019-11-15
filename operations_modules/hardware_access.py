@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from operations_modules.config_primary import current_config
+from supported_hardware import dummy_hardware
 
 
 def _get_initialized_display():
@@ -25,7 +26,8 @@ def _get_initialized_display():
         if current_config.installed_interactive_hw["WaveShare27"]:
             driver_import = __import__('supported_hardware.waveshare_2_7_e_paper', fromlist=["CreateHardwareAccess"])
     if driver_import is None:
-        driver_import = __import__('operations_modules.save_to_file', fromlist=["CreateHardwareAccess"])
+        current_config.using_dummy_access = True
+        return dummy_hardware.CreateHardwareAccess()
     return driver_import.CreateHardwareAccess()
 
 
