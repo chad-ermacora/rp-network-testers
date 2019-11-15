@@ -17,10 +17,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
+import re
 import subprocess
 import time
 import requests
 from threading import Thread
+from ipaddress import ip_address as _check_ip_address
 
 
 class CreateMonitoredThread:
@@ -145,3 +147,47 @@ def get_raspberry_pi_model():
             elif pi_version[:22] == "Raspberry Pi 4 Model B":
                 return "Raspberry Pi 4 Model B"
     return get_os_name_version()
+
+
+def hostname_is_valid(text_hostname):
+    """
+    Returns True if provided text only uses Alphanumeric characters plus underscores and dashes.
+    Otherwise returns False.
+    """
+    if text_hostname is None:
+        return False
+    if re.match(r'^[a-zA-Z0-9_-]*$', text_hostname):
+        return True
+    return False
+
+
+def text_is_alphanumeric(text_string):
+    """
+    Returns True if provided text only uses Alphanumeric characters.
+    Otherwise returns False.
+    """
+    if text_string.isalnum():
+        return True
+    else:
+        return False
+
+
+def ip_address_is_valid(ip_address):
+    return _check_ip_address(ip_address)
+
+
+def subnet_mask_is_valid(subnet_mask):
+    if re.match(r'/[0-9][0-9]|/[0-9]', subnet_mask):
+        return True
+    return False
+
+
+def wireless_ssid_is_valid(text_ssid):
+    """
+    Returns True if provided text only uses Alphanumeric characters, spaces, underscores and dashes.
+    Otherwise returns False.
+    """
+    if re.match(r'^[a-zA-Z0-9][ A-Za-z0-9_-]*$', text_ssid):
+        return True
+    else:
+        return False

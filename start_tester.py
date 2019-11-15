@@ -36,10 +36,11 @@ if not os.path.isdir(file_locations.script_folder_path + "/test_results"):
 threads_access.http_server = CreateMonitoredThread(http_server.CreateSensorHTTP, thread_name="HTTPS Server")
 if config_primary.current_config.is_iperf_server:
     threads_access.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name="iPerf3 Server")
+if config_primary.current_config.running_on_rpi:
+    threads_access.interactive_hardware_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="Display Server")
+    hardware_access.display_message(hardware_access.get_start_message())
 else:
-    if config_primary.current_config.running_on_rpi:
-        threads_access.display_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="Display Server")
-
-hardware_access.display_message(hardware_access.get_start_message())
+    part_1_msg = "Interactive Hardware not supported on anything besides a Raspberry Pi. "
+    print(part_1_msg + "Interactive Hardware Server Disabled.\n")
 while True:
     sleep(600)

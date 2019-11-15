@@ -23,7 +23,7 @@ from operations_modules.app_generic_functions import get_file_content, write_fil
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.26"
+        self.app_version = "0.1.38"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -33,7 +33,7 @@ class CreateConfiguration:
         self.is_iperf_server = 0
         self.tests_running = False
 
-        self.display_ip = "192.168.169.249"
+        self.interactive_unit_ip = "192.168.169.249"
         self.remote_tester_ip = "192.168.7.194"  # "192.168.169.251"
         self.iperf_port = "9000"
         self.mtr_run_count = "10"
@@ -66,7 +66,7 @@ class CreateConfiguration:
                     print("Error loading iPerf 3 config setting: " + str(error))
                     self.is_iperf_server = 0
 
-                self.display_ip = config_list[2]
+                self.interactive_unit_ip = config_list[2]
                 self.remote_tester_ip = config_list[3]
                 self.iperf_port = config_list[4]
                 self.mtr_run_count = config_list[5]
@@ -92,7 +92,7 @@ class CreateConfiguration:
     def _get_config_as_str(self):
         return_config = "Kootnet Ethernet Testers - Ver." + self.app_version + " - Enable = 1 & Disable = 0\n" + \
                         str(self.is_iperf_server) + " = Start as iPerf 3 Server\n" + \
-                        str(self.display_ip) + " = Display/Interactive Unit IP\n" + \
+                        str(self.interactive_unit_ip) + " = Display/Interactive Unit IP\n" + \
                         str(self.remote_tester_ip) + " = Test Server IP\n" + \
                         str(self.iperf_port) + " = iPerf Server Port\n" + \
                         str(self.mtr_run_count) + " = Number of MTR Runs\n" + \

@@ -20,9 +20,11 @@ from operations_modules.config_primary import current_config
 
 
 def _get_initialized_display():
-    if current_config.installed_interactive_hw["WaveShare27"]:
-        driver_import = __import__('supported_hardware.waveshare_2_7_e_paper', fromlist=["CreateHardwareAccess"])
-    else:
+    driver_import = None
+    if current_config.running_on_rpi:
+        if current_config.installed_interactive_hw["WaveShare27"]:
+            driver_import = __import__('supported_hardware.waveshare_2_7_e_paper', fromlist=["CreateHardwareAccess"])
+    if driver_import is None:
         driver_import = __import__('operations_modules.save_to_file', fromlist=["CreateHardwareAccess"])
     return driver_import.CreateHardwareAccess()
 

@@ -32,21 +32,6 @@ if [[ -f ${INSTALL_DIR}/requirements.txt ]]
 then
   PREVIOUS_INSTALL="yes"
 fi
-# printf "\nConfiguring Network\n"
-# Add and edit TCP/IP v4 Network + Wireless
-#if [[ -f ${INSTALL_DIR}/backup/interfaces ]]
-#then
-#  printf "\nPrevious install detected, restoring interfaces before install\n"
-#  cp -f ${INSTALL_DIR}/backup/interfaces /etc/network/interfaces 2>/dev/null
-#fi
-#cp -f /etc/network/interfaces ${INSTALL_DIR}/backup/ 2>/dev/null
-#cat >> /etc/network/interfaces << "EOF"
-#
-#allow-hotplug eth0
-#iface eth0 inet static
-#    address 192.168.169.251
-#    netmask 255.255.255.0
-#EOF
 printf "\n\nDownloads started\n"
 wget ${HTTP_SERVER}${HTTP_FOLDER}${HTTP_ZIP} -P /root/
 printf "Downloads complete\nUnzipping & Installing Files\n"

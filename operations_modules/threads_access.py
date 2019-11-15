@@ -18,6 +18,5 @@
 """
 
 http_server = None
-display_server = None
-interaction_server = None
+interactive_hardware_server = None
 iperf3_server = None

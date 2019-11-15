@@ -19,3 +19,6 @@
 
 raw_previous_mtr = False
 raw_previous_iperf = False
+
+last_run_mtr = ""
+last_run_iperf = ""

@@ -16,7 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from time import strftime
+import os
+from time import strftime, sleep
 from PIL import Image, ImageDraw, ImageFont
 from operations_modules import file_locations
 from operations_modules.app_generic_functions import get_raspberry_pi_model
@@ -24,34 +25,37 @@ from operations_modules.app_generic_functions import get_raspberry_pi_model
 
 class CreateHardwareAccess:
     def __init__(self):
+        self.full_system_text = get_raspberry_pi_model()
+        self.band_width_message = "Expected Bandwidth:\n Unknown"
+        if self.full_system_text == "Raspberry Pi 3 Model B Plus":
+            self.band_width_message = "Expected Bandwidth:\n 290-298 Mbps"
+        elif self.full_system_text == "Raspberry Pi 4 Model B":
+            self.band_width_message = "Expected Bandwidth:\n 935-955 Mbps"
+
         try:
-            self.full_system_text = get_raspberry_pi_model()
-            self.band_width_message = "Expected Bandwidth:\n Unknown"
-            if self.full_system_text == "Raspberry Pi 3 Model B Plus":
-                self.band_width_message = "Expected Bandwidth:\n 290-298 Mbps"
-            elif self.full_system_text == "Raspberry Pi 4 Model B":
-                self.band_width_message = "Expected Bandwidth:\n 935-955 Mbps"
-
-            # GPIO key to Pin #s
-            self.key1 = 5
-            self.key2 = 6
-            self.key3 = 13
-            self.key4 = 19
-            self.rpi_gpio_import = __import__('RPi.GPIO', fromlist=["setmode", "BCM", "setup",
-                                                                    "IN", "PUD_UP", "input"])
-            self.epd2in7_import = __import__("supported_hardware.drivers.waveshare.epd2in7",
-                                             fromlist=["EPD", "EPD_WIDTH", "EPD_HEIGHT"])
-            self.esp = self.epd2in7_import.EPD()
-            self.esp.init()
-
-            self.rpi_gpio_import.setmode(self.rpi_gpio_import.BCM)
-
-            self.rpi_gpio_import.setup(self.key1, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
-            self.rpi_gpio_import.setup(self.key2, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
-            self.rpi_gpio_import.setup(self.key3, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
-            self.rpi_gpio_import.setup(self.key4, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+            os.system("raspi-config nonint do_spi 0")
+            print("\nEnabled SPI for WaveShare 2.7 E-Paper\n")
         except Exception as error:
-            print("Problems!: " + str(error))
+            print("\nError Enabling SPI for WaveShare 2.7 E-Paper: " + str(error) + "\n")
+
+        # GPIO key to Pin #s
+        self.key1 = 5
+        self.key2 = 6
+        self.key3 = 13
+        self.key4 = 19
+        self.rpi_gpio_import = __import__('RPi.GPIO', fromlist=["setmode", "BCM", "setup",
+                                                                "IN", "PUD_UP", "input"])
+        self.epd2in7_import = __import__("supported_hardware.drivers.waveshare.epd2in7",
+                                         fromlist=["EPD", "EPD_WIDTH", "EPD_HEIGHT"])
+        self.esp = self.epd2in7_import.EPD()
+        self.esp.init()
+
+        self.rpi_gpio_import.setmode(self.rpi_gpio_import.BCM)
+
+        self.rpi_gpio_import.setup(self.key1, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+        self.rpi_gpio_import.setup(self.key2, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+        self.rpi_gpio_import.setup(self.key3, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
+        self.rpi_gpio_import.setup(self.key4, self.rpi_gpio_import.IN, pull_up_down=self.rpi_gpio_import.PUD_UP)
 
     def get_key_states(self):
         return [self.rpi_gpio_import.input(self.key1), self.rpi_gpio_import.input(self.key2),
@@ -68,9 +72,7 @@ class CreateHardwareAccess:
 
     @staticmethod
     def get_start_message():
-        start_message = "Device Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n" + \
-                        "   Day/Month/Year\n     Date: " + str(strftime("%d/%m/%y")) + \
-                        "\n       Time: " + str(strftime("%H:%M") + "\n")
+        start_message = "Device Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n"
         return start_message
 
     @staticmethod

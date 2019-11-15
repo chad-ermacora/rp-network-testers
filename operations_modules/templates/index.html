@@ -35,6 +35,14 @@
         Configuration
     </a></li>
     <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+           data-mui-controls="network-eth-tab">
+        Network - Eth
+    </a></li>
+    <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+           data-mui-controls="network-wifi-tab">
+        Network - Wifi
+    </a></li>
+    <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
            data-mui-controls="about-tab">
         About
     </a></li>
@@ -49,13 +57,13 @@
                 <h3><u><strong><a style="color: black;" href="/">Run Tests & View Results</a></strong></u></h3>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" name="mtr" value="" checked>
+                        <input type="checkbox" name="run_mtr" value="" checked>
                         Run MTR
                     </label>
                 </div>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" name="iperf" value="" checked>
+                        <input type="checkbox" name="run_iperf" value="" checked>
                         Run iPerf 3
                     </label>
                 </div>
@@ -78,17 +86,19 @@
             <fieldset style="text-align: center;">
                 <h3><u><strong><a style="color: black;" href="/">Configurations</a></strong></u></h3>
                 <div class="mui-textfield">
-                    <label style="color: black">Interactive Unit IP
+                    <label style="color: black">
+                        Local HostName
                         <br>
-                        <input style="width: 125px;" type="text" maxlength="15" name="iPerfPort"
-                               value="{{ InteractiveIP }}">
+                        <input style="width: 200px;" type="text" id="ip_hostname" name="ip_hostname" required
+                               placeholder="eg. Tester9932" minlength="2" maxlength="62"
+                               value="{{ IPHostname }}">
                     </label>
                 </div>
                 <br>
                 <div class="mui-textfield">
-                    <label style="color: black">Remote iPerf 3 Server IP
+                    <label style="color: black">Remote Test Unit IP
                         <br>
-                        <input style="width: 125px;" type="text" maxlength="15" name="iPerfPort"
+                        <input style="width: 125px;" type="text" maxlength="15" name="iperf_server_ip"
                                value="{{ ServerIP }}">
                     </label>
                 </div>
@@ -96,7 +106,7 @@
                 <div class="mui-textfield">
                     <label style="color: black">iPerf 3 Server Port #
                         <br>
-                        <input style="width: 75px;" type="number" min="1" max="65535" name="iPerfPort"
+                        <input style="width: 75px;" type="number" min="1" max="65535" name="iperf_port"
                                value="{{ iPerfPort }}">
                     </label>
                 </div>
@@ -104,7 +114,7 @@
                 <div class="mui-textfield">
                     <label style="color: black;">MTR Run Count
                         <br>
-                        <input style="width: 75px;" type="number" min="1" max="1000" name="MTRCount"
+                        <input style="width: 75px;" type="number" min="1" max="1000" name="mtr_run_count"
                                value="{{ MTRCount }}">
                     </label>
                 </div>
@@ -114,6 +124,148 @@
             </fieldset>
         </form>
     </div>
+</div>
+
+<div class="mui-tabs__pane" id="network-eth-tab">
+    <br>
+    <form class="mui-form" method="POST" style="min-height: 300px;" action="/EditEthernetIPv4">
+        <fieldset style="text-align: center">
+            <h2><u><a style="color: black" href="{{ PageURL }}">Ethernet Configuration</a></u></h2>
+            <div class="mui-checkbox" style="display: inline-block;">
+                <label class="container_checkbox">
+                    <input type="checkbox" id="IP_DHCP" name="ip_dhcp" value="" {{ CheckedDHCP }}>
+                    DHCP
+                    <span class="checkmark_checkbox"></span>
+                </label>
+            </div>
+
+            <div class="mui-textfield">
+                <label style="color: black">
+                    IPv4 Address
+                    <br>
+                    <input style="width: 125px" type="text" name="ip_address"
+                           placeholder="eg. 192.168.10.11" minlength="7"
+                           value="{{ IPv4Address }}" {{ IPv4AddressDisabled }}>
+                </label>
+            </div>
+
+            <div class="mui-textfield" style="inset-inline-end: auto">
+                <label style="color: black">
+                    <a style="color: black" target="_blank"
+                       href="https://en.wikipedia.org/wiki/Subnetwork#Subnetting">
+                        Subnet mask
+                    </a>
+                    <br>
+                    <input style="width: 50px" type="text" name="ip_subnet"
+                           placeholder="eg. /24" minlength="2" maxlength="3"
+                           value="{{ IPv4Subnet }}" {{ IPv4SubnetDisabled }}>
+                </label>
+            </div>
+
+            <div class="mui-textfield">
+                <label style="color: black">
+                    Gateway
+                    <br>
+                    <input style="width: 125px" type="text" name="ip_gateway"
+                           placeholder="eg. 192.168.10.1" minlength="7" maxlength="15"
+                           value="{{ IPGateway }}" {{ IPGatewayDisabled }}>
+                </label>
+            </div>
+
+            <div class="mui-textfield">
+                <label style="color: black">
+                    Primary DNS
+                    <br>
+                    <input style="width: 125px" type="text" name="ip_dns1"
+                           placeholder="eg. 8.8.8.8" minlength="7" maxlength="15"
+                           value="{{ IPDNS1 }}" {{ IPDNS1Disabled }}>
+                </label>
+            </div>
+
+            <div class="mui-textfield">
+                <label style="color: black">
+                    Secondary DNS
+                    <br>
+                    <input style="width: 125px" type="text" name="ip_dns2"
+                           placeholder="eg. 8.8.4.4" minlength="7" maxlength="15"
+                           value="{{ IPDNS2 }}" {{ IPDNS2Disabled }}>
+                </label>
+            </div>
+            <br>
+            <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+        </fieldset>
+    </form>
+</div>
+
+<div class="mui-tabs__pane" id="network-wifi-tab">
+    <br>
+    <form class="mui-form" method="POST" style="min-height: 300px;" action="/EditWifiIPv4">
+        <fieldset style="text-align: center">
+            <h2><u><a style="color: black" href="{{ PageURL }}">Wireless Configuration</a></u></h2>
+            <div class="mui-checkbox" style="display: inline-block;">
+                <label class="container_checkbox">
+                    <input type="checkbox" id="wifi_IP_DHCP" name="wifi_ip_dhcp" value="" {{ CheckedDHCP }}>
+                    DHCP
+                    <span class="checkmark_checkbox"></span>
+                </label>
+            </div>
+
+            <div class="mui-textfield">
+                <label style="color: black">
+                    IPv4 Address
+                    <br>
+                    <input style="width: 125px" type="text" name="ip_address"
+                           placeholder="eg. 192.168.10.11" minlength="7"
+                           value="{{ IPv4Address }}" {{ IPv4AddressDisabled }}>
+                </label>
+            </div>
+
+            <div class="mui-textfield" style="inset-inline-end: auto">
+                <label style="color: black">
+                    <a style="color: black" target="_blank"
+                       href="https://en.wikipedia.org/wiki/Subnetwork#Subnetting">
+                        Subnet mask
+                    </a>
+                    <br>
+                    <input style="width: 50px" type="text" name="ip_subnet"
+                           placeholder="eg. /24" minlength="2" maxlength="3"
+                           value="{{ IPv4Subnet }}" {{ IPv4SubnetDisabled }}>
+                </label>
+            </div>
+
+            <div class="mui-textfield">
+                <label style="color: black">
+                    Gateway
+                    <br>
+                    <input style="width: 125px" type="text" name="ip_gateway"
+                           placeholder="eg. 192.168.10.1" minlength="7" maxlength="15"
+                           value="{{ IPGateway }}" {{ IPGatewayDisabled }}>
+                </label>
+            </div>
+
+            <div class="mui-textfield">
+                <label style="color: black">
+                    Primary DNS
+                    <br>
+                    <input style="width: 125px" type="text" name="ip_dns1"
+                           placeholder="eg. 8.8.8.8" minlength="7" maxlength="15"
+                           value="{{ IPDNS1 }}" {{ IPDNS1Disabled }}>
+                </label>
+            </div>
+
+            <div class="mui-textfield">
+                <label style="color: black">
+                    Secondary DNS
+                    <br>
+                    <input style="width: 125px" type="text" name="ip_dns2"
+                           placeholder="eg. 8.8.4.4" minlength="7" maxlength="15"
+                           value="{{ IPDNS2 }}" {{ IPDNS2Disabled }}>
+                </label>
+            </div>
+            <br>
+            <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+        </fieldset>
+    </form>
 </div>
 
 <div class="mui-tabs__pane" id="about-tab">
@@ -131,11 +283,20 @@
 
         <div class="mui-row" style="padding-left: inherit;">
             <div class="mui-col-md-3"><b>Software License</b></div>
-            <div class="mui-col-md-4"><b><a href="https://www.gnu.org/licenses/licenses.html"
+            <div class="mui-col-md-4"><b><a href="https://www.gnu.org/licenses/gpl-3.0.html"
                                             target="_blank" style="color: black;">
                 GNU General Public License 3
             </a></b></div>
         </div>
+        <br>
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
+                onclick="window.location.href = '/UpdateProgram';" disabled>
+            Standard Upgrade
+        </button>
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                onclick="window.location.href = '/UpdateProgramDev';">
+            Development Upgrade
+        </button>
     </div>
 </div>
 

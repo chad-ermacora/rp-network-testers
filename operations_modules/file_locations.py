@@ -21,6 +21,13 @@ import sys
 
 script_folder_path = os.path.dirname(sys.argv[0])
 config_file_location = script_folder_path + "/config.txt"
+http_upgrade_script = script_folder_path + "/scripts/kootnet_testers_installer_http.sh"
+
+dhcpcd_config_file = "/etc/dhcpcd.conf"
+dhcpcd_config_file_template = script_folder_path + "/operations_modules/extras/dhcpcd_template.conf"
+
+wifi_config_file = "/etc/wpa_supplicant/wpa_supplicant.conf"
+wifi_config_file_template = script_folder_path + "/operations_modules/extras/wpa_supplicant_template.conf"
 
 location_save_report_folder = "/home/pi"
 location_truetype_font = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
