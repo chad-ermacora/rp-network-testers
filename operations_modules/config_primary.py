@@ -23,7 +23,7 @@ from operations_modules.app_generic_functions import get_file_content, write_fil
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.49"
+        self.app_version = "0.1.54"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -52,11 +52,27 @@ class CreateConfiguration:
         self.local_wireless_dns1 = ""
         self.local_wireless_dns2 = ""
 
+        # Holds how many times the corresponding button has been pressed for additional actions
+        self.button_1 = 0
+        self.button_2 = 0
+        self.button_3 = 0
+        self.button_4 = 0
+
         self.installed_interactive_hw = {"WaveShare27": 0}
         self.using_dummy_access = False
 
         self.load_config_from_file()
         self.load_installed_hardware_from_file()
+
+    def clear_button_counts(self, exception_button=100):
+        if exception_button != 0:
+            self.button_1 = 0
+        if exception_button != 1:
+            self.button_2 = 0
+        if exception_button != 2:
+            self.button_3 = 0
+        if exception_button != 3:
+            self.button_4 = 0
 
     def get_mtr_command_str(self):
         return "mtr -c " + self.mtr_run_count + " -r -n " + self.remote_tester_ip

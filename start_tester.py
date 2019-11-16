@@ -20,7 +20,7 @@ import os
 from time import sleep
 from operations_modules import file_locations
 from operations_modules.config_primary import current_config
-from operations_modules.app_generic_functions import CreateMonitoredThread, get_network_ip
+from operations_modules.app_generic_functions import CreateMonitoredThread
 from operations_modules import config_primary, http_server, app_variables
 from operations_modules.interaction_server import CreateInteractiveServer
 from operations_modules.hardware_access import hardware_access
@@ -41,7 +41,7 @@ if config_primary.current_config.is_iperf_server:
 if config_primary.current_config.running_on_rpi:
     print(" -- Interactive Hardware Server started")
     app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="Interactive Server")
-    hardware_access.display_message("IP: " + get_network_ip() + "\n" + hardware_access.get_start_message())
+    hardware_access.display_message(hardware_access.get_start_message())
 else:
     part_1_msg = "\nInteractive Hardware only supported on Raspberry Pis - "
     print(part_1_msg + "Interactive Hardware Server Disabled")

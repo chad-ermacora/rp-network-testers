@@ -43,11 +43,7 @@ class CreateHardwareAccess:
         return ""
 
     @staticmethod
-    def shutdown_remote_unit_message(cli_ok):
-        if cli_ok:
-            print("Shutting Down Remote Unit")
-        else:
-            print("ShutDown Failed on Remote Unit")
+    def get_sys_info_message():
         return ""
 
     @staticmethod

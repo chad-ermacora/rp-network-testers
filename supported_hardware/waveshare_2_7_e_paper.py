@@ -17,10 +17,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
-from time import strftime, sleep
+from time import strftime
 from PIL import Image, ImageDraw, ImageFont
 from operations_modules import file_locations
-from operations_modules.app_generic_functions import get_raspberry_pi_model
+from operations_modules.config_primary import current_config
+from operations_modules.app_generic_functions import get_raspberry_pi_model, get_network_ip, get_os_name_version
 
 
 class CreateHardwareAccess:
@@ -125,21 +126,19 @@ class CreateHardwareAccess:
         return message
 
     @staticmethod
-    def shutdown_remote_unit_message(cli_ok):
-        if cli_ok:
-            message = " Shutting Down\n" + \
-                      " Remote Unit\n\n" + \
-                      "   Day/Month/Year\n\n" + \
-                      " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      " Time: " + str(strftime("%H:%M"))
-        else:
+    def get_sys_info_message():
+        date_now = strftime("%d/%m/%y")
+        time_now = strftime("%H:%M")
+        net_ip = get_network_ip()
+        os_text = get_os_name_version()
 
-            message = " Shut Down Failed\n" + \
-                      " Remote Unit Offline\n\n" + \
-                      "   Day/Month/Year\n\n" + \
-                      " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      " Time: " + str(strftime("%H:%M"))
-        return message
+        if current_config.running_on_rpi:
+            lines = os_text.split(" ")
+            os_text = lines[0] + " " + lines[2]
+
+        text_msg = "Date: " + date_now + " (D/M/Y)\nTime: " + time_now + "\n\nOS: " + os_text + \
+                   "\nVersion: " + current_config.app_version + "\n\nIP: " + net_ip
+        return text_msg
 
     @staticmethod
     def shutdown_local_unit_message():
