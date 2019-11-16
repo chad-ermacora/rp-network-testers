@@ -54,14 +54,21 @@ def html_root():
     if current_config.local_wireless_dhcp:
         wireless_dhcp = "checked"
 
+    mtr_results = ""
+    if app_variables.previous_mtr_results:
+        mtr_results = app_variables.previous_mtr_start_text + str(app_variables.previous_mtr_results)
+    iperf_results = ""
+    if app_variables.previous_iperf_results:
+        iperf_results = app_variables.previous_iperf_start_text + str(app_variables.previous_iperf_results)
+
     return render_template("index.html",
                            TestsRunning=tests_running_msg,
                            IPHostname=str(gethostname()),
                            DisabledButton=button_disabled,
                            OSVersion=app_generic_functions.get_os_name_version(),
                            KootnetVersion=current_config.app_version,
-                           Results_MTR=app_variables.previous_mtr_results,
-                           Results_iPerf=app_variables.previous_iperf_results,
+                           Results_MTR=mtr_results,
+                           Results_iPerf=iperf_results,
                            CheckediPerfServer=iperf_server_enabled,
                            InteractiveIP=current_config.local_ethernet_ip,
                            ServerIP=current_config.remote_tester_ip,
@@ -96,6 +103,13 @@ def update_program_development():
     return render_template("message_return.html", URL="/",
                            TextMessage="Development Upgrade in Progress",
                            TextMessage2="Please wait ...")
+
+
+@http_routes.route("/ReStart")
+def restart_program():
+    app_generic_functions.thread_function(os.system, args="systemctl restart KootnetEthServer")
+    return render_template("message_return.html", URL="/", TextMessage="Re-Starting Program",
+                           TextMessage2="You will automatically be redirected to home in 10 seconds")
 
 
 @http_routes.route("/Shutdown")
@@ -133,7 +147,7 @@ def start_tests():
     return html_root()
 
 
-@http_routes.route("/EditConfiguration", methods=["POST", "GET"])
+@http_routes.route("/EditConfiguration", methods=["POST"])
 def edit_configuration():
     if request.form.get("ip_hostname") is not None:
         new_hostname = str(request.form.get("ip_hostname"))
@@ -141,12 +155,12 @@ def edit_configuration():
             os.system("hostname " + new_hostname)
 
     if request.form.get("checkbox_iperf_server") is not None:
-        current_config.is_iperf_server = True
+        current_config.is_iperf_server = 1
     else:
-        current_config.is_iperf_server = False
+        current_config.is_iperf_server = 0
 
-    if request.form.get("iperf_server_ip") is not None:
-        current_config.remote_tester_ip = str(request.form.get("iperf_server_ip"))
+    if request.form.get("remote_test_server_ip") is not None:
+        current_config.remote_tester_ip = str(request.form.get("remote_test_server_ip"))
     else:
         current_config.remote_tester_ip = "192.168.169.251"
 
@@ -169,7 +183,7 @@ def edit_installed_hardware():
         current_config.installed_interactive_hw["WaveShare27"] = 1
     else:
         current_config.installed_interactive_hw["WaveShare27"] = 0
-    current_config.write_config_to_file()
+    current_config.write_installed_hardware_to_file()
     return render_template("message_return.html", URL="/", TextMessage="Installed Hardware Saved",
                            TextMessage2="Please reboot the device for settings to take effect")
 

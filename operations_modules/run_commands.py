@@ -20,7 +20,8 @@ import time
 from operations_modules.config_primary import current_config
 from operations_modules import file_locations
 from operations_modules import app_variables
-from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function, write_file_to_disk
+from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function, write_file_to_disk, \
+    get_network_ip
 from operations_modules.hardware_access import hardware_access
 
 
@@ -30,7 +31,7 @@ def run_command(command_num):
     elif command_num == 1:
         start_iperf()
     elif command_num == 2:
-        pass
+        display_ip()
     elif command_num == 3:
         pass
 
@@ -43,15 +44,16 @@ def start_all_tests():
 def start_mtr():
     current_config.tests_running = True
     try:
-        print("MTR Command Line: " + current_config.get_mtr_command_str() + "\n")
+        print("\nStarting MTR CLI: " + current_config.get_mtr_command_str() + "\n")
         thread_function(hardware_access.display_message("Starting MTR Test\n\nPlease Wait ..."))
         temp_lines = get_subprocess_str_output(current_config.get_mtr_command_str()).strip().split("\n")
         temp_lines = temp_lines[1:]
         new_str = ""
         for line in temp_lines:
             new_str += line + "\n"
-        start_results_text = "Run on " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
-        app_variables.previous_mtr_results = start_results_text + new_str.strip()[:-2]
+        app_variables.previous_mtr_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
+        app_variables.previous_mtr_results = new_str.strip()[:-2]
+        print("MTR CLI Done\n")
     except Exception as error:
         print("MTR Command Error: " + str(error))
     current_config.tests_running = False
@@ -62,11 +64,12 @@ def start_mtr():
 def start_iperf():
     current_config.tests_running = True
     try:
-        print("iPerf 3 Command Line: " + current_config.get_iperf_command_str() + "\n")
+        print("\nStarting iPerf 3 CLI: " + current_config.get_iperf_command_str())
         thread_function(hardware_access.display_message("Starting iPerf3 Test\n\nPlease Wait ..."))
-        start_results_text = "Run on " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
+        app_variables.previous_iperf_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
         raw_iperf = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
-        app_variables.previous_iperf_results = start_results_text + raw_iperf
+        app_variables.previous_iperf_results = raw_iperf
+        print("iPerf 3 CLI Done\n")
     except Exception as error:
         print("iPerf Command Error: " + str(error))
     current_config.tests_running = False
@@ -75,14 +78,20 @@ def start_iperf():
 
 
 def save_mtr_results_to_file():
-    print(app_variables.previous_mtr_results)
     text_time_sec = str(time.time()).split(".")[0]
-    new_file_location = file_locations.script_folder_path + "/test_results/kootnet_ethernet_results-mtr-" + text_time_sec + ".txt"
-    write_file_to_disk(new_file_location, app_variables.previous_mtr_results)
+    new_file_location = "/test_results/kootnet_ethernet_results-mtr-" + text_time_sec + ".txt"
+    write_file_to_disk(file_locations.script_folder_path + new_file_location,
+                       app_variables.previous_mtr_start_text + app_variables.previous_mtr_results)
 
 
 def save_iperf_results_to_file():
-    print(app_variables.previous_iperf_results)
     text_time_sec = str(time.time()).split(".")[0]
-    new_file_location = file_locations.script_folder_path + "/test_results/kootnet_ethernet_results-iperf-" + text_time_sec + ".txt"
-    write_file_to_disk(new_file_location, app_variables.previous_iperf_results)
+    new_file_location = "/test_results/kootnet_ethernet_results-iperf-" + text_time_sec + ".txt"
+    write_file_to_disk(file_locations.script_folder_path + new_file_location,
+                       app_variables.previous_iperf_start_text + app_variables.previous_iperf_results)
+
+
+def display_ip():
+    net_ip = get_network_ip()
+    print("IP: " + net_ip)
+    hardware_access.display_message("IP: " + net_ip)

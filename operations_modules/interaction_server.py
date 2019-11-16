@@ -25,10 +25,9 @@ from operations_modules.hardware_access import hardware_access
 class CreateInteractiveServer:
     def __init__(self):
         if current_config.using_dummy_access:
-            print("No Interactive Hardware Detected.  Using Web Access Only.\n")
+            print("\nNo Interactive Hardware Detected.  Interactive Server Disabled.  Using Web Access Only.\n")
             while True:
                 sleep(300)
-        print("Starting Interactive Server\n")
         while True:
             if current_config.tests_running:
                 sleep(1)

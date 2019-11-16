@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from time import sleep
 from flask import Flask
 from flask_compress import Compress
 from gevent.pywsgi import WSGIServer
@@ -25,17 +26,16 @@ flask_http_ip = ""
 flask_http_port = 10066
 
 
-class CreateSensorHTTP:
+class CreateHTTPServer:
     def __init__(self):
         app = Flask(__name__)
         Compress(app)
-
         app.register_blueprint(http_server_routes.http_routes)
 
         try:
             http_server = WSGIServer((flask_http_ip, flask_http_port), app)
-            print("\n -- HTTP Server Started on port " + str(flask_http_port) + "\n")
             http_server.serve_forever()
         except Exception as error:
-            print("\n --- Failed to Start HTTP Server: " + str(error) + "\n")
-            pass
+            print("\nError Starting HTTP Server: " + str(error) + "\n")
+            while True:
+                sleep(600)

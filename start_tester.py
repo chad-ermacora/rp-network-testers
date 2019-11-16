@@ -20,8 +20,8 @@ import os
 from time import sleep
 from operations_modules import file_locations
 from operations_modules.config_primary import current_config
-from operations_modules.app_generic_functions import CreateMonitoredThread
-from operations_modules import threads_access, config_primary, http_server
+from operations_modules.app_generic_functions import CreateMonitoredThread, get_network_ip
+from operations_modules import config_primary, http_server, app_variables
 from operations_modules.interaction_server import CreateInteractiveServer
 from operations_modules.hardware_access import hardware_access
 
@@ -33,16 +33,17 @@ def start_iperf_server():
 if not os.path.isdir(file_locations.script_folder_path + "/test_results"):
     os.mkdir(file_locations.script_folder_path + "/test_results")
 
-threads_access.http_server = CreateMonitoredThread(http_server.CreateSensorHTTP, thread_name="HTTPS Server")
+print(" -- HTTP Server Started on port " + str(http_server.flask_http_port))
+app_variables.http_server = CreateMonitoredThread(http_server.CreateHTTPServer, thread_name="HTTP Server")
 if config_primary.current_config.is_iperf_server:
-    threads_access.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name="iPerf3 Server")
-else:
-    print("iPerf 3 Server not started.  Disabled in Configuration.")
+    print(" -- iPerf 3 Server started on port " + current_config.iperf_port)
+    app_variables.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name="iPerf3 Server")
 if config_primary.current_config.running_on_rpi:
-    threads_access.interactive_hardware_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="Display Server")
-    hardware_access.display_message(hardware_access.get_start_message())
+    print(" -- Interactive Hardware Server started")
+    app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="Interactive Server")
+    hardware_access.display_message("IP: " + get_network_ip() + "\n" + hardware_access.get_start_message())
 else:
-    part_1_msg = "Interactive Hardware not supported on anything besides a Raspberry Pi. "
-    print(part_1_msg + "Interactive Hardware Server Disabled.\n")
+    part_1_msg = "\nInteractive Hardware only supported on Raspberry Pis - "
+    print(part_1_msg + "Interactive Hardware Server Disabled")
 while True:
     sleep(600)

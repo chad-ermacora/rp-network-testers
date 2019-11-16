@@ -28,7 +28,7 @@ class CreateHardwareAccess:
 
     @staticmethod
     def display_message(text_message):
-        print(text_message)
+        pass
 
     @staticmethod
     def get_start_message():

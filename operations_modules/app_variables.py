@@ -17,5 +17,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+# Cached results from the previous test run
+previous_mtr_start_text = ""
+previous_iperf_start_text = ""
 previous_mtr_results = False
 previous_iperf_results = False
+
+# Monitored Thread's created as class instances /w function and variables access
+http_server = None
+interactive_hw_server = None
+iperf3_server = None

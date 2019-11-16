@@ -53,10 +53,9 @@ else
   pip3 install -r ${INSTALL_DIR}/requirements.txt
   deactivate
 fi
-printf "copying & enabling KootNet Ethernet Tester Display Services\n"
+printf "copying & enabling KootNet Ethernet Tester Service\n"
 cp ${INSTALL_DIR}/auto_start/KootnetEthServer.service /etc/systemd/system
 systemctl daemon-reload
-systemctl enable KootnetEthServer 2>/dev/null
-systemctl restart KootnetEthServer 2>/dev/null
+systemctl restart KootnetEthServer.service
 printf "\nInstall Complete\n"
 cd || exit
