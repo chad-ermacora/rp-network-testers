@@ -1,7 +1,7 @@
 # KootNet Network Testers
 This Python 3 program turn 2x Linux Computers (Primarily Raspberry Pis) into Network Testers by running 
 [MTR](https://www.bitwizard.nl/mtr/) & [iPerf3](https://iperf.fr/) 
-to test latency & throughput on individual cables or network routes.
+to test latency & throughput on individual cables or network routes.  
 No special hardware is required to use Kootnet Network Testers.  
 _IPv4 support only.  IPv6 support coming soon._
 
@@ -10,14 +10,14 @@ Raspberry Pi 3B+ = 300Mbps || Raspberry Pi 4B = 1000Mbps_
 
 Install & Setup
 ====================
-_Raspberry Pi 4B Recommended due to it's 1GB network adapter_
-####Supported & Tested Operating Systems
-Raspbian (9 or higher), Ubuntu (18.04 or higher)
-####Unsupported Operating Systems that will probably work
+_Raspberry Pi 4B Recommended due to it's 1GB network adapter_  
+#### Supported & Tested Operating Systems
+Raspbian (9 or higher), Ubuntu (18.04 or higher)  
+#### Unsupported Operating Systems that will probably work
 Most other GNU/Linux distributions that support MTR, iPerf3 & wget, along with Python3 and the Flask, gevent & requests modules.
 If the OS supports those programs and modules, the install script will automatically download and install them from the internet.
 
-###Optional Hardware
+### Optional Hardware
 When installed on a Raspberry Pi you can install additional hardware such as displays and buttons to operate the unit.  
 See below for supported optional hardware and it's operation.  
 
@@ -25,7 +25,7 @@ See below for supported optional hardware and it's operation.
 _Note: This hardware uses the SPI Interface: Enable SPI in the RPi Configuration program_  
 _Note: Hold the buttons down for 1 second before releasing to ensure proper operation._
 
-###Installing Kootnet Network Testers
+### Installing Kootnet Network Testers
 1. If using Raspberry Pis, get a fresh copy of Raspbian running on both of them, otherwise skip to step 3.
 2. Optional: Enable requirements for optional hardware support like displays and buttons (SPI, IC2, etc. found in the Raspberry Pi configuration utility)
 3. Run the following command in a Terminal
