@@ -73,7 +73,8 @@ class CreateHardwareAccess:
 
     @staticmethod
     def get_start_message():
-        start_message = "Device Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n"
+        start_message = "Kootnet Tester\nVersion: " + current_config.app_version + \
+                        "\n\nDevice Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n"
         return start_message
 
     @staticmethod
@@ -136,8 +137,9 @@ class CreateHardwareAccess:
             lines = os_text.split(" ")
             os_text = lines[0] + " " + lines[2]
 
-        text_msg = "Date: " + date_now + " (D/M/Y)\nTime: " + time_now + "\n\nOS: " + os_text + \
-                   "\nVersion: " + current_config.app_version + "\n\nIP: " + net_ip
+        text_msg = "Version: " + current_config.app_version + "\nOS: " + os_text + \
+                   "\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now + \
+                   "\n\nLocal IP\n" + net_ip + "\nRemote Test Server IP\n" + current_config.remote_tester_ip
         return text_msg
 
     @staticmethod

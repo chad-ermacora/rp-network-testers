@@ -23,7 +23,7 @@ from operations_modules.app_generic_functions import get_file_content, write_fil
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.54"
+        self.app_version = "0.1.55"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -31,7 +31,7 @@ class CreateConfiguration:
             self.running_on_rpi = True
 
         self.tests_running = False
-        self.is_iperf_server = 0
+        self.is_iperf_server = 1
         self.iperf_port = "9000"
         self.mtr_run_count = "10"
         self.remote_tester_ip = "192.168.7.194"  # "192.168.169.251"
