@@ -12,7 +12,8 @@ fi
 HTTP_SERVER="http://kootenay-networks.com"
 HTTP_ZIP="/KootNetEthTesters.zip"
 # Other Option
-APT_GET_INSTALL="wget mtr iperf3 fonts-freefont-ttf"
+APT_GET_INSTALL="wget mtr iperf3"
+SECONDARY_APT_GET_INSTALL="fonts-freefont-ttf fake-hwclock"
 INSTALL_DIR="/opt/kootnet-network-testers"
 # Make sure its running with root
 if [[ $EUID != 0 ]]; then
@@ -45,6 +46,7 @@ else
   printf '\nChecking dependencies\n\n'
   apt-get update
   apt-get -y install ${APT_GET_INSTALL}
+  apt-get -y install ${SECONDARY_APT_GET_INSTALL}
   cd ${INSTALL_DIR} || exit
   python3 -m venv --system-site-packages python-env
   # shellcheck disable=SC1090

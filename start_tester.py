@@ -26,9 +26,16 @@ from operations_modules.interaction_server import CreateInteractiveServer
 from operations_modules.hardware_access import hardware_access
 
 
+def enable_fake_hw_clock():
+    os.system("bash " + file_locations.enable_fake_hw_clock_script)
+
+
 def start_iperf_server():
     os.system("/usr/bin/iperf3 -s -p " + current_config.iperf_port)
 
+
+if current_config.running_on_rpi:
+    enable_fake_hw_clock()
 
 if not os.path.isdir(file_locations.script_folder_path + "/test_results"):
     os.mkdir(file_locations.script_folder_path + "/test_results")
