@@ -147,9 +147,9 @@ def start_tests():
 @http_routes.route("/EditConfiguration", methods=["POST"])
 def edit_configuration():
     if request.form.get("ip_hostname") is not None:
-        new_hostname = str(request.form.get("ip_hostname"))
+        new_hostname = request.form.get("ip_hostname")
         if app_generic_functions.hostname_is_valid(new_hostname):
-            os.system("hostname " + new_hostname)
+            os.system("hostnamectl set-hostname " + new_hostname)
 
     if request.form.get("checkbox_iperf_server") is not None:
         current_config.is_iperf_server = 1
