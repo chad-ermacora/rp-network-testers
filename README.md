@@ -14,8 +14,9 @@ _Raspberry Pi 4B Recommended due to it's 1GB network adapter_
 #### Supported & Tested Operating Systems
 Raspbian (9 or higher), Ubuntu (18.04 or higher)  
 #### Unsupported Operating Systems that will probably work
-Most other GNU/Linux distributions that support MTR, iPerf3 & wget, along with Python3 and the Flask, gevent & requests modules.
-If the OS supports those programs and modules, the install script will automatically download and install them from the internet.
+Most other GNU/Linux distributions should work with Kootnet Network Testers if they support 
+MTR, iPerf3 & wget, along with Python3 and the Flask, gevent & requests modules.
+The install script will automatically download and install prerequisites from your Operating System's repositories & pip.
 
 ### Optional Hardware
 When installed on a Raspberry Pi you can install additional hardware such as displays and buttons to operate the unit.  
