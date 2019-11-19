@@ -17,15 +17,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
-import shutil
 from socket import gethostname
 from flask import request, Blueprint, render_template, send_file
 from operations_modules import file_locations
 from operations_modules import app_generic_functions
 from operations_modules import app_variables
 from operations_modules import run_commands
-from operations_modules import network_ip
-from operations_modules import network_wifi
 from operations_modules.config_primary import current_config
 
 http_routes = Blueprint("http_routes", __name__)
@@ -191,31 +188,39 @@ def edit_installed_hardware():
 @http_routes.route("/EditEthernetIPv4", methods=["POST"])
 def edit_eth_ipv4_network():
     if current_config.running_on_rpi:
+        message1 = "Ethernet Settings Applied"
+        message2 = "You must reboot for all settings to take effect."
         if request.form.get("ethernet_ip_dhcp") is not None:
-            message = "You must reboot for all settings to take effect."
-            dhcpcd_template = app_generic_functions.get_file_content(file_locations.dhcpcd_config_file_template)
-            dhcpcd_template = dhcpcd_template.replace("{{ StaticIPSettings }}", "")
-            app_generic_functions.write_file_to_disk(file_locations.dhcpcd_config_file, dhcpcd_template)
-            return render_template("message_return.html", URL="/", TextMessage="Ethernet Settings Applied",
-                                   TextMessage2=message)
-        config_ok = set_html_config_ipv4(request)
-        if config_ok:
-            return render_template("message_return.html", URL="/", TextMessage="Ethernet Configuration OK",
-                                   TextMessage2="You must reboot the device for settings to take effect")
-        return render_template("message_return.html", URL="/", TextMessage="Bad Configuration Options",
-                               TextMessage2="Please check your Ethernet configuration carefully and try again")
-    return render_template("message_return.html", URL="/", TextMessage="OS Not Supported",
-                           TextMessage2="Ethernet Network Configuration not supported on current OS")
+            current_config.local_ethernet_dhcp = 1
+            current_config.set_static_ips()
+        else:
+            current_config.local_ethernet_dhcp = 0
+            set_html_config_ipv4(request)
+            current_config.set_static_ips()
+        current_config.load_dhcpcd_conf_from_file()
+        return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
+    message1 = "OS Not Supported"
+    message2 = "Ethernet Network Configuration not supported on " + current_config.full_system_text
+    return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
 
 
 @http_routes.route("/EditWifiIPv4", methods=["POST"])
 def edit_wifi_ipv4_network():
     if current_config.running_on_rpi:
-        # set_html_config_wifi(request)
-        set_html_config_ipv4(request)
-        return html_root()
-    return render_template("message_return.html", URL="/", TextMessage="OS Not Supported",
-                           TextMessage2="Wireless Network Configuration not supported on current OS")
+        message1 = "Wireless Settings Applied"
+        message2 = "You must reboot for all settings to take effect."
+        if request.form.get("wifi_ip_dhcp") is not None:
+            current_config.local_wireless_dhcp = 1
+            current_config.set_static_ips()
+        else:
+            current_config.local_wireless_dhcp = 0
+            set_html_config_ipv4(request, wireless_type=True)
+            current_config.set_static_ips()
+        current_config.load_dhcpcd_conf_from_file()
+        return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
+    message1 = "OS Not Supported"
+    message2 = "Wireless Network Configuration not supported on " + current_config.full_system_text
+    return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
 
 
 def set_html_config_wifi(html_request):
@@ -227,73 +232,15 @@ def set_html_config_wifi(html_request):
 
 def set_html_config_ipv4(html_request, wireless_type=False):
     print("Starting HTML IPv4 Configuration Update for Ethernet or Wireless.  Wireless = " + str(wireless_type))
-    network_template = app_generic_functions.get_file_content(file_locations.dhcpcd_config_file_template)
-    html_request_variable_names = ["ethernet_ip_address", "ethernet_ip_subnet", "ethernet_ip_gateway",
-                                   "ethernet_ip_dns1", "ethernet_ip_dns2"]
     if wireless_type:
-        network_template = app_generic_functions.get_file_content(file_locations.wifi_config_file_template)
-        html_request_variable_names = ["wifi_ip_address", "wifi_ip_subnet", "wifi_ip_gateway",
-                                       "wifi_ip_dns1", "wifi_ip_dns2"]
-
-    ip_address = html_request.form.get(html_request_variable_names[0])
-    ip_subnet_mask = html_request.form.get(html_request_variable_names[1])
-    ip_gateway = html_request.form.get(html_request_variable_names[2])
-    ip_dns1 = html_request.form.get(html_request_variable_names[3])
-    ip_dns2 = html_request.form.get(html_request_variable_names[4])
-
-    for new_variable in [ip_address, ip_subnet_mask]:
-        if app_generic_functions.check_for_none_and_blank(new_variable):
-            return False
-
-    if wireless_type:
-        if current_config.local_wireless_dhcp:
-            dhcp = True
-        else:
-            dhcp = False
-
-        current_config.local_wireless_ip = ip_address.strip()
-        current_config.local_wireless_subnet = ip_subnet_mask.strip()
-        current_config.local_wireless_gateway = ip_gateway.strip()
-        current_config.local_wireless_dns1 = ip_dns1.strip()
-        current_config.local_wireless_dns2 = ip_dns2.strip()
-        ip_network_text2 = "interface " + current_config.local_ethernet_adapter_name + "\nstatic ip_address=" + \
-                           current_config.local_ethernet_ip + current_config.local_ethernet_subnet + \
-                           "\nstatic routers=" + current_config.local_ethernet_gateway + \
-                           "\nstatic domain_name_servers=" + current_config.local_ethernet_dns1 + " " + \
-                           current_config.local_ethernet_dns2
-        for network_setting in [current_config.local_ethernet_adapter_name, current_config.local_ethernet_ip,
-                                current_config.local_ethernet_subnet, current_config.local_ethernet_gateway]:
-            if app_generic_functions.check_for_none_and_blank(network_setting):
-                ip_network_text2 = ""
-
+        current_config.local_wireless_ip = html_request.form.get("wifi_ip_address")
+        current_config.local_wireless_subnet = html_request.form.get("wifi_ip_subnet")
+        current_config.local_wireless_gateway = html_request.form.get("wifi_ip_gateway")
+        current_config.local_wireless_dns1 = html_request.form.get("wifi_ip_dns1")
+        current_config.local_wireless_dns2 = html_request.form.get("wifi_ip_dns2")
     else:
-        if current_config.local_ethernet_dhcp:
-            dhcp = True
-        else:
-            dhcp = False
-
-        current_config.local_ethernet_ip = ip_address.strip()
-        current_config.local_ethernet_subnet = ip_subnet_mask.strip()
-        current_config.local_ethernet_gateway = ip_gateway.strip()
-        current_config.local_ethernet_dns1 = ip_dns1.strip()
-        current_config.local_ethernet_dns2 = ip_dns2.strip()
-        ip_network_text2 = "interface " + current_config.local_wireless_adapter_name + "\nstatic ip_address=" + \
-                           current_config.local_wireless_ip + current_config.local_wireless_subnet + \
-                           "\nstatic routers=" + current_config.local_wireless_gateway + \
-                           "\nstatic domain_name_servers=" + current_config.local_wireless_dns1 + " " + \
-                           current_config.local_wireless_dns2
-        for network_setting in [current_config.local_wireless_adapter_name, current_config.local_wireless_ip,
-                                current_config.local_wireless_subnet, current_config.local_wireless_gateway]:
-            if app_generic_functions.check_for_none_and_blank(network_setting):
-                ip_network_text2 = ""
-
-    if dhcp:
-        ip_network_text = ""
-    else:
-        ip_network_text = "interface eth0\nstatic ip_address=" + ip_address + ip_subnet_mask + \
-                          "\nstatic routers=" + ip_gateway + "\nstatic domain_name_servers=" + ip_dns1 + " " + ip_dns2
-    network_template = network_template.replace("{{ StaticIPSettings }}", ip_network_text + "\n\n" + ip_network_text2)
-    network_ip.write_ipv4_config_to_file(network_template)
-    shutil.chown(file_locations.dhcpcd_config_file, "root", "netdev")
-    os.chmod(file_locations.dhcpcd_config_file, 0o664)
-    return True
+        current_config.local_ethernet_ip = html_request.form.get("ethernet_ip_address")
+        current_config.local_ethernet_subnet = html_request.form.get("ethernet_ip_subnet")
+        current_config.local_ethernet_gateway = html_request.form.get("ethernet_ip_gateway")
+        current_config.local_ethernet_dns1 = html_request.form.get("ethernet_ip_dns1")
+        current_config.local_ethernet_dns2 = html_request.form.get("ethernet_ip_dns2")

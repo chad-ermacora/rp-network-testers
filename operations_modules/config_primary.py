@@ -17,13 +17,25 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
+import shutil
 from operations_modules import file_locations
+from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_file_content, write_file_to_disk, get_raspberry_pi_model
+from operations_modules import network_ip
+
+dhcpcd_interface_template = """
+
+# Custom Kootnet Network Tester Addition
+interface {{ Interface }}
+static ip_address={{ IPAddress }}{{ Subnet }}
+static routers={{ Gateway }}
+static domain_name_servers={{ DNS1 }} {{ DNS2 }}
+"""
 
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.56"
+        self.app_version = "0.1.61"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -36,7 +48,7 @@ class CreateConfiguration:
         self.mtr_run_count = "10"
         self.remote_tester_ip = "192.168.7.194"  # "192.168.169.251"
 
-        self.local_ethernet_dhcp = True
+        self.local_ethernet_dhcp = 1
         self.local_ethernet_adapter_name = "eth0"
         self.local_ethernet_ip = ""
         self.local_ethernet_subnet = ""
@@ -44,7 +56,7 @@ class CreateConfiguration:
         self.local_ethernet_dns1 = ""
         self.local_ethernet_dns2 = ""
 
-        self.local_wireless_dhcp = True
+        self.local_wireless_dhcp = 1
         self.local_wireless_adapter_name = "wlan0"
         self.local_wireless_ip = ""
         self.local_wireless_subnet = ""
@@ -63,6 +75,27 @@ class CreateConfiguration:
 
         self.load_config_from_file()
         self.load_installed_hardware_from_file()
+        self.load_dhcpcd_conf_from_file()
+
+    def load_dhcpcd_conf_from_file(self):
+        try:
+            app_variables.dhcpcd_config_file_content = get_file_content(file_locations.dhcpcd_config_file)
+
+            self.local_ethernet_dhcp = network_ip.check_for_dhcp()
+            self.local_ethernet_ip = network_ip.get_dhcpcd_ip()
+            self.local_ethernet_subnet = network_ip.get_subnet()
+            self.local_ethernet_gateway = network_ip.get_gateway()
+            self.local_ethernet_dns1 = network_ip.get_dns(dns_server=0)
+            self.local_ethernet_dns2 = network_ip.get_dns(dns_server=1)
+
+            self.local_wireless_dhcp = network_ip.check_for_dhcp(wireless=True)
+            self.local_wireless_ip = network_ip.get_dhcpcd_ip(wireless=True)
+            self.local_wireless_subnet = network_ip.get_subnet(wireless=True)
+            self.local_wireless_gateway = network_ip.get_gateway(wireless=True)
+            self.local_wireless_dns1 = network_ip.get_dns(dns_server=0, wireless=True)
+            self.local_wireless_dns2 = network_ip.get_dns(dns_server=1, wireless=True)
+        except Exception as error:
+            print("Unable to get IP information from dhcpcd.conf: " + str(error))
 
     def clear_button_counts(self, exception_button=100):
         if exception_button != 0:
@@ -79,6 +112,72 @@ class CreateConfiguration:
 
     def get_iperf_command_str(self):
         return "iperf3 -c " + self.remote_tester_ip + " -O 1 -p " + self.iperf_port
+
+    def set_static_ips(self):
+        dhcpcd_template = app_variables.dhcpcd_config_file_content_template
+
+        eth_replacement_variables = []
+        wlan_replacement_variables = []
+
+        if self.is_eth_ip_settings_ok():
+            eth_replacement_variables.append("eth0")
+            eth_replacement_variables.append(self.local_ethernet_ip)
+            eth_replacement_variables.append(self.local_ethernet_subnet)
+            eth_replacement_variables.append(self.local_ethernet_gateway)
+            eth_replacement_variables.append(self.local_ethernet_dns1)
+            eth_replacement_variables.append(self.local_ethernet_dns2)
+        else:
+            eth_replacement_variables = ["", "", "", "", "", ""]
+
+        if self.is_wlan_ip_settings_ok():
+            wlan_replacement_variables.append("wlan0")
+            wlan_replacement_variables.append(self.local_wireless_ip)
+            wlan_replacement_variables.append(self.local_wireless_subnet)
+            wlan_replacement_variables.append(self.local_wireless_gateway)
+            wlan_replacement_variables.append(self.local_wireless_dns1)
+            wlan_replacement_variables.append(self.local_wireless_dns2)
+        else:
+            wlan_replacement_variables = ["", "", "", "", "", ""]
+
+        eth_dhcpcd_text = self.get_dhcpcd_replacement_text(eth_replacement_variables)
+        wlan_dhcpcd_text = self.get_dhcpcd_replacement_text(wlan_replacement_variables)
+        new_dhcpcd = dhcpcd_template.replace("{{ StaticIPSettings }}", eth_dhcpcd_text + wlan_dhcpcd_text)
+        write_file_to_disk(file_locations.dhcpcd_config_file, new_dhcpcd)
+        shutil.chown(file_locations.dhcpcd_config_file, "root", "netdev")
+        os.chmod(file_locations.dhcpcd_config_file, 0o664)
+
+    @staticmethod
+    def get_dhcpcd_replacement_text(replacement_variables):
+        """
+        Takes a list [] of variables and replaces the dhcpcd_template with them one by one.
+        In order it takes [interface, ip, subnet, gateway, dns1, dns2]
+        """
+        if replacement_variables[0] == "" or replacement_variables[1] == "":
+            return ""
+
+        dhcpcd_replacement_identifiers = ["{{ Interface }}", "{{ IPAddress }}", "{{ Subnet }}",
+                                          "{{ Gateway }}", "{{ DNS1 }}", "{{ DNS2 }}"]
+
+        new_dhcpcd_interface_replacement = dhcpcd_interface_template
+        for id_text, replacement_text in zip(dhcpcd_replacement_identifiers, replacement_variables):
+            new_dhcpcd_interface_replacement = new_dhcpcd_interface_replacement.replace(id_text, str(replacement_text))
+        return new_dhcpcd_interface_replacement
+
+    def is_eth_ip_settings_ok(self):
+        if not self.local_ethernet_dhcp:
+            for req_var in [self.local_ethernet_ip, self.local_ethernet_subnet]:
+                if req_var == "":
+                    return False
+            return True
+        return False
+
+    def is_wlan_ip_settings_ok(self):
+        if not self.local_wireless_dhcp:
+            for req_var in [self.local_wireless_ip, self.local_wireless_subnet]:
+                if req_var == "":
+                    return False
+            return True
+        return False
 
     def load_installed_hardware_from_file(self):
         """ Loads Installed Hardware configuration from local disk. """

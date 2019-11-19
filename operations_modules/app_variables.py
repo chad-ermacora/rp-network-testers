@@ -16,6 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from operations_modules import file_locations
+from operations_modules.app_generic_functions import get_file_content
 
 # Cached results from the previous test run
 previous_mtr_start_text = ""
@@ -27,3 +29,7 @@ previous_iperf_results = False
 http_server = None
 interactive_hw_server = None
 iperf3_server = None
+
+# Cached variables
+dhcpcd_config_file_content = get_file_content(file_locations.dhcpcd_config_file)
+dhcpcd_config_file_content_template = get_file_content(file_locations.dhcpcd_config_file_template)
