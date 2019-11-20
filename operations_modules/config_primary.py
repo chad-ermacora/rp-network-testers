@@ -22,6 +22,7 @@ from operations_modules import file_locations
 from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_file_content, write_file_to_disk, get_raspberry_pi_model
 from operations_modules import network_ip
+from operations_modules import network_wifi
 
 dhcpcd_interface_template = """
 
@@ -35,7 +36,7 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.62"
+        self.app_version = "0.1.65"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -64,6 +65,11 @@ class CreateConfiguration:
         self.local_wireless_dns1 = ""
         self.local_wireless_dns2 = ""
 
+        self.wifi_country_code = ""
+        self.wifi_ssid = ""
+        self.wifi_security_type = ""
+        self.wifi_pass_key = ""
+
         # Holds how many times the corresponding button has been pressed for additional actions
         self.button_1 = 0
         self.button_2 = 0
@@ -76,11 +82,21 @@ class CreateConfiguration:
         self.load_config_from_file()
         self.load_installed_hardware_from_file()
         self.load_dhcpcd_conf_from_file()
+        self.load_wpa_supplicant_wifi()
+
+    def load_wpa_supplicant_wifi(self):
+        try:
+            app_variables.wpa_supplicant_file_content = get_file_content(file_locations.wpa_supplicant_file)
+            self.wifi_country_code = network_wifi.get_wifi_country_code()
+            self.wifi_ssid = network_wifi.get_wifi_ssid()
+            self.wifi_security_type = network_wifi.get_wifi_security_type()
+            self.wifi_pass_key = network_wifi.get_wifi_psk()
+        except Exception as error:
+            print("Unable to get Wireless information from wpa_supplicant.conf: " + str(error))
 
     def load_dhcpcd_conf_from_file(self):
         try:
             app_variables.dhcpcd_config_file_content = get_file_content(file_locations.dhcpcd_config_file)
-
             self.local_ethernet_dhcp = network_ip.check_for_dhcp()
             self.local_ethernet_ip = network_ip.get_dhcpcd_ip()
             self.local_ethernet_subnet = network_ip.get_subnet()
@@ -113,7 +129,21 @@ class CreateConfiguration:
     def get_iperf_command_str(self):
         return "iperf3 -c " + self.remote_tester_ip + " -O 1 -p " + self.iperf_port
 
-    def set_static_ips(self):
+    def write_wpa_supplicant_wifi_settings_to_file(self):
+        wpa_supplicant_template = app_variables.wpa_supplicant_file_content_template
+        if self.wifi_security_type == "":
+            wifi_security_type = ""
+            wifi_template = wpa_supplicant_template.replace("{{ WirelessPSK1 }}", self.wifi_pass_key)
+        else:
+            wifi_security_type = "key_mgmt=None"
+            wifi_template = wpa_supplicant_template.replace("{{ WirelessPSK1 }}", "")
+
+        wifi_template = wifi_template.replace("{{ WirelessCountryCode }}", self.wifi_country_code)
+        wifi_template = wifi_template.replace("{{ WirelessSSID1 }}", self.wifi_ssid)
+        wifi_template = wifi_template.replace("{{ WirelessKeyMgmt1 }}", wifi_security_type)
+        write_file_to_disk(file_locations.wpa_supplicant_file, wifi_template)
+
+    def write_dhcpcd_ip_settings_to_file(self):
         dhcpcd_template = app_variables.dhcpcd_config_file_content_template
 
         eth_replacement_variables = []

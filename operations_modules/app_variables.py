@@ -33,3 +33,6 @@ iperf3_server = None
 # Cached variables
 dhcpcd_config_file_content = get_file_content(file_locations.dhcpcd_config_file)
 dhcpcd_config_file_content_template = get_file_content(file_locations.dhcpcd_config_file_template)
+
+wpa_supplicant_file_content = get_file_content(file_locations.wpa_supplicant_file)
+wpa_supplicant_file_content_template = get_file_content(file_locations.wpa_supplicant_file_template)

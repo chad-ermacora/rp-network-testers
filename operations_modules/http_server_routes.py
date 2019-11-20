@@ -27,6 +27,9 @@ from operations_modules.config_primary import current_config
 
 http_routes = Blueprint("http_routes", __name__)
 
+invalid_os_msg1 = "OS Not Supported"
+invalid_os_msg2 = "Wireless Network Configuration not supported on " + current_config.full_system_text
+
 
 @http_routes.route("/")
 @http_routes.route("/index.html")
@@ -58,6 +61,13 @@ def html_root():
     if app_variables.previous_iperf_results:
         iperf_results = app_variables.previous_iperf_start_text + str(app_variables.previous_iperf_results)
 
+    wifi_type_wpa = ""
+    wifi_type_none = ""
+    if current_config.wifi_security_type == "":
+        wifi_type_wpa = "checked"
+    else:
+        wifi_type_none = "checked"
+
     return render_template("index.html",
                            TestsRunning=tests_running_msg,
                            IPHostname=str(gethostname()),
@@ -83,7 +93,11 @@ def html_root():
                            WirelessIPv4Subnet=current_config.local_wireless_subnet,
                            WirelessIPGateway=current_config.local_wireless_gateway,
                            WirelessIPDNS1=current_config.local_wireless_dns1,
-                           WirelessIPDNS2=current_config.local_wireless_dns2)
+                           WirelessIPDNS2=current_config.local_wireless_dns2,
+                           WirelessCountryCode=current_config.wifi_country_code,
+                           CheckedWiFiSecurityWPA1=wifi_type_wpa,
+                           CheckedWiFiSecurityNone1=wifi_type_none,
+                           SSID1=current_config.wifi_ssid)
 
 
 @http_routes.route("/UpdateProgram")
@@ -192,16 +206,14 @@ def edit_eth_ipv4_network():
         message2 = "You must reboot for all settings to take effect."
         if request.form.get("ethernet_ip_dhcp") is not None:
             current_config.local_ethernet_dhcp = 1
-            current_config.set_static_ips()
+            current_config.write_dhcpcd_ip_settings_to_file()
         else:
             current_config.local_ethernet_dhcp = 0
             set_html_config_ipv4(request)
-            current_config.set_static_ips()
+            current_config.write_dhcpcd_ip_settings_to_file()
         current_config.load_dhcpcd_conf_from_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
-    message1 = "OS Not Supported"
-    message2 = "Ethernet Network Configuration not supported on " + current_config.full_system_text
-    return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
+    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=invalid_os_msg2)
 
 
 @http_routes.route("/EditWifiIPv4", methods=["POST"])
@@ -211,23 +223,33 @@ def edit_wifi_ipv4_network():
         message2 = "You must reboot for all settings to take effect."
         if request.form.get("wifi_ip_dhcp") is not None:
             current_config.local_wireless_dhcp = 1
-            current_config.set_static_ips()
+            current_config.write_dhcpcd_ip_settings_to_file()
         else:
             current_config.local_wireless_dhcp = 0
             set_html_config_ipv4(request, wireless_type=True)
-            current_config.set_static_ips()
+            current_config.write_dhcpcd_ip_settings_to_file()
         current_config.load_dhcpcd_conf_from_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
-    message1 = "OS Not Supported"
-    message2 = "Wireless Network Configuration not supported on " + current_config.full_system_text
-    return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
+    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=invalid_os_msg2)
 
 
-def set_html_config_wifi(html_request):
+@http_routes.route("/EditWifiConnection", methods=["POST"])
+def edit_wifi_connection():
     if current_config.running_on_rpi:
-        return html_root()
-    return render_template("message_return.html", URL="/", TextMessage="OS Not Supported",
-                           TextMessage2="Wireless Network Configuration not supported on current OS")
+        message1 = "Wireless Connection Settings Applied"
+        message2 = "You must reboot for all settings to take effect."
+        set_html_config_wifi_connection(request)
+        current_config.write_wpa_supplicant_wifi_settings_to_file()
+        return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
+    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=invalid_os_msg2)
+
+
+def set_html_config_wifi_connection(html_request):
+    print("Starting HTML Wireless Configuration Update")
+    current_config.wifi_country_code = html_request.form.get("country_code")
+    current_config.wifi_ssid = html_request.form.get("ssid1")
+    current_config.wifi_security_type = html_request.form.get("wifi_security1")
+    current_config.wifi_pass_key = html_request.form.get("wifi_key1")
 
 
 def set_html_config_ipv4(html_request, wireless_type=False):
