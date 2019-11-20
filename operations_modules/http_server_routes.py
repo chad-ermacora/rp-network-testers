@@ -69,6 +69,7 @@ def html_root():
         wifi_type_none = "checked"
 
     return render_template("index.html",
+                           RemoteIPandPort=current_config.remote_tester_ip + ":10066",
                            TestsRunning=tests_running_msg,
                            IPHostname=str(gethostname()),
                            DisabledButton=button_disabled,
@@ -121,6 +122,13 @@ def restart_program():
     app_generic_functions.thread_function(os.system, args="systemctl restart KootnetEthServer")
     return render_template("message_return.html", URL="/", TextMessage="Re-Starting Program",
                            TextMessage2="You will automatically be redirected to home in 10 seconds")
+
+
+@http_routes.route("/Reboot")
+def reboot_system():
+    app_generic_functions.thread_function(os.system, args="sleep 5 && reboot")
+    return render_template("message_return.html", URL="/", TextMessage="Rebooting in 4 Seconds",
+                           TextMessage2="It may take up to a few minutes for the system to reboot")
 
 
 @http_routes.route("/Shutdown")

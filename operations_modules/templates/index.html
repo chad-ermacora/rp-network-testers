@@ -398,13 +398,22 @@
                 onclick="window.location.href = '/ReStart';">
             Restart Local Program
         </button>
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                onclick="window.open('http://{{ RemoteIPandPort }}/ReStart', '_blank')">
+            Restart Remote Program
+        </button>
+        <br>
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                onclick="window.location.href = '/Reboot';">
+            Restart Local System
+        </button>
         <br>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                 onclick="window.location.href = '/Shutdown';">
             Shutdown Local Unit
         </button>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                onclick="window.location.href = 'http://{{ RemoteIPandPort }}/Shutdown';">
+                onclick="window.open('http://{{ RemoteIPandPort }}/Shutdown', '_blank')">
             Shutdown Remote Unit
         </button>
     </div>

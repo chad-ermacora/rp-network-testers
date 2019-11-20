@@ -63,7 +63,7 @@ def start_mtr():
             print("MTR Command Error: " + str(error))
         current_config.tests_running = False
         save_mtr_results_to_file()
-        hardware_access.display_message(hardware_access.get_mtr_message(app_variables.previous_mtr_results))
+        hardware_access.display_message(hardware_access.get_mtr_message())
         current_config.button_1 = 1
     else:
         hardware_access.display_message("Secondary Button 1")
@@ -84,7 +84,7 @@ def start_iperf():
             print("iPerf Command Error: " + str(error))
         current_config.tests_running = False
         save_iperf_results_to_file()
-        hardware_access.display_message(hardware_access.get_iperf_message(app_variables.previous_iperf_results))
+        hardware_access.display_message(hardware_access.get_iperf_message())
         current_config.button_2 = 1
     else:
         hardware_access.display_message("Secondary Button 2")
