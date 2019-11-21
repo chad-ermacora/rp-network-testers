@@ -93,13 +93,13 @@
                 <h3><u><strong><a style="color: black;" href="/">Run Tests & View Results</a></strong></u></h3>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" name="run_mtr" value="" checked>
+                        <input type="checkbox" name="run_mtr" value="" {{ MTRChecked }}>
                         Run MTR
                     </label>
                 </div>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" name="run_iperf" value="" checked>
+                        <input type="checkbox" name="run_iperf" value="" {{ iPerfChecked }}>
                         Run iPerf 3
                     </label>
                 </div>
@@ -425,7 +425,7 @@
         <br>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                 onclick="window.location.href = '/Shutdown';">
-            Shutdown System
+            Shutdown
         </button>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
                 onclick="window.location.href = '/UpdateProgram';" disabled>
@@ -439,30 +439,30 @@
         <div class="mui-container-fluid advanced-controls">
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                     onclick="window.location.href = '/Reboot';">
-                Restart Local System
+                Restart - Local
             </button>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                     onclick="window.location.href = '/UpdateProgramDev';">
-                Local Development Upgrade
+                Development Upgrade - Local
             </button>
             <br>
             <br>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                     onclick="window.open('http://{{ RemoteIPandPort }}/Shutdown', '_blank')">
-                Shutdown Remote System
+                Shutdown - Remote
             </button>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                     onclick="window.open('http://{{ RemoteIPandPort }}/UpdateProgram', '_blank')">
-                Upgrade Remote Program
+                Standard Upgrade - Remote
             </button>
             <br>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                     onclick="window.open('http://{{ RemoteIPandPort }}/ReStart', '_blank')">
-                Restart Remote Program
+                Restart - Remote
             </button>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                     onclick="window.open('http://{{ RemoteIPandPort }}/UpdateProgram', '_blank')">
-                Development Upgrade Remote Program
+                Development Upgrade - Remote
             </button>
         </div>
     </div>

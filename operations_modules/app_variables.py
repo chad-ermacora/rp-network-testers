@@ -36,3 +36,7 @@ dhcpcd_config_file_content_template = get_file_content(file_locations.dhcpcd_con
 
 wpa_supplicant_file_content = get_file_content(file_locations.wpa_supplicant_file)
 wpa_supplicant_file_content_template = get_file_content(file_locations.wpa_supplicant_file_template)
+
+# Current Checked Tests on the HTML Page
+html_mtr_checked = "checked"
+html_iperf_checked = "checked"

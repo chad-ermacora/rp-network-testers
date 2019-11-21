@@ -75,6 +75,8 @@ def html_root():
     return render_template("index.html",
                            RemoteIPandPort=current_config.remote_tester_ip + ":10066",
                            TestsRunning=tests_running_msg,
+                           MTRChecked=app_variables.html_mtr_checked,
+                           iPerfChecked=app_variables.html_iperf_checked,
                            IPHostname=str(gethostname()),
                            DisabledButton=button_disabled,
                            OSVersion=app_generic_functions.get_os_name_version(),
@@ -166,13 +168,17 @@ def mui_colors_min_css():
 @http_routes.route("/StartTests", methods=["POST"])
 def start_tests():
     if request.form.get("run_mtr") is not None and request.form.get("run_iperf") is not None:
+        app_variables.html_mtr_checked = "checked"
+        app_variables.html_iperf_checked = "checked"
         app_generic_functions.thread_function(run_commands.start_all_tests)
     elif request.form.get("run_mtr") is not None:
+        app_variables.html_mtr_checked = "checked"
+        app_variables.html_iperf_checked = ""
         app_generic_functions.thread_function(run_commands.start_mtr)
     elif request.form.get("run_iperf") is not None:
+        app_variables.html_iperf_checked = "checked"
+        app_variables.html_mtr_checked = ""
         app_generic_functions.thread_function(run_commands.start_iperf)
-    else:
-        return render_template("message_return.html", URL="/", TextMessage="Error Starting Tests: Bad POST Data")
     return html_root()
 
 
