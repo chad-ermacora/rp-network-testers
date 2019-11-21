@@ -70,6 +70,7 @@ fi
 printf "copying & enabling KootNet Ethernet Tester Service\n"
 cp ${INSTALL_DIR}/auto_start/KootnetEthServer.service /etc/systemd/system
 systemctl daemon-reload
+systemctl enable KootnetEthServer.service
 systemctl restart KootnetEthServer.service
 printf "\nInstall Complete\n"
 cd || exit

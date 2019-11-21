@@ -29,11 +29,11 @@ from operations_modules import network_ip
 class CreateHardwareAccess:
     def __init__(self):
         self.full_system_text = get_raspberry_pi_model()
-        self.band_width_message = "Expected Bandwidth:\n  Unknown Mbps"
+        self.band_width_message = "Available Bandwidth:\n  Unknown Mbps"
         if self.full_system_text == "Raspberry Pi 3 Model B Plus":
-            self.band_width_message = "Expected Bandwidth:\n  up to 299 Mbps"
+            self.band_width_message = "Available Bandwidth:\n  up to 299 Mbps"
         elif self.full_system_text == "Raspberry Pi 4 Model B":
-            self.band_width_message = "Expected Bandwidth:\n  up to 999 Mbps"
+            self.band_width_message = "Available Bandwidth:\n  up to 999 Mbps"
 
         try:
             os.system("raspi-config nonint do_spi 0")
