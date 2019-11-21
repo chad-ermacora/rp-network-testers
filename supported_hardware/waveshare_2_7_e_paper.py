@@ -82,7 +82,7 @@ class CreateHardwareAccess:
         cli_results = app_variables.previous_mtr_results
         if cli_results[-42:-38] != "Loss":
             mtr_results_list = self._get_real_lines_mtr(cli_results)
-            message = " MTR Results\n  " + \
+            message = "MTR Results\nDest: " + current_config.remote_tester_ip + "\n\n  " + \
                       mtr_results_list[0][2] + "  " + mtr_results_list[0][5] + "  " + mtr_results_list[0][7] + "\n"
 
             for line in mtr_results_list[1:]:
@@ -120,7 +120,7 @@ class CreateHardwareAccess:
         try:
             send_results_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-4].split(" "))
             receive_line_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-3].split(" "))
-            message = " iPerf3 Results\n" + \
+            message = "iPerf3 Results\n  Dest: " + current_config.remote_tester_ip + "\n" + \
                       self.band_width_message + \
                       "\nAmount Transferred:\n   In: " + \
                       str(receive_line_list[-5]) + " " + str(receive_line_list[-4]) + "\n   Out: " + \
@@ -148,7 +148,7 @@ class CreateHardwareAccess:
 
         text_msg = "Version: " + current_config.app_version + "\nOS: " + os_text + \
                    "\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now + \
-                   "\n\nLocal IP\n" + net_ip + "\nRemote Test Server IP\n" + current_config.remote_tester_ip
+                   "\n\nLocal IP\n" + net_ip + "\nTest Server Dest IP\n" + current_config.remote_tester_ip
         return text_msg
 
     @staticmethod

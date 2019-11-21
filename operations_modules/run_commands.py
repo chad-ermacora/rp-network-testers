@@ -56,7 +56,7 @@ def run_command(command_num):
             current_config.clear_button_counts()
     elif command_num == 3:
         hardware_access.display_message("Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ...")
-        thread_function(os.system, args="sleep 2 && shutdown now")
+        thread_function(os.system, args="sleep 4 && shutdown now")
 
 
 def start_all_tests():
@@ -67,8 +67,8 @@ def start_all_tests():
 def start_mtr():
     current_config.tests_running = True
     try:
-        print("\nStarting MTR CLI: " + current_config.get_mtr_command_str() + "\n")
-        thread_function(hardware_access.display_message("Starting MTR Test\n\nPlease Wait ..."))
+        print("\nRunning MTR CLI: " + current_config.get_mtr_command_str() + "\n")
+        thread_function(hardware_access.display_message("Running MTR Test\n\nPlease Wait ..."))
         temp_lines = get_subprocess_str_output(current_config.get_mtr_command_str()).strip().split("\n")
         temp_lines = temp_lines[1:]
         new_str = ""
@@ -86,8 +86,8 @@ def start_mtr():
 def start_iperf():
     current_config.tests_running = True
     try:
-        print("\nStarting iPerf 3 CLI: " + current_config.get_iperf_command_str())
-        thread_function(hardware_access.display_message("Starting iPerf3 Test\n\nPlease Wait ..."))
+        print("\nRunning iPerf 3 CLI: " + current_config.get_iperf_command_str())
+        thread_function(hardware_access.display_message("Running iPerf3 Test\n\nPlease Wait ..."))
         app_variables.previous_iperf_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
         raw_iperf = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
         app_variables.previous_iperf_results = raw_iperf
@@ -115,6 +115,7 @@ def save_iperf_results_to_file():
 def upgrade_program_dev():
     date_now = time.strftime("%d/%m/%y")
     time_now = time.strftime("%H:%M")
-    text_msg = "Date: " + date_now + " (D/M/Y)\nTime: " + time_now + "\n\nDEV Upgrade\nPlease Wait ..."
+    text_msg = "** DEVELOPMENT **\nUpgrade Started\nPlease Wait ...\n\nDate: " + \
+               date_now + " (D/M/Y)\nTime: " + time_now
     thread_function(hardware_access.display_message(text_msg))
     thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")

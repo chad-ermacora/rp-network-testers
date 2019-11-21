@@ -22,6 +22,11 @@
         color: black;
         width: 250px;
     }
+
+    .advanced-controls {
+        display: none;
+        overflow: hidden;
+    }
 </style>
 
 <ul class="mui-tabs__bar">
@@ -44,7 +49,7 @@
     </a></li>
     <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
            data-mui-controls="about-tab">
-        About
+        System & About
     </a></li>
 </ul>
 
@@ -368,54 +373,66 @@
     <br>
     <div class="mui-container-fluid" style="align-items: center;">
         <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Software</b></div>
+            <div class="mui-col-md-4"><b><a href="https://github.com/chad-ermacora/rp-network-testers"
+                                            target="_blank" style="color: black;">Kootnet Network Testers {{
+                KootnetVersion }}
+            </a></b></div>
+        </div>
+        <div class="mui-row" style="padding-left: inherit;">
             <div class="mui-col-md-3"><b>Operating System</b></div>
             <div class="mui-col-md-4"><b>{{ OSVersion }}</b></div>
         </div>
-
         <div class="mui-row" style="padding-left: inherit;">
-            <div class="mui-col-md-3"><b>Software Version</b></div>
-            <div class="mui-col-md-4"><b>{{ KootnetVersion }}</b></div>
-        </div>
-
-        <div class="mui-row" style="padding-left: inherit;">
-            <div class="mui-col-md-3"><b>Software License</b></div>
+            <div class="mui-col-md-3"><b>License</b></div>
             <div class="mui-col-md-4"><b><a href="https://www.gnu.org/licenses/gpl-3.0.html"
                                             target="_blank" style="color: black;">
                 GNU General Public License 3
             </a></b></div>
         </div>
         <br>
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                onclick="window.location.href = '/Shutdown';">
+            Shutdown System
+        </button>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
                 onclick="window.location.href = '/UpdateProgram';" disabled>
             Standard Upgrade
         </button>
-        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                onclick="window.location.href = '/UpdateProgramDev';">
-            Development Upgrade
-        </button>
         <br>
-        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                onclick="window.location.href = '/ReStart';">
-            Restart Local Program
+        <button type="button" class="mui-btn mui-btn--raised" id="advanced-controls"
+                style="display: block;">
+            Advanced Controls
         </button>
-        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                onclick="window.open('http://{{ RemoteIPandPort }}/ReStart', '_blank')">
-            Restart Remote Program
-        </button>
-        <br>
-        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                onclick="window.location.href = '/Reboot';">
-            Restart Local System
-        </button>
-        <br>
-        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                onclick="window.location.href = '/Shutdown';">
-            Shutdown Local Unit
-        </button>
-        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                onclick="window.open('http://{{ RemoteIPandPort }}/Shutdown', '_blank')">
-            Shutdown Remote Unit
-        </button>
+        <div class="mui-container-fluid advanced-controls">
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                    onclick="window.location.href = '/Reboot';">
+                Restart Local System
+            </button>
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                    onclick="window.location.href = '/UpdateProgramDev';">
+                Local Development Upgrade
+            </button>
+            <br>
+            <br>
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                    onclick="window.open('http://{{ RemoteIPandPort }}/Shutdown', '_blank')">
+                Shutdown Remote System
+            </button>
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                    onclick="window.open('http://{{ RemoteIPandPort }}/UpdateProgram', '_blank')">
+                Upgrade Remote Program
+            </button>
+            <br>
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                    onclick="window.open('http://{{ RemoteIPandPort }}/ReStart', '_blank')">
+                Restart Remote Program
+            </button>
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                    onclick="window.open('http://{{ RemoteIPandPort }}/UpdateProgram', '_blank')">
+                Development Upgrade Remote Program
+            </button>
+        </div>
     </div>
 </div>
 
@@ -435,6 +452,18 @@
     function refresh_page_timed() {
         window.location = "/";
     }
+</script>
+
+<script>
+    document.getElementById("advanced-controls").addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "inline-block") {
+            content.style.display = "none";
+        } else {
+            content.style.display = "inline-block";
+        }
+    });
 </script>
 
 {% endblock %}
