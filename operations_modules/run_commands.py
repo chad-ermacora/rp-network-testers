@@ -34,6 +34,7 @@ def run_command(command_num):
         elif current_config.button_1 == 1:
             start_mtr()
             current_config.clear_button_counts()
+        thread_function(hardware_access.display_message(hardware_access.get_mtr_message()))
     elif command_num == 1:
         current_config.clear_button_counts(exception_button=1)
         if current_config.button_2 == 0:
@@ -42,9 +43,17 @@ def run_command(command_num):
         elif current_config.button_2 == 1:
             start_iperf()
             current_config.clear_button_counts()
+        thread_function(hardware_access.display_message(hardware_access.get_iperf_message()))
     elif command_num == 2:
         current_config.clear_button_counts(exception_button=2)
-        display_tester_information()
+        text_msg = hardware_access.get_sys_info_message()
+        if current_config.button_3 == 0:
+            print(text_msg)
+            thread_function(hardware_access.display_message(text_msg))
+            current_config.button_3 = 1
+        elif current_config.button_3 == 1:
+            upgrade_program_dev()
+            current_config.clear_button_counts()
     elif command_num == 3:
         hardware_access.display_message("Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ...")
         thread_function(os.system, args="sleep 2 && shutdown now")
@@ -72,7 +81,6 @@ def start_mtr():
         print("MTR Command Error: " + str(error))
     current_config.tests_running = False
     save_mtr_results_to_file()
-    hardware_access.display_message(hardware_access.get_mtr_message())
 
 
 def start_iperf():
@@ -88,7 +96,6 @@ def start_iperf():
         print("iPerf Command Error: " + str(error))
     current_config.tests_running = False
     save_iperf_results_to_file()
-    hardware_access.display_message(hardware_access.get_iperf_message())
 
 
 def save_mtr_results_to_file():
@@ -105,15 +112,9 @@ def save_iperf_results_to_file():
                        app_variables.previous_iperf_start_text + app_variables.previous_iperf_results)
 
 
-def display_tester_information():
+def upgrade_program_dev():
     date_now = time.strftime("%d/%m/%y")
     time_now = time.strftime("%H:%M")
-    if current_config.button_3 < 1:
-        text_msg = hardware_access.get_sys_info_message()
-        print(text_msg)
-        thread_function(hardware_access.display_message(text_msg))
-        current_config.button_3 = 1
-    else:
-        text_msg = "Date: " + date_now + " (D/M/Y)\nTime: " + time_now + "\n\nDEV Upgrade\nPlease Wait ..."
-        thread_function(hardware_access.display_message(text_msg))
-        thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")
+    text_msg = "Date: " + date_now + " (D/M/Y)\nTime: " + time_now + "\n\nDEV Upgrade\nPlease Wait ..."
+    thread_function(hardware_access.display_message(text_msg))
+    thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")

@@ -28,11 +28,11 @@ from operations_modules.app_generic_functions import get_raspberry_pi_model, get
 class CreateHardwareAccess:
     def __init__(self):
         self.full_system_text = get_raspberry_pi_model()
-        self.band_width_message = "Expected Bandwidth:\n Unknown"
+        self.band_width_message = "Expected Bandwidth:\n  Unknown Mbps"
         if self.full_system_text == "Raspberry Pi 3 Model B Plus":
-            self.band_width_message = "Expected Bandwidth:\n 290-298 Mbps"
+            self.band_width_message = "Expected Bandwidth:\n  up to 299 Mbps"
         elif self.full_system_text == "Raspberry Pi 4 Model B":
-            self.band_width_message = "Expected Bandwidth:\n 935-955 Mbps"
+            self.band_width_message = "Expected Bandwidth:\n  up to 999 Mbps"
 
         try:
             os.system("raspi-config nonint do_spi 0")
@@ -93,10 +93,7 @@ class CreateHardwareAccess:
                       " Remote Unit Offline?\n" + \
                       " Or\n" + \
                       " Bad Network\n\n"
-
-        message += "\n   Day/Month/Year\n" + \
-                   "     Date: " + strftime("%d/%m/%y") + "\n" + \
-                   "       Time: " + strftime("%H:%M")
+        message += "\nDate: " + strftime("%d/%m/%y") + " (D/M/Y)\nTime: " + strftime("%H:%M")
         return message
 
     def _get_real_lines_mtr(self, mtr_results):
@@ -116,40 +113,27 @@ class CreateHardwareAccess:
                 real_first_list.append(line.strip())
         return real_first_list
 
-    def get_iperf_message(self, cli_ok=True):
+    def get_iperf_message(self):
         cli_results = app_variables.previous_iperf_results
         iperf_results_lines = cli_results.strip().split("\n")
-        send_results_list = self._get_real_lines_mtr(iperf_results_lines[-4].split(" "))
-        receive_line_list = self._get_real_lines_mtr(iperf_results_lines[-3].split(" "))
-        if cli_ok and len(send_results_list) > 7 and len(receive_line_list) > 7:
-            print(cli_results)
+        print(cli_results)
+        try:
+            send_results_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-4].split(" "))
+            receive_line_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-3].split(" "))
             message = " iPerf3 Results\n" + \
-                      self.band_width_message + "\n" + \
-                      " Amount Transferred:\nIn:" + \
-                      str(receive_line_list[-3]) + str(receive_line_list[-2]) + "\nOut:" + \
-                      str(send_results_list[-3]) + str(send_results_list[-2]) + "\n" + \
-                      " Average Bandwidth:\nIn:" + \
-                      str(receive_line_list[-5]) + str(receive_line_list[-4]) + "\nOut:" + \
-                      str(send_results_list[-5]) + str(send_results_list[-4]) + "\n" + \
-                      " Over: " + str(receive_line_list[-7]) + str(receive_line_list[-6]) + "\n\n" + \
-                      "   Day/Month/Year\n" + \
-                      "     Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      "       Time: " + str(strftime("%H:%M"))
-        else:
-            message = " iPerf3 Failed\n" + \
-                      " Remote Unit Offline?\n" + \
-                      "   Or\n" + \
-                      " Bad Network\n\n" + \
-                      "   Day/Month/Year\n\n" + \
-                      " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      " Time: " + str(strftime("%H:%M"))
+                      self.band_width_message + \
+                      "\nAmount Transferred:\n   In: " + \
+                      str(receive_line_list[-5]) + " " + str(receive_line_list[-4]) + "\n   Out: " + \
+                      str(send_results_list[-6]) + " " + str(send_results_list[-5]) + "\n" + \
+                      "Average Bandwidth:\n   In: " + \
+                      str(receive_line_list[-3]) + " " + str(receive_line_list[-2]) + "\n   Out: " + \
+                      str(send_results_list[-4]) + " " + str(send_results_list[-3]) + "\n" + \
+                      " Over: " + str(receive_line_list[-7]) + " " + str(receive_line_list[-6])
+        except Exception as error:
+            print("iPerf Display Error: " + str(error))
+            message = " iPerf3 Failed\n Remote Unit Offline?\n   Or\n Bad Network"
+        message += "\n\nDate: " + strftime("%d/%m/%y") + " (D/M/Y)\nTime: " + strftime("%H:%M")
         return message
-
-    def _get_real_lines_iperf(self, iperf_results):
-        results_lines = iperf_results.strip().split("\n")
-        sender_line_list = self._get_mtr_or_iperf_real_list(results_lines[0].split(" "))
-        receiver_line_list = self._get_mtr_or_iperf_real_list(results_lines[1].split(" "))
-        return [sender_line_list, receiver_line_list]
 
     @staticmethod
     def get_sys_info_message():
