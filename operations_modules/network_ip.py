@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import socket
 from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_raspberry_pi_model
 
@@ -47,6 +48,19 @@ def check_for_dhcp(wireless=False):
                     if line_stripped[9:].strip() == "eth0":
                         return 0
     return 1
+
+
+def get_ip_from_socket():
+    """ Returns IPv4 Address as a String. """
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip_address = (s.getsockname()[0])
+        s.close()
+    except Exception as error:
+        print("Get IP Failed: " + str(error))
+        ip_address = "0.0.0.0"
+    return ip_address
 
 
 def get_dhcpcd_ip(wireless=False):

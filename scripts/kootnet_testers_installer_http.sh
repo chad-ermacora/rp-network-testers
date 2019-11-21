@@ -54,6 +54,18 @@ else
   python3 -m pip install -U pip
   pip3 install -r ${INSTALL_DIR}/requirements.txt
   deactivate
+  cat > /usr/share/applications/KootNet-Network-Testers-Web.desktop << "EOF"
+[Desktop Entry]
+Name=Kootnet Network Testers
+Comment=Web interface for running tests & configuring
+Type=Application
+Icon=/opt/kootnet-network-testers/operations_modules/extras/icon.png
+TryExec=/usr/bin/x-www-browser
+Exec=x-www-browser http://localhost:10066
+Terminal=false
+Categories=Utility;Science;
+StartupNotify=true
+EOF
 fi
 printf "copying & enabling KootNet Ethernet Tester Service\n"
 cp ${INSTALL_DIR}/auto_start/KootnetEthServer.service /etc/systemd/system

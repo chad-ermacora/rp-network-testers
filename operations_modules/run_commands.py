@@ -29,18 +29,22 @@ def run_command(command_num):
     if command_num == 0:
         current_config.clear_button_counts(exception_button=0)
         if current_config.button_1 == 0:
+            thread_function(hardware_access.display_message("Running MTR Test\n\nPlease Wait ..."))
             start_mtr()
             current_config.button_1 = 1
         elif current_config.button_1 == 1:
+            thread_function(hardware_access.display_message("Running MTR Test\n\nPlease Wait ..."))
             start_mtr()
             current_config.clear_button_counts()
         thread_function(hardware_access.display_message(hardware_access.get_mtr_message()))
     elif command_num == 1:
         current_config.clear_button_counts(exception_button=1)
         if current_config.button_2 == 0:
+            thread_function(hardware_access.display_message("Running iPerf3 Test\n\nPlease Wait ..."))
             start_iperf()
             current_config.button_2 = 1
         elif current_config.button_2 == 1:
+            thread_function(hardware_access.display_message("Running iPerf3 Test\n\nPlease Wait ..."))
             start_iperf()
             current_config.clear_button_counts()
         thread_function(hardware_access.display_message(hardware_access.get_iperf_message()))
@@ -68,7 +72,6 @@ def start_mtr():
     current_config.tests_running = True
     try:
         print("\nRunning MTR CLI: " + current_config.get_mtr_command_str() + "\n")
-        thread_function(hardware_access.display_message("Running MTR Test\n\nPlease Wait ..."))
         temp_lines = get_subprocess_str_output(current_config.get_mtr_command_str()).strip().split("\n")
         temp_lines = temp_lines[1:]
         new_str = ""
@@ -87,7 +90,6 @@ def start_iperf():
     current_config.tests_running = True
     try:
         print("\nRunning iPerf 3 CLI: " + current_config.get_iperf_command_str())
-        thread_function(hardware_access.display_message("Running iPerf3 Test\n\nPlease Wait ..."))
         app_variables.previous_iperf_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
         raw_iperf = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
         app_variables.previous_iperf_results = raw_iperf

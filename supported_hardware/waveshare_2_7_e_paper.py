@@ -22,7 +22,8 @@ from PIL import Image, ImageDraw, ImageFont
 from operations_modules import file_locations
 from operations_modules import app_variables
 from operations_modules.config_primary import current_config
-from operations_modules.app_generic_functions import get_raspberry_pi_model, get_network_ip, get_os_name_version
+from operations_modules.app_generic_functions import get_raspberry_pi_model, get_os_name_version
+from operations_modules import network_ip
 
 
 class CreateHardwareAccess:
@@ -139,7 +140,6 @@ class CreateHardwareAccess:
     def get_sys_info_message():
         date_now = strftime("%d/%m/%y")
         time_now = strftime("%H:%M")
-        net_ip = get_network_ip()
         os_text = get_os_name_version()
 
         if current_config.running_on_rpi:
@@ -147,8 +147,11 @@ class CreateHardwareAccess:
             os_text = lines[0] + " " + lines[2]
 
         text_msg = "Version: " + current_config.app_version + "\nOS: " + os_text + \
-                   "\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now + \
-                   "\n\nLocal IP\n" + net_ip + "\nTest Server Dest IP\n" + current_config.remote_tester_ip
+                   "\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now
+        text_msg += "\n\nRemote Server IP\n" + current_config.remote_tester_ip
+        text_msg += "\n\nInternet Facing IP\n" + network_ip.get_ip_from_socket()
+        text_msg += "\nStatic Eth IP\n" + network_ip.get_dhcpcd_ip()
+        text_msg += "\nStatic Wifi IP\n" + network_ip.get_dhcpcd_ip(wireless=True)
         return text_msg
 
     @staticmethod

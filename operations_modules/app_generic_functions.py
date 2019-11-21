@@ -21,7 +21,6 @@ import re
 import subprocess
 import time
 import requests
-import socket
 from threading import Thread
 from ipaddress import ip_address as _check_ip_address
 
@@ -198,16 +197,3 @@ def check_for_none_and_blank(check_variable):
     if check_variable is None or check_variable == "":
         return True
     return False
-
-
-def get_network_ip():
-    """ Returns IPv4 Address as a String. """
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip_address = (s.getsockname()[0])
-        s.close()
-    except Exception as error:
-        print("Get IP Failed: " + str(error))
-        ip_address = "0.0.0.0"
-    return ip_address

@@ -11,4 +11,5 @@ systemctl disable KootnetEthServer 2>/dev/null
 systemctl stop KootnetEthServer 2>/dev/null
 rm ${SYSTEM_D_FILE} 2>/dev/null
 rm -f -r ${INSTALL_DIR} 2>/dev/null
+rm /usr/share/applications/KootNet-Network-Testers-Web.desktop
 printf "Uninstall Complete\n"
