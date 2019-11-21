@@ -68,6 +68,10 @@ def html_root():
     else:
         wifi_type_none = "checked"
 
+    wifi_country_code_disable = "disabled"
+    if current_config.running_on_rpi:
+        wifi_country_code_disable = ""
+
     return render_template("index.html",
                            RemoteIPandPort=current_config.remote_tester_ip + ":10066",
                            TestsRunning=tests_running_msg,
@@ -90,6 +94,7 @@ def html_root():
                            EthernetIPDNS1=current_config.local_ethernet_dns1,
                            EthernetIPDNS2=current_config.local_ethernet_dns2,
                            WirelessCheckedDHCP=wireless_dhcp,
+                           WifiCountryCodeDisabled=wifi_country_code_disable,
                            WirelessIPv4Address=current_config.local_wireless_ip,
                            WirelessIPv4Subnet=current_config.local_wireless_subnet,
                            WirelessIPGateway=current_config.local_wireless_gateway,
@@ -136,6 +141,11 @@ def shutdown_system():
     app_generic_functions.thread_function(os.system, args="shutdown now")
     return render_template("message_return.html", URL="/", TextMessage="Shutting Down Unit",
                            TextMessage2="Please wait 15 seconds before removing power")
+
+
+@http_routes.route("/jquery.min.js")
+def jquery_min_js():
+    return send_file(file_locations.j_query_js)
 
 
 @http_routes.route("/mui.min.css")

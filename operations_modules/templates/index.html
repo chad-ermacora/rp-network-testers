@@ -2,6 +2,37 @@
 
 {% block content %}
 
+<script>
+    window.onload = function () {
+        if (jQuery('#ETH_IP_DHCP').prop('checked')) {
+            document.getElementsByName("ethernet_ip_address")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_subnet")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_gateway")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_dns1")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_dns2")[0].disabled = true;
+        } else {
+            document.getElementsByName("ethernet_ip_address")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_subnet")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_gateway")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_dns1")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_dns2")[0].disabled = false;
+        }
+        if (jQuery('#WIFI_IP_DHCP').prop('checked')) {
+            document.getElementsByName("wifi_ip_address")[0].disabled = true;
+            document.getElementsByName("wifi_ip_subnet")[0].disabled = true;
+            document.getElementsByName("wifi_ip_gateway")[0].disabled = true;
+            document.getElementsByName("wifi_ip_dns1")[0].disabled = true;
+            document.getElementsByName("wifi_ip_dns2")[0].disabled = true;
+        } else {
+            document.getElementsByName("wifi_ip_address")[0].disabled = false;
+            document.getElementsByName("wifi_ip_subnet")[0].disabled = false;
+            document.getElementsByName("wifi_ip_gateway")[0].disabled = false;
+            document.getElementsByName("wifi_ip_dns1")[0].disabled = false;
+            document.getElementsByName("wifi_ip_dns2")[0].disabled = false;
+        }
+    };
+</script>
+
 <style>
     .mui-container-fluid {
         color: red;
@@ -182,7 +213,8 @@
                 <h2><u><a style="color: black" href="{{ PageURL }}">Ethernet Configuration</a></u></h2>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" id="IP_DHCP" name="ethernet_ip_dhcp" value="" {{ EthernetCheckedDHCP }}>
+                        <input type="checkbox" id="ETH_IP_DHCP" name="ethernet_ip_dhcp" value="" {{ EthernetCheckedDHCP
+                               }}>
                         DHCP
                         <span class="checkmark_checkbox"></span>
                     </label>
@@ -252,7 +284,7 @@
                 <h2><u><a style="color: black" href="{{ PageURL }}">Wireless Configuration</a></u></h2>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" id="wifi_IP_DHCP" name="wifi_ip_dhcp" value="" {{ WirelessCheckedDHCP }}>
+                        <input type="checkbox" id="WIFI_IP_DHCP" name="wifi_ip_dhcp" value="" {{ WirelessCheckedDHCP }}>
                         DHCP
                         <span class="checkmark_checkbox"></span>
                     </label>
@@ -323,11 +355,11 @@
 
                 <label>
                     <a style="color: black" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank">
-                        Two Character Country Code
+                        Two Character Country Code (RPi Only)
                     </a>
                     <br>
                     <input type="text" style="width: 25px;" maxlength="2" minlength="2"
-                           name="country_code" value="{{ WirelessCountryCode }}" required>
+                           name="country_code" value="{{ WirelessCountryCode }}" required {{ WifiCountryCodeDisabled }}>
                 </label>
 
                 <br>
@@ -359,7 +391,7 @@
                         Wireless Key
                         <br>
                         <input style="width: 175px;" type="password" name="wifi_key1"
-                               placeholder="Eg. $00p3rS3curz" minlength="8" maxlength="63" value="">
+                               placeholder="eg. $00p3rS3curz" minlength="8" maxlength="63" value="">
                     </label>
                 </div>
                 <br>
@@ -462,6 +494,38 @@
             content.style.display = "none";
         } else {
             content.style.display = "inline-block";
+        }
+    });
+
+    jQuery('#ETH_IP_DHCP').change(function () {
+        if (jQuery(this).prop('checked')) {
+            document.getElementsByName("ethernet_ip_address")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_subnet")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_gateway")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_dns1")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_dns2")[0].disabled = true;
+        } else {
+            document.getElementsByName("ethernet_ip_address")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_subnet")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_gateway")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_dns1")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_dns2")[0].disabled = false;
+        }
+    });
+
+    jQuery('#WIFI_IP_DHCP').change(function () {
+        if (jQuery(this).prop('checked')) {
+            document.getElementsByName("wifi_ip_address")[0].disabled = true;
+            document.getElementsByName("wifi_ip_subnet")[0].disabled = true;
+            document.getElementsByName("wifi_ip_gateway")[0].disabled = true;
+            document.getElementsByName("wifi_ip_dns1")[0].disabled = true;
+            document.getElementsByName("wifi_ip_dns2")[0].disabled = true;
+        } else {
+            document.getElementsByName("wifi_ip_address")[0].disabled = false;
+            document.getElementsByName("wifi_ip_subnet")[0].disabled = false;
+            document.getElementsByName("wifi_ip_gateway")[0].disabled = false;
+            document.getElementsByName("wifi_ip_dns1")[0].disabled = false;
+            document.getElementsByName("wifi_ip_dns2")[0].disabled = false;
         }
     });
 </script>
