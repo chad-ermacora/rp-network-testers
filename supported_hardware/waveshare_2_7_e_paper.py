@@ -20,6 +20,7 @@ import os
 from time import strftime
 from PIL import Image, ImageDraw, ImageFont
 from operations_modules import file_locations
+from operations_modules import app_variables
 from operations_modules.config_primary import current_config
 from operations_modules.app_generic_functions import get_raspberry_pi_model, get_network_ip, get_os_name_version
 
@@ -77,42 +78,60 @@ class CreateHardwareAccess:
                         "\n\nDevice Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n"
         return start_message
 
-    @staticmethod
-    def get_mtr_message(cli_results):
+    def get_mtr_message(self):
+        cli_results = app_variables.previous_mtr_results
         if cli_results[-42:-38] != "Loss":
-            message = " MTR Results\n" + \
-                      " Sent: " + cli_results[-33:-27] + "\n" + \
-                      " Lost: " + cli_results[-42:-35] + "\n" + \
-                      " Avg: " + cli_results[-23:-17] + "ms\n" + \
-                      " Worst: " + cli_results[-9:-5] + "ms\n" + \
-                      " Best: " + cli_results[-16:-11] + "ms\n" + \
-                      " Last: " + cli_results[-28:-23] + "ms\n" + \
-                      " StDev: " + cli_results[-3:] + " ms\n\n" + \
-                      "   Day/Month/Year\n" + \
-                      "     Date: " + strftime("%d/%m/%y") + "\n" + \
-                      "       Time: " + strftime("%H:%M")
+            mtr_results_list = self._get_real_lines_mtr(cli_results)
+            message = " MTR Results\n  " + \
+                      mtr_results_list[0][2] + "  " + mtr_results_list[0][5] + "  " + mtr_results_list[0][7] + "\n"
+
+            for line in mtr_results_list[1:]:
+                message += "  IP: " + line[1] + \
+                           "\n  " + line[2] + "  " + line[5] + "ms  " + line[7] + "ms\n"
         else:
             message = " MTR Failed\n" + \
                       " Remote Unit Offline?\n" + \
-                      "   Or\n" + \
-                      " Bad Network\n\n" + \
-                      "   Day/Month/Year\n\n" + \
-                      " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
-                      " Time: " + str(strftime("%H:%M"))
+                      " Or\n" + \
+                      " Bad Network\n\n"
+
+        message += "\n   Day/Month/Year\n" + \
+                   "     Date: " + strftime("%d/%m/%y") + "\n" + \
+                   "       Time: " + strftime("%H:%M")
         return message
 
-    def get_iperf_message(self, cli_results, cli_ok=True):
-        if cli_ok:
+    def _get_real_lines_mtr(self, mtr_results):
+        mtr_results_lines = mtr_results.strip().split("\n")
+        return_results = []
+        for line in mtr_results_lines:
+            return_results.append(self._get_mtr_or_iperf_real_list(line.split(" ")))
+        return return_results
+
+    @staticmethod
+    def _get_mtr_or_iperf_real_list(mtr_results_lines):
+        real_first_list = []
+        for line in mtr_results_lines:
+            if line.strip() == "":
+                pass
+            else:
+                real_first_list.append(line.strip())
+        return real_first_list
+
+    def get_iperf_message(self, cli_ok=True):
+        cli_results = app_variables.previous_iperf_results
+        iperf_results_lines = cli_results.strip().split("\n")
+        send_results_list = self._get_real_lines_mtr(iperf_results_lines[-4].split(" "))
+        receive_line_list = self._get_real_lines_mtr(iperf_results_lines[-3].split(" "))
+        if cli_ok and len(send_results_list) > 7 and len(receive_line_list) > 7:
             print(cli_results)
             message = " iPerf3 Results\n" + \
                       self.band_width_message + "\n" + \
                       " Amount Transferred:\nIn:" + \
-                      cli_results[-68:-54] + "\nOut:" + \
-                      cli_results[-144:-130] + "\n" + \
+                      str(receive_line_list[-3]) + str(receive_line_list[-2]) + "\nOut:" + \
+                      str(send_results_list[-3]) + str(send_results_list[-2]) + "\n" + \
                       " Average Bandwidth:\nIn:" + \
-                      cli_results[-55:-39] + "\nOut:" + \
-                      cli_results[-131:-115] + "\n" + \
-                      " Over: " + cli_results[-80:-67] + "\n\n" + \
+                      str(receive_line_list[-5]) + str(receive_line_list[-4]) + "\nOut:" + \
+                      str(send_results_list[-5]) + str(send_results_list[-4]) + "\n" + \
+                      " Over: " + str(receive_line_list[-7]) + str(receive_line_list[-6]) + "\n\n" + \
                       "   Day/Month/Year\n" + \
                       "     Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       "       Time: " + str(strftime("%H:%M"))
@@ -125,6 +144,12 @@ class CreateHardwareAccess:
                       " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                       " Time: " + str(strftime("%H:%M"))
         return message
+
+    def _get_real_lines_iperf(self, iperf_results):
+        results_lines = iperf_results.strip().split("\n")
+        sender_line_list = self._get_mtr_or_iperf_real_list(results_lines[0].split(" "))
+        receiver_line_list = self._get_mtr_or_iperf_real_list(results_lines[1].split(" "))
+        return [sender_line_list, receiver_line_list]
 
     @staticmethod
     def get_sys_info_message():
