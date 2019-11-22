@@ -351,7 +351,7 @@
         <form class="mui-form" method="POST" style="min-height: 300px;"
               action="/EditWifiConnection">
             <fieldset style="text-align: center">
-                <h2><u><a style="color: black" href="">Automatic Wireless Connection</a></u></h2>
+                <h2><u><a style="color: black;" href="">Automatic Wireless Connection</a></u></h2>
 
                 <label>
                     <a style="color: black" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank">
@@ -424,8 +424,8 @@
         </div>
         <br>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                onclick="window.location.href = '/Shutdown';">
-            Shutdown
+                onclick="window.location.href = '/ReStart';">
+            Restart Program
         </button>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
                 onclick="window.location.href = '/UpdateProgram';" disabled>
@@ -439,30 +439,22 @@
         <div class="mui-container-fluid advanced-controls">
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                     onclick="window.location.href = '/Reboot';">
-                Restart - Local
+                Restart System
             </button>
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+                    onclick="window.location.href = '/Shutdown';">
+                Shutdown
+            </button>
+            <br>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
                     onclick="window.location.href = '/UpdateProgramDev';">
-                Development Upgrade - Local
+                Development Upgrade
             </button>
             <br>
             <br>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                    onclick="window.open('http://{{ RemoteIPandPort }}/Shutdown', '_blank')">
-                Shutdown - Remote
-            </button>
-            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                    onclick="window.open('http://{{ RemoteIPandPort }}/UpdateProgram', '_blank')">
-                Standard Upgrade - Remote
-            </button>
-            <br>
-            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                    onclick="window.open('http://{{ RemoteIPandPort }}/ReStart', '_blank')">
-                Restart - Remote
-            </button>
-            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                    onclick="window.open('http://{{ RemoteIPandPort }}/UpdateProgram', '_blank')">
-                Development Upgrade - Remote
+                    onclick="window.open('http://{{ RemoteIPandPort }}', '_blank')">
+                Manage Remote Test Server
             </button>
         </div>
     </div>
