@@ -28,7 +28,7 @@ from operations_modules.config_primary import current_config
 http_routes = Blueprint("http_routes", __name__)
 
 invalid_os_msg1 = "OS Not Supported"
-invalid_os_msg2 = "Wireless Network Configuration not supported on " + current_config.full_system_text
+invalid_os_msg2 = "Network Configuration not supported on " + current_config.full_system_text
 
 
 @http_routes.route("/")
@@ -237,7 +237,8 @@ def edit_eth_ipv4_network():
             current_config.write_dhcpcd_ip_settings_to_file()
         current_config.load_dhcpcd_conf_from_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
-    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=invalid_os_msg2)
+    second_msg = "Ethernet " + invalid_os_msg2
+    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=second_msg)
 
 
 @http_routes.route("/EditWifiIPv4", methods=["POST"])
@@ -254,7 +255,8 @@ def edit_wifi_ipv4_network():
             current_config.write_dhcpcd_ip_settings_to_file()
         current_config.load_dhcpcd_conf_from_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
-    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=invalid_os_msg2)
+    second_msg = "Wireless " + invalid_os_msg2
+    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=second_msg)
 
 
 @http_routes.route("/EditWifiConnection", methods=["POST"])
@@ -265,7 +267,8 @@ def edit_wifi_connection():
         set_html_config_wifi_connection(request)
         current_config.write_wpa_supplicant_wifi_settings_to_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
-    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=invalid_os_msg2)
+    second_msg = "Wireless " + invalid_os_msg2
+    return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=second_msg)
 
 
 def set_html_config_wifi_connection(html_request):
