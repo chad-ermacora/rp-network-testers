@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import re
 from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_raspberry_pi_model
 
@@ -63,3 +64,20 @@ def get_wifi_psk():
             if line_stripped[:4] == "psk=":
                 return line_stripped[5:-1]
     return ""
+
+
+def check_html_wifi_settings(html_request):
+    wifi_country_code = html_request.form.get("country_code")
+    wifi_ssid = html_request.form.get("ssid1")
+    wifi_security_type = html_request.form.get("wifi_security1")
+    wifi_pass_key = html_request.form.get("wifi_key1")
+
+    settings_status = True
+    if wifi_country_code == "" or not re.match(r'^[a-zA-Z]*$', wifi_country_code):
+        settings_status = False
+    if len(wifi_ssid) > 32 or not re.match(r'^[a-zA-Z0-9][ A-Za-z0-9_-]*$', wifi_ssid):
+        settings_status = False
+    if not wifi_security_type == "None":
+        if wifi_pass_key == "":
+            settings_status = False
+    return settings_status

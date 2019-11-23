@@ -24,6 +24,7 @@ from operations_modules import app_generic_functions
 from operations_modules import app_variables
 from operations_modules import run_commands
 from operations_modules.config_primary import current_config
+from operations_modules.network_wifi import check_html_wifi_settings
 
 http_routes = Blueprint("http_routes", __name__)
 
@@ -262,11 +263,16 @@ def edit_wifi_ipv4_network():
 @http_routes.route("/EditWifiConnection", methods=["POST"])
 def edit_wifi_connection():
     if current_config.running_on_rpi:
-        message1 = "Wireless Connection Settings Applied"
-        message2 = "You must reboot for all settings to take effect."
-        set_html_config_wifi_connection(request)
-        current_config.write_wpa_supplicant_wifi_settings_to_file()
-        return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
+        if check_html_wifi_settings(request):
+            message1 = "Wireless Connection Settings Applied"
+            message2 = "You must reboot for all settings to take effect."
+            set_html_config_wifi_connection(request)
+            current_config.write_wpa_supplicant_wifi_settings_to_file()
+            return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
+        else:
+            message1 = "Invalid Wireless Connection Settings"
+            message2 = "One or more Wireless Connection settings where incorrect."
+            return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
     second_msg = "Wireless " + invalid_os_msg2
     return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=second_msg)
 

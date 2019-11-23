@@ -81,7 +81,7 @@ class CreateHardwareAccess:
 
     def get_mtr_message(self):
         cli_results = app_variables.previous_mtr_results
-        if cli_results[-42:-38] != "Loss":
+        if cli_results != "Error Connecting to Remote Test Server":
             mtr_results_list = self._get_real_lines_mtr(cli_results)
             message = "MTR Results\nDest: " + current_config.remote_tester_ip + "\n\n  " + \
                       mtr_results_list[0][2] + "  " + mtr_results_list[0][5] + "  " + mtr_results_list[0][7] + "\n"
@@ -90,10 +90,7 @@ class CreateHardwareAccess:
                 message += "  IP: " + line[1] + \
                            "\n  " + line[2] + "  " + line[5] + "ms  " + line[7] + "ms\n"
         else:
-            message = " MTR Failed\n" + \
-                      " Remote Unit Offline?\n" + \
-                      " Or\n" + \
-                      " Bad Network\n\n"
+            message = " MTR Failed\n Remote Test Server\n Offline Or Bad Network\n\n"
         message += "\nDate: " + strftime("%d/%m/%y") + " (D/M/Y)\nTime: " + strftime("%H:%M")
         return message
 
@@ -116,23 +113,26 @@ class CreateHardwareAccess:
 
     def get_iperf_message(self):
         cli_results = app_variables.previous_iperf_results
-        iperf_results_lines = cli_results.strip().split("\n")
-        print(cli_results)
-        try:
-            send_results_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-4].split(" "))
-            receive_line_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-3].split(" "))
-            message = "iPerf3 Results\n  Dest: " + current_config.remote_tester_ip + "\n" + \
-                      self.band_width_message + \
-                      "\nAmount Transferred:\n   In: " + \
-                      str(receive_line_list[-5]) + " " + str(receive_line_list[-4]) + "\n   Out: " + \
-                      str(send_results_list[-6]) + " " + str(send_results_list[-5]) + "\n" + \
-                      "Average Bandwidth:\n   In: " + \
-                      str(receive_line_list[-3]) + " " + str(receive_line_list[-2]) + "\n   Out: " + \
-                      str(send_results_list[-4]) + " " + str(send_results_list[-3]) + "\n" + \
-                      " Over: " + str(receive_line_list[-7]) + " " + str(receive_line_list[-6])
-        except Exception as error:
-            print("iPerf Display Error: " + str(error))
-            message = " iPerf3 Failed\n Remote Unit Offline?\n   Or\n Bad Network"
+        if cli_results != "Error Connecting to Remote Test Server":
+            iperf_results_lines = cli_results.strip().split("\n")
+            print(cli_results)
+            try:
+                send_results_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-4].split(" "))
+                receive_line_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-3].split(" "))
+                message = "iPerf3 Results\n  Dest: " + current_config.remote_tester_ip + "\n" + \
+                          self.band_width_message + \
+                          "\nAmount Transferred:\n   In: " + \
+                          str(receive_line_list[-5]) + " " + str(receive_line_list[-4]) + "\n   Out: " + \
+                          str(send_results_list[-6]) + " " + str(send_results_list[-5]) + "\n" + \
+                          "Average Bandwidth:\n   In: " + \
+                          str(receive_line_list[-3]) + " " + str(receive_line_list[-2]) + "\n   Out: " + \
+                          str(send_results_list[-4]) + " " + str(send_results_list[-3]) + "\n" + \
+                          " Over: " + str(receive_line_list[-7]) + " " + str(receive_line_list[-6])
+            except Exception as error:
+                print("iPerf Display Error: " + str(error))
+                message = " iPerf3 Failed\n Remote Test Server\n Offline Or Bad Network\n"
+        else:
+            message = " iPerf3 Failed\n Remote Test Server\n Offline Or Bad Network\n"
         message += "\n\nDate: " + strftime("%d/%m/%y") + " (D/M/Y)\nTime: " + strftime("%H:%M")
         return message
 

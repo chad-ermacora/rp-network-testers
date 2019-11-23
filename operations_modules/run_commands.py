@@ -70,6 +70,7 @@ def start_all_tests():
 
 def start_mtr():
     current_config.tests_running = True
+    app_variables.previous_mtr_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
     try:
         print("\nRunning MTR CLI: " + current_config.get_mtr_command_str() + "\n")
         temp_lines = get_subprocess_str_output(current_config.get_mtr_command_str()).strip().split("\n")
@@ -77,25 +78,28 @@ def start_mtr():
         new_str = ""
         for line in temp_lines:
             new_str += line + "\n"
-        app_variables.previous_mtr_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
         app_variables.previous_mtr_results = new_str.strip()[:-2]
         print("MTR CLI Done\n")
     except Exception as error:
         print("MTR Command Error: " + str(error))
+        temp_lines = []
+    if len(temp_lines) < 3:
+        app_variables.previous_mtr_results = "Error Connecting to Remote Test Server"
     current_config.tests_running = False
     save_mtr_results_to_file()
 
 
 def start_iperf():
     current_config.tests_running = True
+    app_variables.previous_iperf_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
     try:
         print("\nRunning iPerf 3 CLI: " + current_config.get_iperf_command_str())
-        app_variables.previous_iperf_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
         raw_iperf = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
         app_variables.previous_iperf_results = raw_iperf
         print("iPerf 3 CLI Done\n")
     except Exception as error:
         print("iPerf Command Error: " + str(error))
+        app_variables.previous_iperf_results = "Error Connecting to Remote Test Server"
     current_config.tests_running = False
     save_iperf_results_to_file()
 
