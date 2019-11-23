@@ -36,7 +36,7 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "1.0.1"
+        self.app_version = "1.0.2"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -214,7 +214,7 @@ class CreateConfiguration:
         """ Loads Installed Hardware configuration from local disk. """
         if os.path.isfile(file_locations.installed_hardware_file_location):
             log_msg = "Loading Installed Hardware Configuration from: "
-            print(log_msg + file_locations.installed_hardware_file_location + "\n")
+            print(log_msg + file_locations.installed_hardware_file_location)
             try:
                 config_file_lines = get_file_content(file_locations.installed_hardware_file_location).split("\n")
                 config_list = []

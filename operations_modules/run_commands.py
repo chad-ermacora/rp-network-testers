@@ -115,15 +115,15 @@ def start_iperf():
 def save_mtr_results_to_file():
     text_time_sec = str(time.time()).split(".")[0]
     new_file_location = file_locations.location_save_report_folder + "/mtr-" + text_time_sec + ".txt"
-    write_file_to_disk(file_locations.script_folder_path + new_file_location,
-                       app_variables.previous_mtr_start_text + app_variables.previous_mtr_results)
+    file_content = app_variables.previous_mtr_start_text + app_variables.previous_mtr_results
+    write_file_to_disk(new_file_location, file_content)
 
 
 def save_iperf_results_to_file():
     text_time_sec = str(time.time()).split(".")[0]
     new_file_location = file_locations.location_save_report_folder + "/iperf-" + text_time_sec + ".txt"
-    write_file_to_disk(file_locations.script_folder_path + new_file_location,
-                       app_variables.previous_iperf_start_text + app_variables.previous_iperf_results)
+    file_content = app_variables.previous_iperf_start_text + app_variables.previous_iperf_results
+    write_file_to_disk(new_file_location, file_content)
 
 
 # FIXME Move this function to the hardware file layout.

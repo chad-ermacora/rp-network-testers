@@ -36,18 +36,23 @@ def start_iperf_server():
 
 if current_config.running_on_rpi:
     enable_fake_hw_clock()
-
+if not current_config.running_on_rpi:
+    file_locations.location_save_report_folder = file_locations.script_folder_path + "/Kootnet_test_results"
 if not os.path.isdir(file_locations.location_save_report_folder):
     os.mkdir(file_locations.location_save_report_folder)
+print("Reports Saving to: " + file_locations.location_save_report_folder + "\n")
 
+thread_name = "HTTP Server"
 print(" -- HTTP Server Started on port " + str(http_server.flask_http_port))
-app_variables.http_server = CreateMonitoredThread(http_server.CreateHTTPServer, thread_name="HTTP Server")
+app_variables.http_server = CreateMonitoredThread(http_server.CreateHTTPServer, thread_name=thread_name)
 if config_primary.current_config.is_iperf_server:
+    thread_name = "iPerf3 Server"
     print(" -- iPerf 3 Server started on port " + current_config.iperf_port)
-    app_variables.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name="iPerf3 Server")
+    app_variables.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name=thread_name)
 if config_primary.current_config.running_on_rpi:
+    thread_name = "Interactive Server"
     print(" -- Interactive Hardware Server started")
-    app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="Interactive Server")
+    app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name=thread_name)
     hardware_access.display_message(hardware_access.get_start_message())
 else:
     part_1_msg = "\nInteractive Hardware only supported on Raspberry Pis - "
