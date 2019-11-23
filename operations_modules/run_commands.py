@@ -56,7 +56,7 @@ def run_command(command_num):
             thread_function(hardware_access.display_message, args=text_msg)
             current_config.button_3 = 1
         elif current_config.button_3 == 1:
-            upgrade_program_dev()
+            upgrade_program()
     elif command_num == 3:
         hardware_access.display_message("Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ...")
         thread_function(os.system, args="sleep 4 && shutdown now")
@@ -127,10 +127,13 @@ def save_iperf_results_to_file():
 
 
 # FIXME Move this function to the hardware file layout.
-def upgrade_program_dev():
+def upgrade_program(development_upgrade=False):
     date_now = time.strftime("%d/%m/%y")
     time_now = time.strftime("%H:%M")
-    text_msg = "** DEVELOPMENT **\nUpgrade Started\nPlease Wait ...\n\nDate: " + \
-               date_now + " (D/M/Y)\nTime: " + time_now
+    text_msg = "Upgrade Started\nPlease Wait ...\n\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now
+    bash_args = "bash " + file_locations.http_upgrade_script
+    if development_upgrade:
+        text_msg = "** DEVELOPMENT **\n" + text_msg
+        bash_args += " dev"
     thread_function(hardware_access.display_message, args=text_msg)
-    thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")
+    thread_function(os.system, args=bash_args)
