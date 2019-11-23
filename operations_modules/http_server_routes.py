@@ -25,6 +25,7 @@ from operations_modules import app_variables
 from operations_modules import run_commands
 from operations_modules.config_primary import current_config
 from operations_modules.network_wifi import check_html_wifi_settings
+from operations_modules.network_ip import check_html_network_settings
 
 http_routes = Blueprint("http_routes", __name__)
 
@@ -233,9 +234,14 @@ def edit_eth_ipv4_network():
             current_config.local_ethernet_dhcp = 1
             current_config.write_dhcpcd_ip_settings_to_file()
         else:
-            current_config.local_ethernet_dhcp = 0
-            set_html_config_ipv4(request)
-            current_config.write_dhcpcd_ip_settings_to_file()
+            if check_html_network_settings(request):
+                current_config.local_ethernet_dhcp = 0
+                set_html_config_ipv4(request)
+                current_config.write_dhcpcd_ip_settings_to_file()
+            else:
+                message1 = "Invalid Network Settings"
+                message2 = "One or more Network settings where incorrect."
+                return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
         current_config.load_dhcpcd_conf_from_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
     second_msg = "Ethernet " + invalid_os_msg2
@@ -251,9 +257,14 @@ def edit_wifi_ipv4_network():
             current_config.local_wireless_dhcp = 1
             current_config.write_dhcpcd_ip_settings_to_file()
         else:
-            current_config.local_wireless_dhcp = 0
-            set_html_config_ipv4(request, wireless_type=True)
-            current_config.write_dhcpcd_ip_settings_to_file()
+            if check_html_network_settings(request, wireless_type=True):
+                current_config.local_wireless_dhcp = 0
+                set_html_config_ipv4(request, wireless_type=True)
+                current_config.write_dhcpcd_ip_settings_to_file()
+            else:
+                message1 = "Invalid Network Settings"
+                message2 = "One or more Network settings where incorrect."
+                return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
         current_config.load_dhcpcd_conf_from_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
     second_msg = "Wireless " + invalid_os_msg2

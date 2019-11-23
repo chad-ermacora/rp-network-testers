@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import socket
+from ipaddress import ip_address as _check_ip_address
 from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_raspberry_pi_model
 
@@ -137,3 +138,55 @@ def get_dns(dns_server=0, wireless=False):
                         if len(dns_list) > 1 or dns_server == 0:
                             return dns_list[dns_server]
     return ""
+
+
+def check_html_network_settings(html_request, wireless_type=False):
+    if wireless_type:
+        local_ip = html_request.form.get("wifi_ip_address")
+        local_subnet = html_request.form.get("wifi_ip_subnet")
+        local_gateway = html_request.form.get("wifi_ip_gateway")
+        local_dns1 = html_request.form.get("wifi_ip_dns1")
+        local_dns2 = html_request.form.get("wifi_ip_dns2")
+    else:
+        local_ip = html_request.form.get("ethernet_ip_address")
+        local_subnet = html_request.form.get("ethernet_ip_subnet")
+        local_gateway = html_request.form.get("ethernet_ip_gateway")
+        local_dns1 = html_request.form.get("ethernet_ip_dns1")
+        local_dns2 = html_request.form.get("ethernet_ip_dns2")
+
+    settings_status = True
+    if not ip_address_validation_check(local_ip):
+        settings_status = False
+    if not _check_subnet(local_subnet):
+        settings_status = False
+    if local_gateway != "":
+        if not ip_address_validation_check(local_gateway):
+            settings_status = False
+    if local_dns1 != "":
+        if not ip_address_validation_check(local_dns1):
+            settings_status = False
+    if local_dns2 != "":
+        if not ip_address_validation_check(local_dns2):
+            settings_status = False
+    return settings_status
+
+
+def ip_address_validation_check(ip_address):
+    try:
+        if _check_ip_address(ip_address):
+            return True
+        return False
+    except Exception as error:
+        print(str(error))
+        return False
+
+
+def _check_subnet(subnet):
+    subnet_ok = False
+    count = 8
+    while count <= 30:
+        good_subnet = "/" + str(count)
+        if subnet == good_subnet:
+            subnet_ok = True
+        count += 1
+    return subnet_ok
