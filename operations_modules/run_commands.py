@@ -29,38 +29,43 @@ def run_command(command_num):
     if command_num == 0:
         current_config.clear_button_counts(exception_button=0)
         if current_config.button_1 == 0:
-            thread_function(hardware_access.display_message("Running MTR Test\n\nPlease Wait ..."))
+            thread_function(hardware_access.display_message, args="Running MTR Test\n\nPlease Wait ...")
             start_mtr()
             current_config.button_1 = 1
         elif current_config.button_1 == 1:
-            thread_function(hardware_access.display_message("Running MTR Test\n\nPlease Wait ..."))
+            thread_function(hardware_access.display_message, args="Running MTR Test\n\nPlease Wait ...")
             start_mtr()
             current_config.clear_button_counts()
-        thread_function(hardware_access.display_message(hardware_access.get_mtr_message()))
+        thread_function(hardware_access.display_message, args=hardware_access.get_mtr_message())
     elif command_num == 1:
         current_config.clear_button_counts(exception_button=1)
         if current_config.button_2 == 0:
-            thread_function(hardware_access.display_message("Running iPerf3 Test\n\nPlease Wait ..."))
+            thread_function(hardware_access.display_message, args="Running iPerf3 Test\n\nPlease Wait ...")
             start_iperf()
             current_config.button_2 = 1
         elif current_config.button_2 == 1:
-            thread_function(hardware_access.display_message("Running iPerf3 Test\n\nPlease Wait ..."))
+            thread_function(hardware_access.display_message, args="Running iPerf3 Test\n\nPlease Wait ...")
             start_iperf()
             current_config.clear_button_counts()
-        thread_function(hardware_access.display_message(hardware_access.get_iperf_message()))
+        thread_function(hardware_access.display_message, args=hardware_access.get_iperf_message())
     elif command_num == 2:
         current_config.clear_button_counts(exception_button=2)
         text_msg = hardware_access.get_sys_info_message()
         if current_config.button_3 == 0:
             print(text_msg)
-            thread_function(hardware_access.display_message(text_msg))
+            thread_function(hardware_access.display_message, args=text_msg)
             current_config.button_3 = 1
         elif current_config.button_3 == 1:
             upgrade_program_dev()
-            current_config.clear_button_counts()
     elif command_num == 3:
         hardware_access.display_message("Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ...")
         thread_function(os.system, args="sleep 4 && shutdown now")
+    thread_function(_reset_buttons_in_sec, args=15)
+
+
+def _reset_buttons_in_sec(seconds):
+    time.sleep(seconds)
+    current_config.clear_button_counts()
 
 
 def start_all_tests():
@@ -123,5 +128,5 @@ def upgrade_program_dev():
     time_now = time.strftime("%H:%M")
     text_msg = "** DEVELOPMENT **\nUpgrade Started\nPlease Wait ...\n\nDate: " + \
                date_now + " (D/M/Y)\nTime: " + time_now
-    thread_function(hardware_access.display_message(text_msg))
+    thread_function(hardware_access.display_message, args=text_msg)
     thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")

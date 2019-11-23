@@ -36,7 +36,7 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "0.1.86"
+        self.app_version = "0.1.88"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -113,7 +113,7 @@ class CreateConfiguration:
         except Exception as error:
             print("Unable to get IP information from dhcpcd.conf: " + str(error))
 
-    def clear_button_counts(self, exception_button=100):
+    def clear_button_counts(self, exception_button=11):
         if exception_button != 0:
             self.button_1 = 0
         if exception_button != 1:
