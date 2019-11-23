@@ -1,0 +1,6 @@
+RPi.GPIO
+spidev
+Pillow
+Flask
+Flask-Compress
+gevent
