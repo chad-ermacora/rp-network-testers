@@ -31,12 +31,10 @@ dhcpcd_config_file_template = script_folder_path + "/operations_modules/extras/d
 wpa_supplicant_file = "/etc/wpa_supplicant/wpa_supplicant.conf"
 wpa_supplicant_file_template = script_folder_path + "/operations_modules/extras/wpa_supplicant_template.conf"
 
-location_save_report_folder = "/home/pi"
+location_save_report_folder = "/home/pi/Kootnet_test_results"
 location_truetype_font = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
 
 # Flask HTTP files
-menu_js = script_folder_path + "/operations_modules/extras/menu.js"
-menu_css_style = script_folder_path + "/operations_modules/extras/style.css"
 j_query_js = script_folder_path + "/operations_modules/extras/jquery-3.4.1.min.js"
 mui_min_css = script_folder_path + "/operations_modules/extras/mui.min-ver-0.9.43.css"
 mui_min_js = script_folder_path + "/operations_modules/extras/mui.min-ver-0.9.43.js"

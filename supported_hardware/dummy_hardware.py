@@ -50,3 +50,5 @@ class CreateHardwareAccess:
     def shutdown_local_unit_message():
         print("Shutting Down Local Unit")
         return ""
+
+# TODO Add Upgrade, Dev Upgrade, reboot, shutdown, restart service??

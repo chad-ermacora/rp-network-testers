@@ -4,4 +4,3 @@ Pillow
 Flask
 Flask-Compress
 gevent
-requests

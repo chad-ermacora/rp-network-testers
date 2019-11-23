@@ -25,7 +25,7 @@ from operations_modules import app_variables
 from operations_modules import run_commands
 from operations_modules.config_primary import current_config
 from operations_modules.network_wifi import check_html_wifi_settings
-from operations_modules.network_ip import check_html_network_settings
+from operations_modules.network_ip import check_html_network_settings, ip_address_validation_check
 
 http_routes = Blueprint("http_routes", __name__)
 
@@ -137,7 +137,7 @@ def restart_program():
 def reboot_system():
     app_generic_functions.thread_function(os.system, args="sleep 5 && reboot")
     return render_template("message_return.html", URL="/", TextMessage="Rebooting in 4 Seconds",
-                           TextMessage2="It may take up to a few minutes for the system to reboot")
+                           TextMessage2="It may take a few minutes for the system to reboot")
 
 
 @http_routes.route("/Shutdown")
@@ -196,10 +196,12 @@ def edit_configuration():
     else:
         current_config.is_iperf_server = 0
 
-    if request.form.get("remote_test_server_ip") is not None:
+    if ip_address_validation_check(request.form.get("remote_test_server_ip")):
         current_config.remote_tester_ip = str(request.form.get("remote_test_server_ip"))
     else:
-        current_config.remote_tester_ip = "192.168.169.251"
+        msg1 = "Bad Remote Test Server IP"
+        msg2 = "Please check the remote test server IP and try again."
+        return render_template("message_return.html", URL="/", TextMessage=msg1, TextMessage2=msg2)
 
     if request.form.get("iperf_port") is not None:
         current_config.iperf_port = str(request.form.get("iperf_port"))
@@ -242,7 +244,6 @@ def edit_eth_ipv4_network():
                 message1 = "Invalid Network Settings"
                 message2 = "One or more Network settings where incorrect."
                 return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
-        current_config.load_dhcpcd_conf_from_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
     second_msg = "Ethernet " + invalid_os_msg2
     return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=second_msg)
@@ -265,7 +266,6 @@ def edit_wifi_ipv4_network():
                 message1 = "Invalid Network Settings"
                 message2 = "One or more Network settings where incorrect."
                 return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
-        current_config.load_dhcpcd_conf_from_file()
         return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
     second_msg = "Wireless " + invalid_os_msg2
     return render_template("message_return.html", URL="/", TextMessage=invalid_os_msg1, TextMessage2=second_msg)

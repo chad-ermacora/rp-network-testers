@@ -15,7 +15,7 @@ _Raspberry Pi 4B Recommended due to it's 1000Mbps network adapter_
 Raspbian (9 or higher), Ubuntu (18.04 or higher)  
 #### Other Operating Systems
 Most other GNU/Linux distributions should work with Kootnet Network Testers if the distribution supports the applications
-MTR, iPerf3, wget & Python3 along with the Flask, gevent & requests Python modules.
+MTR, iPerf3, wget & Python3 along with the Flask & gevent Python modules.
 The install script will automatically download the applications from your Operating System's repositories
 and the Python modules with pip.
 

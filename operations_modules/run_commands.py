@@ -60,12 +60,15 @@ def run_command(command_num):
     elif command_num == 3:
         hardware_access.display_message("Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ...")
         thread_function(os.system, args="sleep 4 && shutdown now")
-    thread_function(_reset_buttons_in_sec, args=15)
+    if not current_config.button_reset_running:
+        thread_function(_reset_buttons_in_sec, args=15)
 
 
 def _reset_buttons_in_sec(seconds):
+    current_config.button_reset_running = True
     time.sleep(seconds)
     current_config.clear_button_counts()
+    current_config.button_reset_running = False
 
 
 def start_all_tests():
@@ -111,18 +114,19 @@ def start_iperf():
 
 def save_mtr_results_to_file():
     text_time_sec = str(time.time()).split(".")[0]
-    new_file_location = "/test_results/kootnet_ethernet_results-mtr-" + text_time_sec + ".txt"
+    new_file_location = file_locations.location_save_report_folder + "/mtr-" + text_time_sec + ".txt"
     write_file_to_disk(file_locations.script_folder_path + new_file_location,
                        app_variables.previous_mtr_start_text + app_variables.previous_mtr_results)
 
 
 def save_iperf_results_to_file():
     text_time_sec = str(time.time()).split(".")[0]
-    new_file_location = "/test_results/kootnet_ethernet_results-iperf-" + text_time_sec + ".txt"
+    new_file_location = file_locations.location_save_report_folder + "/iperf-" + text_time_sec + ".txt"
     write_file_to_disk(file_locations.script_folder_path + new_file_location,
                        app_variables.previous_iperf_start_text + app_variables.previous_iperf_results)
 
 
+# FIXME Move this function to the hardware file layout.
 def upgrade_program_dev():
     date_now = time.strftime("%d/%m/%y")
     time_now = time.strftime("%H:%M")

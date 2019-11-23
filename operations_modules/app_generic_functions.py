@@ -20,9 +20,7 @@ import os
 import re
 import subprocess
 import time
-import requests
 from threading import Thread
-from ipaddress import ip_address as _check_ip_address
 
 
 class CreateMonitoredThread:
@@ -124,17 +122,6 @@ def write_file_to_disk(file_location, file_content, open_type="w"):
         print("Write to Disk Error: " + str(error))
 
 
-def send_command(url):
-    """ Sends command URL using requests. """
-    try:
-        requests.get(url=url, timeout=5, headers={'Connection': 'close'}, verify=False)
-        print("Command '" + url + "' OK")
-        return True
-    except Exception as error:
-        print(str(error))
-        return False
-
-
 def get_raspberry_pi_model():
     if os.path.isfile("/proc/device-tree/model"):
         pi_version = str(subprocess.check_output("cat /proc/device-tree/model", shell=True))
@@ -159,38 +146,6 @@ def hostname_is_valid(text_hostname):
     if re.match(r'^[a-zA-Z0-9_-]*$', text_hostname):
         return True
     return False
-
-
-def text_is_alphanumeric(text_string):
-    """
-    Returns True if provided text only uses Alphanumeric characters.
-    Otherwise returns False.
-    """
-    if text_string.isalnum():
-        return True
-    else:
-        return False
-
-
-def ip_address_is_valid(ip_address):
-    return _check_ip_address(ip_address)
-
-
-def subnet_mask_is_valid(subnet_mask):
-    if re.match(r'/[0-9][0-9]|/[0-9]', subnet_mask):
-        return True
-    return False
-
-
-def wireless_ssid_is_valid(text_ssid):
-    """
-    Returns True if provided text only uses Alphanumeric characters, spaces, underscores and dashes.
-    Otherwise returns False.
-    """
-    if re.match(r'^[a-zA-Z0-9][ A-Za-z0-9_-]*$', text_ssid):
-        return True
-    else:
-        return False
 
 
 def check_for_none_and_blank(check_variable):

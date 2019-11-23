@@ -27,15 +27,6 @@ if full_system_text[:12] == "Raspberry Pi":
     running_on_rpi = True
 
 
-def get_number_of_interface_entries_dhcpcd():
-    dhcpcd_content_lines = app_variables.dhcpcd_config_file_content.split("\n")
-    interface_count = 0
-    for line in dhcpcd_content_lines:
-        if line.strip()[:9] == "interface":
-            interface_count += 1
-    return interface_count
-
-
 def check_for_dhcp(wireless=False):
     if running_on_rpi:
         dhcpcd_content_lines = app_variables.dhcpcd_config_file_content.split("\n")

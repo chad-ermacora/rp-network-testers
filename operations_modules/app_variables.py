@@ -25,18 +25,17 @@ previous_iperf_start_text = ""
 previous_mtr_results = False
 previous_iperf_results = False
 
-# Monitored Thread's created as class instances /w function and variables access
+# Monitored Thread placeholders. Replaced with class instances that have function and variables access
 http_server = None
 interactive_hw_server = None
 iperf3_server = None
 
-# Cached variables
-dhcpcd_config_file_content = get_file_content(file_locations.dhcpcd_config_file)
+# Cached variables from disk
+dhcpcd_config_file_content = ""
 dhcpcd_config_file_content_template = get_file_content(file_locations.dhcpcd_config_file_template)
-
-wpa_supplicant_file_content = get_file_content(file_locations.wpa_supplicant_file)
+wpa_supplicant_file_content = ""
 wpa_supplicant_file_content_template = get_file_content(file_locations.wpa_supplicant_file_template)
 
-# Current Checked Tests on the HTML Page
+# Last state of Test checkboxes on the main HTML page
 html_mtr_checked = "checked"
 html_iperf_checked = "checked"

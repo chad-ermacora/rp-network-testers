@@ -36,7 +36,7 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "1.0.0"
+        self.app_version = "1.0.1"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -47,7 +47,7 @@ class CreateConfiguration:
         self.is_iperf_server = 1
         self.iperf_port = "9000"
         self.mtr_run_count = "10"
-        self.remote_tester_ip = "192.168.7.194"  # "192.168.169.251"
+        self.remote_tester_ip = "8.8.8.8"
 
         self.local_ethernet_dhcp = 1
         self.local_ethernet_adapter_name = "eth0"
@@ -71,6 +71,7 @@ class CreateConfiguration:
         self.wifi_pass_key = ""
 
         # Holds how many times the corresponding button has been pressed for additional actions
+        self.button_reset_running = False
         self.button_1 = 0
         self.button_2 = 0
         self.button_3 = 0

@@ -37,8 +37,8 @@ def start_iperf_server():
 if current_config.running_on_rpi:
     enable_fake_hw_clock()
 
-if not os.path.isdir(file_locations.script_folder_path + "/test_results"):
-    os.mkdir(file_locations.script_folder_path + "/test_results")
+if not os.path.isdir(file_locations.location_save_report_folder):
+    os.mkdir(file_locations.location_save_report_folder)
 
 print(" -- HTTP Server Started on port " + str(http_server.flask_http_port))
 app_variables.http_server = CreateMonitoredThread(http_server.CreateHTTPServer, thread_name="HTTP Server")

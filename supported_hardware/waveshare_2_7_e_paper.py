@@ -162,3 +162,4 @@ class CreateHardwareAccess:
                   " Date: " + str(strftime("%d/%m/%y")) + "\n" + \
                   " Time: " + str(strftime("%H:%M"))
         return message
+# TODO Add Upgrade, Dev Upgrade, reboot, shutdown, restart service??
