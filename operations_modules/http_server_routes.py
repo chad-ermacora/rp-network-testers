@@ -25,7 +25,7 @@ from operations_modules import app_variables
 from operations_modules import run_commands
 from operations_modules.config_primary import current_config
 from operations_modules.network_wifi import check_html_wifi_settings
-from operations_modules.network_ip import check_html_network_settings, ip_address_validation_check
+from operations_modules.network_ip import check_html_network_settings, ip_address_validation_check, get_ip_from_socket
 
 http_routes = Blueprint("http_routes", __name__)
 
@@ -82,6 +82,7 @@ def html_root():
                            IPHostname=str(gethostname()),
                            DisabledButton=button_disabled,
                            OSVersion=app_generic_functions.get_os_name_version(),
+                           InternetIPAddress=get_ip_from_socket(),
                            KootnetVersion=current_config.app_version,
                            Results_MTR=mtr_results,
                            Results_iPerf=iperf_results,

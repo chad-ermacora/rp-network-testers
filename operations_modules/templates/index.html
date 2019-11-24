@@ -178,7 +178,8 @@
                 <h3><u><strong><a style="color: black;" href="/">Installed Hardware</a></strong></u></h3>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label style="color: black;">
-                        <input type="checkbox" name="checkbox_waveshare_2_7_e_ink" value="" {{ CheckedWaveShare27EInk }}>
+                        <input type="checkbox" name="checkbox_waveshare_2_7_e_ink" value="" {{ CheckedWaveShare27EInk
+                               }}>
                         WaveShare 2.7" E-Ink Display (BW or RBW)
                     </label>
                 </div>
@@ -212,7 +213,8 @@
                 <h2><u><a style="color: black" href="{{ PageURL }}">Ethernet Configuration</a></u></h2>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" id="ETH_IP_DHCP" name="ethernet_ip_dhcp" value="" {{ EthernetCheckedDHCP }}>
+                        <input type="checkbox" id="ETH_IP_DHCP" name="ethernet_ip_dhcp" value="" {{ EthernetCheckedDHCP
+                               }}>
                         DHCP
                         <span class="checkmark_checkbox"></span>
                     </label>
@@ -243,7 +245,7 @@
 
                 <div class="mui-textfield">
                     <label style="color: black">
-                        Gateway
+                        Gateway (Optional)
                         <br>
                         <input style="width: 125px" type="text" name="ethernet_ip_gateway"
                                placeholder="eg. 192.168.10.1" minlength="7" maxlength="15"
@@ -253,7 +255,7 @@
 
                 <div class="mui-textfield">
                     <label style="color: black">
-                        Primary DNS
+                        Primary DNS (Optional)
                         <br>
                         <input style="width: 125px" type="text" name="ethernet_ip_dns1"
                                placeholder="eg. 8.8.8.8" minlength="7" maxlength="15"
@@ -263,7 +265,7 @@
 
                 <div class="mui-textfield">
                     <label style="color: black">
-                        Secondary DNS
+                        Secondary DNS (Optional)
                         <br>
                         <input style="width: 125px" type="text" name="ethernet_ip_dns2"
                                placeholder="eg. 8.8.4.4" minlength="7" maxlength="15"
@@ -313,7 +315,7 @@
 
                 <div class="mui-textfield">
                     <label style="color: black">
-                        Gateway
+                        Gateway (Optional)
                         <br>
                         <input style="width: 125px" type="text" name="wifi_ip_gateway"
                                placeholder="eg. 192.168.10.1" minlength="7" maxlength="15"
@@ -323,7 +325,7 @@
 
                 <div class="mui-textfield">
                     <label style="color: black">
-                        Primary DNS
+                        Primary DNS (Optional)
                         <br>
                         <input style="width: 125px" type="text" name="wifi_ip_dns1"
                                placeholder="eg. 8.8.8.8" minlength="7" maxlength="15"
@@ -333,7 +335,7 @@
 
                 <div class="mui-textfield">
                     <label style="color: black">
-                        Secondary DNS
+                        Secondary DNS (Optional)
                         <br>
                         <input style="width: 125px" type="text" name="wifi_ip_dns2"
                                placeholder="eg. 8.8.4.4" minlength="7" maxlength="15"
@@ -420,14 +422,23 @@
                 GNU General Public License 3
             </a></b></div>
         </div>
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Primary IP</b></div>
+            <div class="mui-col-md-4"><b>{{ InternetIPAddress }}</b></div>
+        </div>
         <br>
-        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
                 onclick="window.location.href = '/ReStart';">
             Restart Program
         </button>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
-                onclick="window.location.href = '/UpdateProgram';" disabled>
+                onclick="window.location.href = '/UpdateProgram';">
             Standard Upgrade
+        </button>
+        <br>
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
+                onclick="window.open('http://{{ RemoteIPandPort }}', '_blank')">
+            Manage Remote Test Server
         </button>
         <br>
         <button type="button" class="mui-btn mui-btn--raised" id="advanced-controls"
@@ -435,25 +446,21 @@
             Advanced Controls
         </button>
         <div class="mui-container-fluid advanced-controls">
-            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-yellow-900"
                     onclick="window.location.href = '/Reboot';">
                 Restart System
             </button>
-            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-red-900"
                     onclick="window.location.href = '/Shutdown';">
                 Shutdown
             </button>
             <br>
-            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-light-blue"
                     onclick="window.location.href = '/UpdateProgramDev';">
                 Development Upgrade
             </button>
             <br>
             <br>
-            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-orange"
-                    onclick="window.open('http://{{ RemoteIPandPort }}', '_blank')">
-                Manage Remote Test Server
-            </button>
         </div>
     </div>
 </div>

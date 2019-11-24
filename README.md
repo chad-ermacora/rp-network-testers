@@ -31,7 +31,7 @@ _Note: Hold the buttons down for 1 second before releasing to ensure proper oper
 Fresh Raspbian Installs Recommended [Download Raspbian Here](https://www.raspberrypi.org/downloads/)
 2. Run the following command in a Terminal.
 
-```wget http://kootenay-networks.com/utils/koot_net_eth_testers/kootnet_testers_installer_http.sh && sudo bash kootnet_testers_installer_http.sh```
+```wget http://kootenay-networks.com/utils/koot_net_eth_testers/kootnet_testers_installer_http.sh && sudo bash kootnet_testers_installer_http.sh && sudo reboot```
 
 3. Once the script has finished, open the "Kootnet Network Testers" shortcut in your Operating Systems application menu to configure and use the Tester.
 On the Raspberry Pi, the shortcut is located in the Accessories menu.
