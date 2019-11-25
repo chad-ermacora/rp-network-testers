@@ -126,14 +126,14 @@
                         Local HostName
                         <br>
                         <input style="width: 200px;" type="text" id="ip_hostname" name="ip_hostname" required
-                               placeholder="eg. Tester9932" minlength="2" maxlength="62"
-                               value="{{ IPHostname }}">
+                               placeholder="eg. Tester9932" minlength="2" maxlength="62" value="{{ IPHostname }}">
                     </label>
                 </div>
                 <br>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label style="color: black;">
-                        <input type="checkbox" name="checkbox_iperf_server" value="" {{ CheckediPerfServer }}>
+                        <input type="checkbox" name="checkbox_iperf_server"
+                               value="" {{ CheckediPerfServer }}>
                         Enable iPerf 3 Server
                     </label>
                 </div>
@@ -148,7 +148,8 @@
                 </div>
                 <br>
                 <div class="mui-textfield">
-                    <label style="color: black;">iPerf 3 Server Port #
+                    <label style="color: black;">
+                        iPerf 3 Server Port #
                         <br>
                         <input style="width: 75px;" type="number" min="1" max="65535" name="iperf_port"
                                value="{{ iPerfPort }}">
@@ -156,7 +157,8 @@
                 </div>
                 <br>
                 <div class="mui-textfield">
-                    <label style="color: black;">MTR Run Count
+                    <label style="color: black;">
+                        MTR Run Count
                         <br>
                         <input style="width: 75px;" type="number" min="1" max="1000" name="mtr_run_count"
                                value="{{ MTRCount }}">
@@ -178,8 +180,8 @@
                 <h3><u><strong><a style="color: black;" href="/">Installed Hardware</a></strong></u></h3>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label style="color: black;">
-                        <input type="checkbox" name="checkbox_waveshare_2_7_e_ink" value="" {{ CheckedWaveShare27EInk
-                               }}>
+                        <input type="checkbox" name="checkbox_waveshare_2_7_e_ink"
+                               value="" {{ CheckedWaveShare27EInk }}>
                         WaveShare 2.7" E-Ink Display (BW or RBW)
                     </label>
                 </div>
@@ -213,8 +215,8 @@
                 <h2><u><a style="color: black" href="{{ PageURL }}">Ethernet Configuration</a></u></h2>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" id="ETH_IP_DHCP" name="ethernet_ip_dhcp" value="" {{ EthernetCheckedDHCP
-                               }}>
+                        <input type="checkbox" id="ETH_IP_DHCP" name="ethernet_ip_dhcp"
+                               value="" {{ EthernetCheckedDHCP }}>
                         DHCP
                         <span class="checkmark_checkbox"></span>
                     </label>
@@ -406,10 +408,10 @@
     <div class="mui-container-fluid" style="align-items: center;">
         <div class="mui-row" style="padding-left: inherit;">
             <div class="mui-col-md-3"><b>Software</b></div>
-            <div class="mui-col-md-4"><b><a href="https://github.com/chad-ermacora/rp-network-testers"
-                                            target="_blank" style="color: black;">Kootnet Network Testers {{
-                KootnetVersion }}
-            </a></b></div>
+            <div class="mui-col-md-4"><b>
+                <a href="https://github.com/chad-ermacora/rp-network-testers"
+                   target="_blank" style="color: black;">Kootnet Network Testers {{ KootnetVersion }}
+                </a></b></div>
         </div>
         <div class="mui-row" style="padding-left: inherit;">
             <div class="mui-col-md-3"><b>Operating System</b></div>
@@ -417,8 +419,8 @@
         </div>
         <div class="mui-row" style="padding-left: inherit;">
             <div class="mui-col-md-3"><b>License</b></div>
-            <div class="mui-col-md-4"><b><a href="https://www.gnu.org/licenses/gpl-3.0.html"
-                                            target="_blank" style="color: black;">
+            <div class="mui-col-md-4"><b>
+                <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color: black;">
                 GNU General Public License 3
             </a></b></div>
         </div>
@@ -441,8 +443,7 @@
             Manage Remote Test Server
         </button>
         <br>
-        <button type="button" class="mui-btn mui-btn--raised" id="advanced-controls"
-                style="display: block;">
+        <button type="button" class="mui-btn mui-btn--raised" id="advanced-controls" style="display: block;">
             Advanced Controls
         </button>
         <div class="mui-container-fluid advanced-controls">

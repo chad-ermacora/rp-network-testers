@@ -33,6 +33,31 @@ invalid_os_msg1 = "OS Not Supported"
 invalid_os_msg2 = "Network Configuration not supported on " + current_config.full_system_text
 
 
+@http_routes.route("/jquery.min.js")
+def jquery_min_js():
+    return send_file(file_locations.j_query_js)
+
+
+@http_routes.route("/mui.min.css")
+def mui_min_css():
+    return send_file(file_locations.mui_min_css)
+
+
+@http_routes.route("/mui.min.js")
+def mui_min_js():
+    return send_file(file_locations.mui_min_js)
+
+
+@http_routes.route("/mui-colors.min.css")
+def mui_colors_min_css():
+    return send_file(file_locations.mui_colors_min_css)
+
+
+@http_routes.route("/favicon.ico")
+def html_icon():
+    return send_file(file_locations.html_icon)
+
+
 @http_routes.route("/")
 @http_routes.route("/index.html")
 def html_root():
@@ -146,26 +171,6 @@ def shutdown_system():
     app_generic_functions.thread_function(os.system, args="shutdown now")
     return render_template("message_return.html", URL="/", TextMessage="Shutting Down Unit",
                            TextMessage2="Please wait 15 seconds before removing power")
-
-
-@http_routes.route("/jquery.min.js")
-def jquery_min_js():
-    return send_file(file_locations.j_query_js)
-
-
-@http_routes.route("/mui.min.css")
-def mui_min_css():
-    return send_file(file_locations.mui_min_css)
-
-
-@http_routes.route("/mui.min.js")
-def mui_min_js():
-    return send_file(file_locations.mui_min_js)
-
-
-@http_routes.route("/mui-colors.min.css")
-def mui_colors_min_css():
-    return send_file(file_locations.mui_colors_min_css)
 
 
 @http_routes.route("/StartTests", methods=["POST"])
