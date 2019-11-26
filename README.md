@@ -50,11 +50,22 @@ If you intend to test cables or a network without a DHCP server, be sure to set 
 You must set the "Remote Test Server IP" in the configuration of the tester you are intending to run tests from.  
 Connect the 2 Tester units to a single cable or local network then use the web interface or press the appropriate buttons to initiate tests.  
 
-_Note: In order to use secondary button features on supported hardware, you must hit the same button twice in a row within 15 seconds. 
-Hitting any other button or waiting more then 15 seconds will reset the button to its initial function._
+_Note: Pressing the 4th button to change button functions will cycle through 3 different settings when pressed multiple times._
 
-The 4 buttons are as follows.
+### Primary Button Functions
 1. Run & Display [MTR](https://www.bitwizard.nl/mtr/) tests
 2. Run & Display [iPerf3](https://iperf.fr/) tests
-3. First Press: System Information || Second Press: Upgrade program over HTTP
-4. Shutdown Local Unit
+3. Nothing (WIP)
+4. Change Button Functions
+
+### Secondary Button Functions
+1. System Information
+2. Upgrade Kootnet Ethernet Tester Software
+3. Upgrade Kootnet Ethernet Tester Software Developmental
+4. Change Button Functions
+
+### Tertiary Button Functions
+1. Shutdown Remote Test Server
+2. Shutdown Local Unit
+3. Nothing (WIP)
+4. Change Button Functions

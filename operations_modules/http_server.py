@@ -21,9 +21,7 @@ from flask import Flask
 from flask_compress import Compress
 from gevent.pywsgi import WSGIServer
 from operations_modules import http_server_routes
-
-flask_http_ip = ""
-flask_http_port = 10066
+from operations_modules.app_variables import flask_http_ip, flask_http_port
 
 
 class CreateHTTPServer:

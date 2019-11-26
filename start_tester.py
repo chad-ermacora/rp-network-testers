@@ -53,7 +53,7 @@ if config_primary.current_config.running_on_rpi:
     thread_name = "Interactive Server"
     print(" -- Interactive Hardware Server started")
     app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name=thread_name)
-    hardware_access.display_message(hardware_access.get_start_message())
+    hardware_access.display_message(hardware_access.get_button_functions_message())
 else:
     part_1_msg = "\nInteractive Hardware only supported on Raspberry Pis - "
     print(part_1_msg + "Interactive Hardware Server Disabled")

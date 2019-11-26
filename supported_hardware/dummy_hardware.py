@@ -31,7 +31,7 @@ class CreateHardwareAccess:
         pass
 
     @staticmethod
-    def get_start_message():
+    def get_button_functions_message(function_level=0):
         return ""
 
     @staticmethod
@@ -47,8 +47,14 @@ class CreateHardwareAccess:
         return ""
 
     @staticmethod
+    def get_upgrade_message(development_upgrade=False):
+        if development_upgrade:
+            print("Development Upgrade Started")
+        else:
+            print("Upgrade Started")
+        return ""
+
+    @staticmethod
     def shutdown_local_unit_message():
         print("Shutting Down Local Unit")
         return ""
-
-# TODO Add Upgrade, Dev Upgrade, reboot, shutdown, restart service??

@@ -19,6 +19,11 @@
 from operations_modules import file_locations
 from operations_modules.app_generic_functions import get_file_content
 
+
+# Flask HTTP Server Variables
+flask_http_ip = ""
+flask_http_port = 10066
+
 # Cached results from the previous test run
 previous_mtr_start_text = ""
 previous_iperf_start_text = ""

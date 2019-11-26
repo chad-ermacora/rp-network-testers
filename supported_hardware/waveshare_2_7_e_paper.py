@@ -74,10 +74,21 @@ class CreateHardwareAccess:
         self.esp.display(self.esp.getbuffer(display_image))
 
     @staticmethod
-    def get_start_message():
-        start_message = "Kootnet Tester\nVersion: " + current_config.app_version + \
-                        "\n\nDevice Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n"
-        return start_message
+    def get_button_functions_message(function_level=0):
+        message = "Function Level\nNot Supported"
+        if function_level == 0:
+            message = "Kootnet Tester " + current_config.app_version + \
+                        "\n\nPrimary Functions\n\n1. Run MTR\n2. Run iPerf3\n" + \
+                        "3. Nothing\n4. Change Functions"
+        elif function_level == 1:
+            message = "Kootnet Tester " + current_config.app_version + \
+                      "\n\nSecondary Functions\n\n1. System Information\n2. Upgrade Program\n" + \
+                      "3. DEV Upgrade Program\n4. Change Functions"
+        elif function_level == 2:
+            message = "Kootnet Tester " + current_config.app_version + \
+                      "\n\nTertiary Functions\n\n1. Shutdown Test Server\n2. Shutdown Local Unit\n" + \
+                      "3. Nothing\n4. Change Functions"
+        return message
 
     def get_mtr_message(self):
         cli_results = app_variables.previous_mtr_results
@@ -152,6 +163,16 @@ class CreateHardwareAccess:
         text_msg += "\n\nInternet Facing IP\n" + network_ip.get_ip_from_socket()
         text_msg += "\nStatic Eth IP\n" + network_ip.get_dhcpcd_ip()
         text_msg += "\nStatic Wifi IP\n" + network_ip.get_dhcpcd_ip(wireless=True)
+        return text_msg
+
+    @staticmethod
+    def get_upgrade_message(development_upgrade=False):
+        date_now = strftime("%d/%m/%y")
+        time_now = strftime("%H:%M")
+        text_msg = "Upgrade Started\nPlease Wait ...\n\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now
+
+        if development_upgrade:
+            text_msg = "** DEVELOPMENT **\n" + text_msg
         return text_msg
 
     @staticmethod

@@ -21,47 +21,53 @@ import time
 from operations_modules.config_primary import current_config
 from operations_modules import file_locations
 from operations_modules import app_variables
-from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function, write_file_to_disk
+from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function, write_file_to_disk, \
+    send_command
 from operations_modules.hardware_access import hardware_access
 
 
 def run_command(command_num):
+    display_msg = ""
     if command_num == 0:
-        current_config.clear_button_counts(exception_button=0)
-        if current_config.button_1 == 0:
+        if current_config.button_function_level == 0:
             thread_function(hardware_access.display_message, args="Running MTR Test\n\nPlease Wait ...")
             start_mtr()
-            current_config.button_1 = 1
-        elif current_config.button_1 == 1:
-            thread_function(hardware_access.display_message, args="Running MTR Test\n\nPlease Wait ...")
-            start_mtr()
-            current_config.clear_button_counts()
-        thread_function(hardware_access.display_message, args=hardware_access.get_mtr_message())
+            display_msg = hardware_access.get_mtr_message()
+        elif current_config.button_function_level == 1:
+            display_msg = hardware_access.get_sys_info_message()
+            print(display_msg)
+        elif current_config.button_function_level == 2:
+            display_msg = "Shutting Down\n\nRemote Server\nPlease Wait 15 Seconds\nBefore Powering Down ..."
+            port = app_variables.flask_http_port
+            send_command("http://" + current_config.remote_tester_ip + ":" + port + "/Shutdown")
     elif command_num == 1:
-        current_config.clear_button_counts(exception_button=1)
-        if current_config.button_2 == 0:
+        if current_config.button_function_level == 0:
             thread_function(hardware_access.display_message, args="Running iPerf3 Test\n\nPlease Wait ...")
             start_iperf()
-            current_config.button_2 = 1
-        elif current_config.button_2 == 1:
-            thread_function(hardware_access.display_message, args="Running iPerf3 Test\n\nPlease Wait ...")
-            start_iperf()
-            current_config.clear_button_counts()
-        thread_function(hardware_access.display_message, args=hardware_access.get_iperf_message())
+            display_msg = hardware_access.get_iperf_message()
+        elif current_config.button_function_level == 1:
+            thread_function(os.system, args="bash " + file_locations.http_upgrade_script)
+            display_msg = hardware_access.get_upgrade_message()
+        elif current_config.button_function_level == 2:
+            display_msg = "Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ..."
+            thread_function(os.system, args="sleep 4 && shutdown now")
     elif command_num == 2:
-        current_config.clear_button_counts(exception_button=2)
-        text_msg = hardware_access.get_sys_info_message()
-        if current_config.button_3 == 0:
-            print(text_msg)
-            thread_function(hardware_access.display_message, args=text_msg)
-            current_config.button_3 = 1
-        elif current_config.button_3 == 1:
-            upgrade_program()
+        if current_config.button_function_level == 0:
+            display_msg = "Nothing Yet"
+        elif current_config.button_function_level == 1:
+            thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")
+            display_msg = hardware_access.get_upgrade_message(development_upgrade=True)
+        elif current_config.button_function_level == 2:
+            display_msg = "Nothing Yet"
     elif command_num == 3:
-        hardware_access.display_message("Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ...")
-        thread_function(os.system, args="sleep 4 && shutdown now")
-    if not current_config.button_reset_running:
-        thread_function(_reset_buttons_in_sec, args=15)
+        if current_config.button_function_level == 0:
+            current_config.button_function_level += 1
+        elif current_config.button_function_level == 1:
+            current_config.button_function_level += 1
+        elif current_config.button_function_level == 2:
+            current_config.button_function_level = 0
+        display_msg = hardware_access.get_button_functions_message(current_config.button_function_level)
+    thread_function(hardware_access.display_message, args=display_msg)
 
 
 def _reset_buttons_in_sec(seconds):
@@ -124,16 +130,3 @@ def save_iperf_results_to_file():
     new_file_location = file_locations.location_save_report_folder + "/iperf-" + text_time_sec + ".txt"
     file_content = app_variables.previous_iperf_start_text + app_variables.previous_iperf_results
     write_file_to_disk(new_file_location, file_content)
-
-
-# FIXME Move this function to the hardware file layout.
-def upgrade_program(development_upgrade=False):
-    date_now = time.strftime("%d/%m/%y")
-    time_now = time.strftime("%H:%M")
-    text_msg = "Upgrade Started\nPlease Wait ...\n\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now
-    bash_args = "bash " + file_locations.http_upgrade_script
-    if development_upgrade:
-        text_msg = "** DEVELOPMENT **\n" + text_msg
-        bash_args += " dev"
-    thread_function(hardware_access.display_message, args=text_msg)
-    thread_function(os.system, args=bash_args)

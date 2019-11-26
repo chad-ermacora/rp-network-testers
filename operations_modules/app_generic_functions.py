@@ -18,9 +18,13 @@
 """
 import os
 import re
-import subprocess
 import time
+import subprocess
 from threading import Thread
+try:
+    import requests
+except Exception as error:
+    print("Problem Importing Requests: " + str(error))
 
 
 class CreateMonitoredThread:
@@ -120,6 +124,17 @@ def write_file_to_disk(file_location, file_content, open_type="w"):
         write_file.close()
     except Exception as error:
         print("Write to Disk Error: " + str(error))
+
+
+def send_command(url):
+    """ Sends command URL using requests. """
+    try:
+        requests.get(url=url, timeout=5, headers={'Connection': 'close'}, verify=False)
+        print("Command '" + url + "' OK")
+        return True
+    except Exception as error:
+        print(str(error))
+        return False
 
 
 def get_raspberry_pi_model():

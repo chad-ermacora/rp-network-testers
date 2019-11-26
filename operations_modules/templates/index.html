@@ -421,8 +421,8 @@
             <div class="mui-col-md-3"><b>License</b></div>
             <div class="mui-col-md-4"><b>
                 <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color: black;">
-                GNU General Public License 3
-            </a></b></div>
+                    GNU General Public License 3
+                </a></b></div>
         </div>
         <div class="mui-row" style="padding-left: inherit;">
             <div class="mui-col-md-3"><b>Primary IP</b></div>
@@ -430,30 +430,30 @@
         </div>
         <br>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
-                onclick="window.location.href = '/ReStart';">
-            Restart Program
+                onclick="window.open('http://{{ RemoteIPandPort }}', '_blank')">
+            Manage Remote Test Server
         </button>
+        <br>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
                 onclick="window.location.href = '/UpdateProgram';">
             Standard Upgrade
         </button>
-        <br>
-        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
-                onclick="window.open('http://{{ RemoteIPandPort }}', '_blank')">
-            Manage Remote Test Server
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-red-900"
+                onclick="window.location.href = '/Shutdown';">
+            Shutdown
         </button>
         <br>
         <button type="button" class="mui-btn mui-btn--raised" id="advanced-controls" style="display: block;">
             Advanced Controls
         </button>
         <div class="mui-container-fluid advanced-controls">
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
+                    onclick="window.location.href = '/ReStart';">
+                Restart Program
+            </button>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-yellow-900"
                     onclick="window.location.href = '/Reboot';">
                 Restart System
-            </button>
-            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-red-900"
-                    onclick="window.location.href = '/Shutdown';">
-                Shutdown
             </button>
             <br>
             <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-light-blue"
