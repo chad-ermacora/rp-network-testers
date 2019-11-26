@@ -37,9 +37,9 @@ def run_command(command_num):
             display_msg = hardware_access.get_sys_info_message()
             print(display_msg)
         elif current_config.button_function_level == 2:
-            display_msg = "Shutting Down\n\nRemote Server\nPlease Wait 15 Seconds\nBefore Powering Down ..."
+            display_msg = "Shutting Down\nRemote Server\n\nPlease Wait 15 Seconds\nBefore Powering Down ..."
             port = app_variables.flask_http_port
-            send_command("http://" + current_config.remote_tester_ip + ":" + port + "/Shutdown")
+            send_command("http://" + current_config.remote_tester_ip + ":" + str(port) + "/Shutdown")
     elif command_num == 1:
         if current_config.button_function_level == 0:
             thread_function(hardware_access.display_message, args="Running iPerf3 Test\n\nPlease Wait ...")
