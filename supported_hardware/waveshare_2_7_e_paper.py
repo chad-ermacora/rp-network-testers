@@ -22,7 +22,8 @@ from PIL import Image, ImageDraw, ImageFont
 from operations_modules import file_locations
 from operations_modules import app_variables
 from operations_modules.config_primary import current_config
-from operations_modules.app_generic_functions import get_raspberry_pi_model, get_os_name_version
+from operations_modules.app_generic_functions import get_raspberry_pi_model, get_os_name_version, \
+    check_tester_online_status
 from operations_modules import network_ip
 
 
@@ -75,19 +76,21 @@ class CreateHardwareAccess:
 
     @staticmethod
     def get_button_functions_message(function_level=0):
-        message = "Function Level\nNot Supported"
+        remote_ip = current_config.remote_tester_ip
+        remote_port = app_variables.flask_http_port
+        message = "Kootnet Tester " + current_config.app_version + \
+                  "\nRemote Tester\n" + check_tester_online_status(remote_ip, remote_port)
         if function_level == 0:
-            message = "Kootnet Tester " + current_config.app_version + \
-                        "\n\nPrimary Functions\n\n1. Run MTR\n2. Run iPerf3\n" + \
-                        "3. Nothing\n4. Change Functions"
+            message += "\n\nPrimary Functions\n\n1. Run MTR\n2. Run iPerf3\n" + \
+                       "3. Nothing\n4. Change Functions"
         elif function_level == 1:
-            message = "Kootnet Tester " + current_config.app_version + \
-                      "\n\nSecondary Functions\n\n1. System Information\n2. Upgrade Program\n" + \
-                      "3. DEV Upgrade Program\n4. Change Functions"
+            message += "\n\nSecondary Functions\n\n1. System Information\n2. Upgrade Program\n" + \
+                       "3. DEV Upgrade Program\n4. Change Functions"
         elif function_level == 2:
-            message = "Kootnet Tester " + current_config.app_version + \
-                      "\n\nTertiary Functions\n\n1. Shutdown Test Server\n2. Shutdown Local Unit\n" + \
-                      "3. Nothing\n4. Change Functions"
+            message += "\n\nTertiary Functions\n\n1. Shutdown Test Server\n2. Shutdown Local Unit\n" + \
+                       "3. Nothing\n4. Change Functions"
+        else:
+            message += "\n\nFunction Level\nNot Supported"
         return message
 
     def get_mtr_message(self):
@@ -157,12 +160,23 @@ class CreateHardwareAccess:
             lines = os_text.split(" ")
             os_text = lines[0] + " " + lines[2]
 
-        text_msg = "Version: " + current_config.app_version + "\nOS: " + os_text + \
-                   "\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now
-        text_msg += "\n\nRemote Server IP\n" + current_config.remote_tester_ip
-        text_msg += "\n\nInternet Facing IP\n" + network_ip.get_ip_from_socket()
-        text_msg += "\nStatic Eth IP\n" + network_ip.get_dhcpcd_ip()
-        text_msg += "\nStatic Wifi IP\n" + network_ip.get_dhcpcd_ip(wireless=True)
+        eth_ip = network_ip.get_dhcpcd_ip()
+        wifi_ip = network_ip.get_dhcpcd_ip(wireless=True)
+
+        eth_dhcp = " - Static"
+        wifi_dhcp = " - Static"
+        if network_ip.check_for_dhcp():
+            eth_dhcp = " - DHCP"
+        if network_ip.check_for_dhcp(wireless=True):
+            wifi_dhcp = " - DHCP"
+
+        text_msg = "Version: " + current_config.app_version + \
+                   "\nOS: " + os_text + \
+                   "\nDate: " + date_now + " (D/M/Y)" + \
+                   "\nTime: " + time_now + \
+                   "\n\nRemote Server IP\n" + current_config.remote_tester_ip + \
+                   "\n\nEth IP" + eth_dhcp + "\n" + eth_ip + \
+                   "\n\nWifi IP" + wifi_dhcp + "\n" + wifi_ip
         return text_msg
 
     @staticmethod

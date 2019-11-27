@@ -1,3 +1,4 @@
+netifaces
 requests
 RPi.GPIO
 spidev

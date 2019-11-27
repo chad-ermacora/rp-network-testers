@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import socket
+import netifaces
 from ipaddress import ip_address as _check_ip_address
 from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_raspberry_pi_model
@@ -57,21 +58,16 @@ def get_ip_from_socket():
 
 def get_dhcpcd_ip(wireless=False):
     if running_on_rpi:
-        dhcpcd_content_lines = app_variables.dhcpcd_config_file_content.split("\n")
-        current_interface = ""
-        for line in dhcpcd_content_lines:
-            line_stripped = line.strip()
-            if line_stripped[:9] == "interface":
-                current_interface = line_stripped[9:].strip()
-            elif line_stripped[:18] == "static ip_address=":
-                ip_without_subnet = line_stripped[18:].strip().split("/")[0]
-                if wireless:
-                    if current_interface == "wlan0":
-                        return ip_without_subnet
-                else:
-                    if current_interface == "eth0":
-                        return ip_without_subnet
-    return ""
+        try:
+            if wireless:
+                # netifaces.ifaddresses('wlan0')
+                address = netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
+            else:
+                address = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
+            return address
+        except Exception as error:
+            print("Interface is Inactive: " + str(error))
+    return "Inactive"
 
 
 def get_subnet(wireless=False):

@@ -21,8 +21,8 @@ import time
 from operations_modules.config_primary import current_config
 from operations_modules import file_locations
 from operations_modules import app_variables
-from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function, write_file_to_disk, \
-    send_command
+from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function, \
+    write_file_to_disk, send_command
 from operations_modules.hardware_access import hardware_access
 
 

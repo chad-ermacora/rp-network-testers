@@ -91,6 +91,11 @@
         <form class="mui-form" method="POST" action="/StartTests">
             <fieldset style="text-align: center; color: black;">
                 <h3><u><strong><a style="color: black;" href="/">Run Tests & View Results</a></strong></u></h3>
+                <h4><strong>Remote Tester Status</strong>
+                    <div style="color: {{ RemoteTesterStatusColor }}">
+                        <strong>{{ RemoteTesterStatus }}</strong>
+                    </div>
+                </h4>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
                         <input type="checkbox" name="run_mtr" value="" {{ MTRChecked }}>
@@ -212,7 +217,7 @@
     <div class="mui-tabs__pane mui--is-active" id="networking-eth-tab">
         <form class="mui-form" method="POST" style="min-height: 300px;" action="/EditEthernetIPv4">
             <fieldset style="text-align: center">
-                <h2><u><a style="color: black" href="{{ PageURL }}">Ethernet Configuration</a></u></h2>
+                <h2><u><a style="color: black" href="/">Ethernet Configuration</a></u></h2>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
                         <input type="checkbox" id="ETH_IP_DHCP" name="ethernet_ip_dhcp"
@@ -283,7 +288,7 @@
     <div class="mui-tabs__pane" id="networking-wifi-tab">
         <form class="mui-form" method="POST" style="min-height: 300px;" action="/EditWifiIPv4">
             <fieldset style="text-align: center">
-                <h2><u><a style="color: black" href="{{ PageURL }}">Wireless Configuration</a></u></h2>
+                <h2><u><a style="color: black" href="/">Wireless Configuration</a></u></h2>
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
                         <input type="checkbox" id="WIFI_IP_DHCP" name="wifi_ip_dhcp" value="" {{ WirelessCheckedDHCP }}>
@@ -353,7 +358,7 @@
         <form class="mui-form" method="POST" style="min-height: 300px;"
               action="/EditWifiConnection">
             <fieldset style="text-align: center">
-                <h2><u><a style="color: black;" href="">Automatic Wireless Connection</a></u></h2>
+                <h2><u><a style="color: black;" href="/">Automatic Wireless Connection</a></u></h2>
 
                 <label>
                     <a style="color: black" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank">
@@ -427,6 +432,10 @@
         <div class="mui-row" style="padding-left: inherit;">
             <div class="mui-col-md-3"><b>Primary IP</b></div>
             <div class="mui-col-md-4"><b>{{ InternetIPAddress }}</b></div>
+        </div>
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Disk Space</b></div>
+            <div class="mui-col-md-4"><b>{{ FreeDiskSpace }} GBytes Free</b></div>
         </div>
         <br>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
