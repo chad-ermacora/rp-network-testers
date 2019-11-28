@@ -27,47 +27,50 @@ from operations_modules.hardware_access import hardware_access
 
 
 def run_command(command_num):
-    display_msg = ""
-    if command_num == 0:
-        if current_config.button_function_level == 0:
-            thread_function(hardware_access.display_message, args="Running MTR Test\n\nPlease Wait ...")
-            start_mtr()
-            display_msg = hardware_access.get_mtr_message()
-        elif current_config.button_function_level == 1:
-            display_msg = hardware_access.get_sys_info_message()
-            print(display_msg)
-        elif current_config.button_function_level == 2:
-            display_msg = "Shutting Down\nRemote Server\n\nPlease Wait 15 Seconds\nBefore Powering Down ..."
-            port = app_variables.flask_http_port
-            send_command("http://" + current_config.remote_tester_ip + ":" + str(port) + "/Shutdown")
-    elif command_num == 1:
-        if current_config.button_function_level == 0:
-            thread_function(hardware_access.display_message, args="Running iPerf3 Test\n\nPlease Wait ...")
-            start_iperf()
-            display_msg = hardware_access.get_iperf_message()
-        elif current_config.button_function_level == 1:
-            thread_function(os.system, args="bash " + file_locations.http_upgrade_script)
-            display_msg = hardware_access.get_upgrade_message()
-        elif current_config.button_function_level == 2:
-            display_msg = "Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ..."
-            thread_function(os.system, args="sleep 4 && shutdown now")
-    elif command_num == 2:
-        if current_config.button_function_level == 0:
-            display_msg = "Nothing Yet"
-        elif current_config.button_function_level == 1:
-            thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")
-            display_msg = hardware_access.get_upgrade_message(development_upgrade=True)
-        elif current_config.button_function_level == 2:
-            display_msg = "Nothing Yet"
-    elif command_num == 3:
-        if current_config.button_function_level == 0:
-            current_config.button_function_level += 1
-        elif current_config.button_function_level == 1:
-            current_config.button_function_level += 1
-        elif current_config.button_function_level == 2:
-            current_config.button_function_level = 0
-        display_msg = hardware_access.get_button_functions_message(current_config.button_function_level)
-    thread_function(hardware_access.display_message, args=display_msg)
+    if hardware_access.display_in_use:
+        print("Display In Use, skipping Command.  Try again in a few seconds.")
+    else:
+        display_msg = ""
+        if command_num == 0:
+            if current_config.button_function_level == 0:
+                thread_function(hardware_access.display_message, args="Running MTR Test\n\nPlease Wait ...")
+                start_mtr()
+                display_msg = hardware_access.get_mtr_message()
+            elif current_config.button_function_level == 1:
+                display_msg = hardware_access.get_sys_info_message()
+                print(display_msg)
+            elif current_config.button_function_level == 2:
+                display_msg = "Shutting Down\nRemote Server\n\nPlease Wait 15 Seconds\nBefore Powering Down ..."
+                port = app_variables.flask_http_port
+                send_command("http://" + current_config.remote_tester_ip + ":" + str(port) + "/Shutdown")
+        elif command_num == 1:
+            if current_config.button_function_level == 0:
+                thread_function(hardware_access.display_message, args="Running iPerf3 Test\n\nPlease Wait ...")
+                start_iperf()
+                display_msg = hardware_access.get_iperf_message()
+            elif current_config.button_function_level == 1:
+                thread_function(os.system, args="bash " + file_locations.http_upgrade_script)
+                display_msg = hardware_access.get_upgrade_message()
+            elif current_config.button_function_level == 2:
+                display_msg = "Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ..."
+                thread_function(os.system, args="sleep 4 && shutdown now")
+        elif command_num == 2:
+            if current_config.button_function_level == 0:
+                display_msg = "Nothing Yet"
+            elif current_config.button_function_level == 1:
+                thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")
+                display_msg = hardware_access.get_upgrade_message(development_upgrade=True)
+            elif current_config.button_function_level == 2:
+                display_msg = "Nothing Yet"
+        elif command_num == 3:
+            if current_config.button_function_level == 0:
+                current_config.button_function_level += 1
+            elif current_config.button_function_level == 1:
+                current_config.button_function_level += 1
+            elif current_config.button_function_level == 2:
+                current_config.button_function_level = 0
+            display_msg = hardware_access.get_button_functions_message(current_config.button_function_level)
+        thread_function(hardware_access.display_message, args=display_msg)
 
 
 def _reset_buttons_in_sec(seconds):

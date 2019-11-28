@@ -29,7 +29,7 @@ class CreateInteractiveServer:
             while True:
                 sleep(300)
         while True:
-            if current_config.tests_running or hardware_access.display_in_use:
+            if current_config.tests_running:
                 sleep(1)
             count = 0
             for key_state in hardware_access.get_key_states():
