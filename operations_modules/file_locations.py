@@ -39,3 +39,4 @@ j_query_js = script_folder_path + "/operations_modules/extras/jquery-3.4.1.min.j
 mui_min_css = script_folder_path + "/operations_modules/extras/mui.min-ver-0.9.43.css"
 mui_min_js = script_folder_path + "/operations_modules/extras/mui.min-ver-0.9.43.js"
 mui_colors_min_css = script_folder_path + "/operations_modules/extras/mui-colors.min-ver-0.9.43.css"
+html_icon = script_folder_path + "/operations_modules/extras/icon.png"

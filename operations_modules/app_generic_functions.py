@@ -18,9 +18,14 @@
 """
 import os
 import re
-import subprocess
 import time
+import subprocess
 from threading import Thread
+from operations_modules import file_locations
+try:
+    import requests
+except Exception as import_error:
+    print("Problem Importing Requests: " + str(import_error))
 
 
 class CreateMonitoredThread:
@@ -122,6 +127,30 @@ def write_file_to_disk(file_location, file_content, open_type="w"):
         print("Write to Disk Error: " + str(error))
 
 
+def check_tester_online_status(ip, port):
+    """ requests HTTP connection to Tester IP. Return sensor status. """
+    url = "http://" + ip + ":" + str(port) + "/CheckOnlineStatus"
+    try:
+        html_request_response = requests.get(url=url, timeout=1)
+        if html_request_response.status_code == 200:
+            return "Online"
+    except Exception as error:
+        print(str(error))
+        return "Offline"
+    return "Offline"
+
+
+def send_command(url):
+    """ Sends command URL using requests. """
+    try:
+        requests.get(url=url, timeout=5, headers={'Connection': 'close'})
+        print("Command '" + url + "' OK")
+        return True
+    except Exception as error:
+        print(str(error))
+        return False
+
+
 def get_raspberry_pi_model():
     if os.path.isfile("/proc/device-tree/model"):
         pi_version = str(subprocess.check_output("cat /proc/device-tree/model", shell=True))
@@ -134,6 +163,18 @@ def get_raspberry_pi_model():
             elif pi_version[:22] == "Raspberry Pi 4 Model B":
                 return "Raspberry Pi 4 Model B"
     return get_os_name_version()
+
+
+def get_disk_free_percent():
+    """ Return's root free disk space as a % in string format. """
+    try:
+        statvfs = os.statvfs(file_locations.location_save_report_folder)
+        free_bytes = statvfs.f_frsize * statvfs.f_bfree
+        return_disk_usage = str(round(free_bytes / 1_000_000_000, 3))
+    except Exception as error:
+        print("Linux System - Get Disk Usage % Error: " + str(error))
+        return_disk_usage = "Error"
+    return return_disk_usage
 
 
 def hostname_is_valid(text_hostname):

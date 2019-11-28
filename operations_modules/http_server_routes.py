@@ -25,12 +25,43 @@ from operations_modules import app_variables
 from operations_modules import run_commands
 from operations_modules.config_primary import current_config
 from operations_modules.network_wifi import check_html_wifi_settings
-from operations_modules.network_ip import check_html_network_settings, ip_address_validation_check
+from operations_modules.network_ip import check_html_network_settings, ip_address_validation_check, \
+    get_ip_from_socket, get_dhcpcd_ip
 
 http_routes = Blueprint("http_routes", __name__)
 
 invalid_os_msg1 = "OS Not Supported"
 invalid_os_msg2 = "Network Configuration not supported on " + current_config.full_system_text
+
+
+@http_routes.route("/jquery.min.js")
+def jquery_min_js():
+    return send_file(file_locations.j_query_js)
+
+
+@http_routes.route("/mui.min.css")
+def mui_min_css():
+    return send_file(file_locations.mui_min_css)
+
+
+@http_routes.route("/mui.min.js")
+def mui_min_js():
+    return send_file(file_locations.mui_min_js)
+
+
+@http_routes.route("/mui-colors.min.css")
+def mui_colors_min_css():
+    return send_file(file_locations.mui_colors_min_css)
+
+
+@http_routes.route("/favicon.ico")
+def html_icon():
+    return send_file(file_locations.html_icon)
+
+
+@http_routes.route("/CheckOnlineStatus")
+def check_online():
+    return "Online"
 
 
 @http_routes.route("/")
@@ -74,15 +105,26 @@ def html_root():
     if current_config.running_on_rpi:
         wifi_country_code_disable = ""
 
+    ip = current_config.remote_tester_ip
+    port = app_variables.flask_http_port
+    remote_tester_online_status = app_generic_functions.check_tester_online_status(ip, port)
+    remote_tester_colour = "#B71C1C"
+    if remote_tester_online_status == "Online":
+        remote_tester_colour = "darkgreen"
+
     return render_template("index.html",
-                           RemoteIPandPort=current_config.remote_tester_ip + ":10066",
+                           RemoteIPandPort=current_config.remote_tester_ip + ":" + str(app_variables.flask_http_port),
                            TestsRunning=tests_running_msg,
                            MTRChecked=app_variables.html_mtr_checked,
                            iPerfChecked=app_variables.html_iperf_checked,
                            IPHostname=str(gethostname()),
                            DisabledButton=button_disabled,
                            OSVersion=app_generic_functions.get_os_name_version(),
+                           InternetIPAddress=get_ip_from_socket(),
                            KootnetVersion=current_config.app_version,
+                           FreeDiskSpace=app_generic_functions.get_disk_free_percent(),
+                           RemoteTesterStatus=remote_tester_online_status,
+                           RemoteTesterStatusColor=remote_tester_colour,
                            Results_MTR=mtr_results,
                            Results_iPerf=iperf_results,
                            CheckediPerfServer=iperf_server_enabled,
@@ -92,14 +134,14 @@ def html_root():
                            MTRCount=current_config.mtr_run_count,
                            CheckedWaveShare27EInk=wave_share_27_enabled,
                            EthernetCheckedDHCP=ethernet_dhcp,
-                           EthernetIPv4Address=current_config.local_ethernet_ip,
+                           EthernetIPv4Address=get_dhcpcd_ip(),
                            EthernetIPv4Subnet=current_config.local_ethernet_subnet,
                            EthernetIPGateway=current_config.local_ethernet_gateway,
                            EthernetIPDNS1=current_config.local_ethernet_dns1,
                            EthernetIPDNS2=current_config.local_ethernet_dns2,
                            WirelessCheckedDHCP=wireless_dhcp,
                            WifiCountryCodeDisabled=wifi_country_code_disable,
-                           WirelessIPv4Address=current_config.local_wireless_ip,
+                           WirelessIPv4Address=get_dhcpcd_ip(wireless=True),
                            WirelessIPv4Subnet=current_config.local_wireless_subnet,
                            WirelessIPGateway=current_config.local_wireless_gateway,
                            WirelessIPDNS1=current_config.local_wireless_dns1,
@@ -145,26 +187,6 @@ def shutdown_system():
     app_generic_functions.thread_function(os.system, args="shutdown now")
     return render_template("message_return.html", URL="/", TextMessage="Shutting Down Unit",
                            TextMessage2="Please wait 15 seconds before removing power")
-
-
-@http_routes.route("/jquery.min.js")
-def jquery_min_js():
-    return send_file(file_locations.j_query_js)
-
-
-@http_routes.route("/mui.min.css")
-def mui_min_css():
-    return send_file(file_locations.mui_min_css)
-
-
-@http_routes.route("/mui.min.js")
-def mui_min_js():
-    return send_file(file_locations.mui_min_js)
-
-
-@http_routes.route("/mui-colors.min.css")
-def mui_colors_min_css():
-    return send_file(file_locations.mui_colors_min_css)
 
 
 @http_routes.route("/StartTests", methods=["POST"])

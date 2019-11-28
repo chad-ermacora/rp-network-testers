@@ -1,3 +1,5 @@
+netifaces
+requests
 RPi.GPIO
 spidev
 Pillow

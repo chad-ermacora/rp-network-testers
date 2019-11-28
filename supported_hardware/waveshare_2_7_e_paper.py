@@ -22,7 +22,8 @@ from PIL import Image, ImageDraw, ImageFont
 from operations_modules import file_locations
 from operations_modules import app_variables
 from operations_modules.config_primary import current_config
-from operations_modules.app_generic_functions import get_raspberry_pi_model, get_os_name_version
+from operations_modules.app_generic_functions import get_raspberry_pi_model, get_os_name_version, \
+    check_tester_online_status
 from operations_modules import network_ip
 
 
@@ -40,6 +41,8 @@ class CreateHardwareAccess:
             print("\nEnabled SPI for WaveShare 2.7 E-Paper\n")
         except Exception as error:
             print("\nError Enabling SPI for WaveShare 2.7 E-Paper: " + str(error) + "\n")
+
+        self.display_in_use = False
 
         # GPIO key to Pin #s
         self.key1 = 5
@@ -66,18 +69,34 @@ class CreateHardwareAccess:
 
     def display_message(self, text_message):
         # 255 to clear the frame
+        self.display_in_use = True
         display_image = Image.new("1", (self.epd2in7_import.EPD_WIDTH, self.epd2in7_import.EPD_HEIGHT), 255)
         draw = ImageDraw.Draw(display_image)
         font18 = ImageFont.truetype(file_locations.location_truetype_font, 16)
         draw.text((2, 0), text_message, font=font18, fill=0)
         print(text_message)
         self.esp.display(self.esp.getbuffer(display_image))
+        self.display_in_use = False
 
     @staticmethod
-    def get_start_message():
-        start_message = "Kootnet Tester\nVersion: " + current_config.app_version + \
-                        "\n\nDevice Ready\n\nBe sure to\nGive 15 Seconds\nFor Remote\nDevice to boot\n\n"
-        return start_message
+    def get_button_functions_message(function_level=0):
+        remote_ip = current_config.remote_tester_ip
+        remote_port = app_variables.flask_http_port
+        message = "Kootnet Tester " + current_config.app_version + \
+                  "\n\nRemote Tester\n  Status: " + check_tester_online_status(remote_ip, remote_port) + \
+                  "\n  IP: " + current_config.remote_tester_ip
+        if function_level == 0:
+            message += "\n\nPrimary Functions\n  1. Run MTR\n  2. Run iPerf3\n" + \
+                       "  3. Nothing\n  4. Change Functions"
+        elif function_level == 1:
+            message += "\n\nSecondary Functions\n  1. System Information\n  2. Upgrade Program\n" + \
+                       "  3. DEV Upgrade Program\n  4. Change Functions"
+        elif function_level == 2:
+            message += "\n\nTertiary Functions\n  1. Shutdown Test Server\n  2. Shutdown Local Unit\n" + \
+                       "  3. Nothing\n  4. Change Functions"
+        else:
+            message += "\n\nFunction Level\nNot Supported"
+        return message
 
     def get_mtr_message(self):
         cli_results = app_variables.previous_mtr_results
@@ -146,12 +165,33 @@ class CreateHardwareAccess:
             lines = os_text.split(" ")
             os_text = lines[0] + " " + lines[2]
 
-        text_msg = "Version: " + current_config.app_version + "\nOS: " + os_text + \
-                   "\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now
-        text_msg += "\n\nRemote Server IP\n" + current_config.remote_tester_ip
-        text_msg += "\n\nInternet Facing IP\n" + network_ip.get_ip_from_socket()
-        text_msg += "\nStatic Eth IP\n" + network_ip.get_dhcpcd_ip()
-        text_msg += "\nStatic Wifi IP\n" + network_ip.get_dhcpcd_ip(wireless=True)
+        eth_ip = network_ip.get_dhcpcd_ip()
+        wifi_ip = network_ip.get_dhcpcd_ip(wireless=True)
+
+        eth_dhcp = " - Static"
+        wifi_dhcp = " - Static"
+        if network_ip.check_for_dhcp():
+            eth_dhcp = " - DHCP"
+        if network_ip.check_for_dhcp(wireless=True):
+            wifi_dhcp = " - DHCP"
+
+        text_msg = "Version: " + current_config.app_version + \
+                   "\nOS: " + os_text + \
+                   "\nDate: " + date_now + " (D/M/Y)" + \
+                   "\nTime: " + time_now + \
+                   "\n\nRemote Server IP\n" + current_config.remote_tester_ip + \
+                   "\n\nEth IP" + eth_dhcp + "\n" + eth_ip + \
+                   "\n\nWifi IP" + wifi_dhcp + "\n" + wifi_ip
+        return text_msg
+
+    @staticmethod
+    def get_upgrade_message(development_upgrade=False):
+        date_now = strftime("%d/%m/%y")
+        time_now = strftime("%H:%M")
+        text_msg = "Upgrade Started\nPlease Wait ...\n\nDate: " + date_now + " (D/M/Y)\nTime: " + time_now
+
+        if development_upgrade:
+            text_msg = "** DEVELOPMENT **\n" + text_msg
         return text_msg
 
     @staticmethod
