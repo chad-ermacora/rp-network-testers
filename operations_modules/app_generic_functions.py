@@ -132,11 +132,11 @@ def check_tester_online_status(ip, port):
     url = "http://" + ip + ":" + str(port) + "/CheckOnlineStatus"
     try:
         html_request_response = requests.get(url=url, timeout=1)
+        if html_request_response.status_code == 200:
+            return "Online"
     except Exception as error:
         print(str(error))
         return "Offline"
-    if html_request_response.status_code == 200:
-        return "Online"
     return "Offline"
 
 

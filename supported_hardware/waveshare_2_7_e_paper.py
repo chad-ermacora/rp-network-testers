@@ -42,6 +42,8 @@ class CreateHardwareAccess:
         except Exception as error:
             print("\nError Enabling SPI for WaveShare 2.7 E-Paper: " + str(error) + "\n")
 
+        self.display_in_use = False
+
         # GPIO key to Pin #s
         self.key1 = 5
         self.key2 = 6
@@ -67,12 +69,14 @@ class CreateHardwareAccess:
 
     def display_message(self, text_message):
         # 255 to clear the frame
+        self.display_in_use = True
         display_image = Image.new("1", (self.epd2in7_import.EPD_WIDTH, self.epd2in7_import.EPD_HEIGHT), 255)
         draw = ImageDraw.Draw(display_image)
         font18 = ImageFont.truetype(file_locations.location_truetype_font, 16)
         draw.text((2, 0), text_message, font=font18, fill=0)
         print(text_message)
         self.esp.display(self.esp.getbuffer(display_image))
+        self.display_in_use = False
 
     @staticmethod
     def get_button_functions_message(function_level=0):

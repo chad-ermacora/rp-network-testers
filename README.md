@@ -50,7 +50,7 @@ If you intend to test cables or a network without a DHCP server, be sure to set 
 You must set the "Remote Test Server IP" in the configuration of the tester you are intending to run tests from.  
 Connect the 2 Tester units to a single cable or local network then use the web interface or press the appropriate buttons to initiate tests.  
 
-_Note: Pressing the 4th button to change button functions will cycle through 3 different settings when pressed multiple times._
+_Note: The "Change Button Functions" will cycle through 3 different settings when pressed multiple times._
 
 ### Primary Button Functions
 1. Run & Display [MTR](https://www.bitwizard.nl/mtr/) tests
