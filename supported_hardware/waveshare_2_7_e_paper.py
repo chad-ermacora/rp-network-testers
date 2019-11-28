@@ -83,16 +83,17 @@ class CreateHardwareAccess:
         remote_ip = current_config.remote_tester_ip
         remote_port = app_variables.flask_http_port
         message = "Kootnet Tester " + current_config.app_version + \
-                  "\nRemote Tester\n" + check_tester_online_status(remote_ip, remote_port)
+                  "\n\nRemote Tester\n  Status: " + check_tester_online_status(remote_ip, remote_port) + \
+                  "\n  IP: " + current_config.remote_tester_ip
         if function_level == 0:
-            message += "\n\nPrimary Functions\n\n1. Run MTR\n2. Run iPerf3\n" + \
-                       "3. Nothing\n4. Change Functions"
+            message += "\n\nPrimary Functions\n  1. Run MTR\n  2. Run iPerf3\n" + \
+                       "  3. Nothing\n  4. Change Functions"
         elif function_level == 1:
-            message += "\n\nSecondary Functions\n\n1. System Information\n2. Upgrade Program\n" + \
-                       "3. DEV Upgrade Program\n4. Change Functions"
+            message += "\n\nSecondary Functions\n  1. System Information\n  2. Upgrade Program\n" + \
+                       "  3. DEV Upgrade Program\n  4. Change Functions"
         elif function_level == 2:
-            message += "\n\nTertiary Functions\n\n1. Shutdown Test Server\n2. Shutdown Local Unit\n" + \
-                       "3. Nothing\n4. Change Functions"
+            message += "\n\nTertiary Functions\n  1. Shutdown Test Server\n  2. Shutdown Local Unit\n" + \
+                       "  3. Nothing\n  4. Change Functions"
         else:
             message += "\n\nFunction Level\nNot Supported"
         return message
