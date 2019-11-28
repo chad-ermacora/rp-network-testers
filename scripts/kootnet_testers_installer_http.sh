@@ -12,7 +12,7 @@ fi
 HTTP_SERVER="http://kootenay-networks.com"
 HTTP_ZIP="/KootNetEthTesters.zip"
 # Other Option
-APT_GET_INSTALL="wget mtr iperf3 python3 python3-venv"
+APT_GET_INSTALL="wget mtr iperf3 python3 python3-pip python3-venv"
 SECONDARY_APT_GET_INSTALL="fonts-freefont-ttf fake-hwclock"
 INSTALL_DIR="/opt/kootnet-network-testers"
 # Make sure its running with root
