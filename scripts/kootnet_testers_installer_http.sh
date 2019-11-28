@@ -12,7 +12,7 @@ fi
 HTTP_SERVER="http://kootenay-networks.com"
 HTTP_ZIP="/KootNetEthTesters.zip"
 # Other Option
-APT_GET_INSTALL="wget mtr iperf3"
+APT_GET_INSTALL="wget mtr iperf3 python3 python3-venv"
 SECONDARY_APT_GET_INSTALL="fonts-freefont-ttf fake-hwclock"
 INSTALL_DIR="/opt/kootnet-network-testers"
 # Make sure its running with root
@@ -72,5 +72,6 @@ cp ${INSTALL_DIR}/auto_start/KootnetEthServer.service /etc/systemd/system
 systemctl daemon-reload
 systemctl enable KootnetEthServer.service
 systemctl restart KootnetEthServer.service
+systemctl start KootnetEthServer.service
 printf "\nInstall Complete\n"
 cd || exit
