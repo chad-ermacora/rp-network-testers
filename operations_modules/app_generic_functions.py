@@ -131,7 +131,7 @@ def check_tester_online_status(ip, port):
     """ requests HTTP connection to Tester IP. Return sensor status. """
     url = "http://" + ip + ":" + str(port) + "/CheckOnlineStatus"
     try:
-        html_request_response = requests.get(url=url, timeout=1)
+        html_request_response = requests.get(url=url, timeout=0.5)
         if html_request_response.status_code == 200:
             return "Online"
     except Exception as error:
@@ -149,6 +149,17 @@ def send_command(url):
     except Exception as error:
         print(str(error))
         return False
+
+
+def get_remote_data(url):
+    """ Returns requested HTTP data (based on the provided URL). """
+    try:
+        tmp_data = requests.get(url=url, timeout=0.5)
+        return_data = tmp_data.content
+    except Exception as error:
+        print("Remote Data grab Error: " + str(error))
+        return_data = "NA"
+    return return_data
 
 
 def get_raspberry_pi_model():
