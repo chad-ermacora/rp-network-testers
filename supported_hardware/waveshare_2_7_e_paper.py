@@ -23,7 +23,7 @@ from operations_modules import file_locations
 from operations_modules import app_variables
 from operations_modules.config_primary import current_config
 from operations_modules.app_generic_functions import get_raspberry_pi_model, get_os_name_version, \
-    check_tester_online_status
+    check_tester_online_status, get_remote_data
 from operations_modules import network_ip
 
 
@@ -92,7 +92,7 @@ class CreateHardwareAccess:
             message += "\n\nSecondary Functions\n  1. System Information\n  2. Upgrade Program\n" + \
                        "  3. DEV Upgrade Program\n  4. Change Functions"
         elif function_level == 2:
-            message += "\n\nTertiary Functions\n  1. Shutdown Test Server\n  2. Shutdown Local Unit\n" + \
+            message += "\n\nTertiary Functions\n  1. Shutdown Remote\n  2. Shutdown Local\n" + \
                        "  3. Nothing\n  4. Change Functions"
         else:
             message += "\n\nFunction Level\nNot Supported"
@@ -160,6 +160,8 @@ class CreateHardwareAccess:
         date_now = strftime("%d/%m/%y")
         time_now = strftime("%H:%M")
         os_text = get_os_name_version()
+        remote_ip = current_config.remote_tester_ip
+        remote_port = app_variables.flask_http_port
 
         if current_config.running_on_rpi:
             lines = os_text.split(" ")
@@ -175,13 +177,18 @@ class CreateHardwareAccess:
         if network_ip.check_for_dhcp(wireless=True):
             wifi_dhcp = " - DHCP"
 
+        remote_version = str(get_remote_data("http://" + remote_ip + ":" + str(remote_port) + "/Version"))[2:-1]
+        if 3 > len(remote_version) or len(remote_version) > 14:
+            remote_version = "NA"
         text_msg = "Version: " + current_config.app_version + \
                    "\nOS: " + os_text + \
                    "\nDate: " + date_now + " (D/M/Y)" + \
                    "\nTime: " + time_now + \
-                   "\n\nRemote Server IP\n" + current_config.remote_tester_ip + \
-                   "\n\nEth IP" + eth_dhcp + "\n" + eth_ip + \
-                   "\n\nWifi IP" + wifi_dhcp + "\n" + wifi_ip
+                   "\n\nEthernet IP" + eth_dhcp + "\n" + eth_ip + \
+                   "\nWireless IP" + wifi_dhcp + "\n" + wifi_ip + \
+                   "\n\nRemote Server - " + check_tester_online_status(remote_ip, remote_port) + \
+                   "\nIP " + current_config.remote_tester_ip + \
+                   "\nVersion: " + remote_version
         return text_msg
 
     @staticmethod

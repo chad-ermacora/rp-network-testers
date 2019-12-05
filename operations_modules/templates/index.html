@@ -438,6 +438,11 @@
             <div class="mui-col-md-4"><b>{{ FreeDiskSpace }} GBytes Free</b></div>
         </div>
         <br>
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-4" style="background-color: #00ffff;"><b>Remote Test Server Version</b></div>
+            <div class="mui-col-md-3" style="background-color: #0BB10D"><b>{{ RemoteVersion }}</b></div>
+        </div>
+        <br>
         <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
                 onclick="window.open('http://{{ RemoteIPandPort }}', '_blank')">
             Manage Remote Test Server

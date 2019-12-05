@@ -64,6 +64,11 @@ def check_online():
     return "Online"
 
 
+@http_routes.route("/Version")
+def get_app_version():
+    return current_config.app_version
+
+
 @http_routes.route("/")
 @http_routes.route("/index.html")
 def html_root():
@@ -112,8 +117,15 @@ def html_root():
     if remote_tester_online_status == "Online":
         remote_tester_colour = "darkgreen"
 
+    remote_ip = current_config.remote_tester_ip
+    remote_port = app_variables.flask_http_port
+    remote_version = str(app_generic_functions.get_remote_data("http://" + remote_ip + ":" + str(remote_port) +
+                                                               "/Version"))[2:-1]
+    if 3 > len(remote_version) or len(remote_version) > 14:
+        remote_version = "NA"
     return render_template("index.html",
                            RemoteIPandPort=current_config.remote_tester_ip + ":" + str(app_variables.flask_http_port),
+                           RemoteVersion=remote_version,
                            TestsRunning=tests_running_msg,
                            MTRChecked=app_variables.html_mtr_checked,
                            iPerfChecked=app_variables.html_iperf_checked,

@@ -28,7 +28,7 @@ from operations_modules.hardware_access import hardware_access
 
 def run_command(command_num):
     if hardware_access.display_in_use:
-        print("Display In Use, skipping Command.  Try again in a few seconds.")
+        print("\nDisplay In Use, skipping Command.  Try again in a few seconds.\n")
     else:
         display_msg = ""
         if command_num == 0:
