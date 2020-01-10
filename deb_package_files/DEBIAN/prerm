@@ -1,6 +1,6 @@
 #!/bin/bash
 OLD_AUTORUNS="/etc/systemd/system/KootnetEthServer.service"
-if [[ ! -f ${OLD_AUTORUNS} ]]; then
+if [[ -f ${OLD_AUTORUNS} ]]; then
   systemctl disable KootnetEthServer
   systemctl stop KootnetEthServer
   rm -f ${OLD_AUTORUNS}
@@ -8,5 +8,5 @@ fi
 systemctl disable KootnetNetworkTestersServer
 systemctl stop KootnetNetworkTestersServer
 crontab -u root -r
-find /opt/kootnet-network-testers -type d -name __pycache__ -exec rm -rf {} \;
+find /opt/kootnet-network-testers -type d -name __pycache__ -exec rm -rf {} \; 2>/dev/null
 exit 0
