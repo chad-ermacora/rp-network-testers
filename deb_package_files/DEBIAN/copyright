@@ -1,0 +1,27 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: rp-network-testers
+Upstream-Contact: Chad Ermacora <chad.e@linux.com>
+Source: https://github.com/chad-ermacora/rp-network-testers
+Comment: I used some icons with GPL3 license I should credit to creator as well as mui min & jquery and a font. 
+
+Files: *
+Copyright: 2019 Chad Ermacora
+License: GPL-3+
+
+License: GPL-3+
+ KootNet Sensors is a collection of programs and scripts to deploy,
+ interact with, and collect readings from various Sensors.
+ Copyright (C) 2018  Chad Ermacora  chad.ermacora@gmail.com
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.

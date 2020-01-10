@@ -31,7 +31,7 @@ dhcpcd_config_file_template = script_folder_path + "/operations_modules/extras/d
 wpa_supplicant_file = "/etc/wpa_supplicant/wpa_supplicant.conf"
 wpa_supplicant_file_template = script_folder_path + "/operations_modules/extras/wpa_supplicant_template.conf"
 
-location_save_report_folder = "/home/pi/Kootnet_test_results"
+location_save_report_folder = script_folder_path + "/Kootnet_test_results"
 location_truetype_font = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
 
 # Flask HTTP files

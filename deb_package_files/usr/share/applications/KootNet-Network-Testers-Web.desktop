@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Kootnet Network Testers
+Comment=Web interface for running network tests & configuring
+Type=Application
+Icon=/opt/kootnet-network-testers/operations_modules/extras/icon.png
+TryExec=/usr/bin/x-www-browser
+Exec=x-www-browser http://localhost:10066
+Terminal=false
+Categories=Utility;Science;
+StartupNotify=true

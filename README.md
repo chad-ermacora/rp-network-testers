@@ -5,7 +5,8 @@ to test latency & throughput on individual cables or network routes.
 No special hardware is required to use Kootnet Network Testers.  
 _IPv4 support only.  IPv6 support coming soon._
 
-_Note: Throughput is limited to the Networks Capacity and the Computers Network Adapter. The results will reflect the slowest link.  
+_Note: Throughput is limited to the Networks Capacity and the Computers Network Adapter.
+The results will reflect the slowest link.  
 Raspberry Pi 3B+ = 300Mbps || Raspberry Pi 4B = 1000Mbps_
 
 Install & Setup
@@ -31,24 +32,30 @@ _Note: Hold the buttons down for 1 second before releasing to ensure proper oper
 Fresh Raspbian Installs Recommended [Download Raspbian Here](https://www.raspberrypi.org/downloads/)
 2. Run the following command in a Terminal.
 
-```wget http://kootenay-networks.com/utils/koot_net_eth_testers/kootnet_testers_installer_http.sh && sudo bash kootnet_testers_installer_http.sh && sudo reboot```
+```wget http://kootenay-networks.com/utils/koot_net_eth_testers/kootnet_testers_installer_http.sh && sudo bash kootnet_testers_installer_http.sh```
 
-3. Once the script has finished, open the "Kootnet Network Testers" shortcut in your Operating Systems application menu to configure and use the Tester.
-On the Raspberry Pi, the shortcut is located in the Accessories menu.
+3. Once the script has finished, open the "Kootnet Network Testers" shortcut in your Operating Systems application
+menu to configure and use the Tester. On the Raspberry Pi, the shortcut is located in the Accessories menu.
 
-Optional: If you cannot find the menu shortcut, you can open a web browser like Firefox or Chrome and goto http://localhost:10066 on the local unit to use and configure the Tester.  
-Optional: Connect the tester to a network and access the configuration page from another computer on the same network through the IP address. Example: http://192.168.1.121:10066
+Optional: If you cannot find the menu shortcut, you can open a web browser like Firefox or Chrome and goto
+http://localhost:10066 on the local unit to use and configure the Tester.  
+Optional: Connect the tester to a network and access the configuration page from another computer on the same network
+through the IP address. Example: http://192.168.1.121:10066
 
-_Note: You need to install Kootnet Network Testers on 2 devices to test throughput, one for interacting with and the other as the remote test server.
-By default, each Kootnet Network Tester can be used as the remote test server (This can be turned off in the configuration).  
+_Note: You need to install Kootnet Network Testers on 2 devices to test throughput,
+one for interacting with and the other as the remote test server.
+By default, each Kootnet Network Tester can be used as the remote test server
+(This can be turned off in the configuration).  
 The remote test server IP can be found and set in the unit's configuration._ 
 
 Using KootNet Network Testers
 ====================
-If you intend to test cables or a network without a DHCP server, be sure to set Static IP's in the testers configuration or the underlying Operating System.
+If you intend to test cables or a network without a DHCP server,
+be sure to set Static IP's in the testers configuration or the underlying Operating System.
 
 You must set the "Remote Test Server IP" in the configuration of the tester you are intending to run tests from.  
-Connect the 2 Tester units to a single cable or local network then use the web interface or press the appropriate buttons to initiate tests.  
+Connect the 2 Tester units to a single cable or local network
+then use the web interface or press the appropriate buttons to initiate tests.  
 
 _Note: The "Change Button Functions" will cycle through 3 different settings when pressed multiple times._
 

@@ -19,9 +19,10 @@
 import os
 from time import sleep
 from operations_modules import file_locations
+from operations_modules import http_server
+from operations_modules import app_variables
 from operations_modules.config_primary import current_config
 from operations_modules.app_generic_functions import CreateMonitoredThread
-from operations_modules import config_primary, http_server, app_variables
 from operations_modules.interaction_server import CreateInteractiveServer
 from operations_modules.hardware_access import hardware_access
 
@@ -34,22 +35,18 @@ def start_iperf_server():
     os.system("/usr/bin/iperf3 -s -p " + current_config.iperf_port)
 
 
+print("Reports Saving to: " + file_locations.location_save_report_folder + "\n")
 if current_config.running_on_rpi:
     enable_fake_hw_clock()
-if not current_config.running_on_rpi:
-    file_locations.location_save_report_folder = file_locations.script_folder_path + "/Kootnet_test_results"
-if not os.path.isdir(file_locations.location_save_report_folder):
-    os.mkdir(file_locations.location_save_report_folder)
-print("Reports Saving to: " + file_locations.location_save_report_folder + "\n")
 
-thread_name = "HTTP Server"
+app_variables.http_server = CreateMonitoredThread(http_server.CreateHTTPServer, thread_name="HTTP Server")
 print(" -- HTTP Server Started on port " + str(http_server.flask_http_port))
-app_variables.http_server = CreateMonitoredThread(http_server.CreateHTTPServer, thread_name=thread_name)
-if config_primary.current_config.is_iperf_server:
+
+if current_config.is_iperf_server:
     thread_name = "iPerf3 Server"
     print(" -- iPerf 3 Server started on port " + current_config.iperf_port)
     app_variables.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name=thread_name)
-if config_primary.current_config.running_on_rpi:
+if current_config.running_on_rpi:
     thread_name = "Interactive Server"
     print(" -- Interactive Hardware Server started")
     app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name=thread_name)
