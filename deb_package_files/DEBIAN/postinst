@@ -10,4 +10,4 @@ ${PYTHON_VENV_DIR}/bin/pip3 install -r ${INSTALL_DIR}/requirements.txt
 systemctl daemon-reload
 systemctl enable KootnetNetworkTestersServer.service
 systemctl start KootnetNetworkTestersServer.service
-cd || exit
+cd || exit 0

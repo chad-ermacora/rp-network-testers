@@ -15,10 +15,9 @@ _Raspberry Pi 4B Recommended due to it's 1000Mbps network adapter_
 #### Supported Operating Systems
 Raspbian (9 or higher), Ubuntu (18.04 or higher)  
 #### Other Operating Systems
-Most other GNU/Linux distributions should work with Kootnet Network Testers if the distribution supports the applications
-MTR, iPerf3, wget & Python3 along with the Flask & gevent Python modules.
-The install script will automatically download the applications from your Operating System's repositories
-and the Python modules with pip.
+Most other Debian based GNU/Linux distributions should work with Kootnet Network Testers if the distribution supports 
+the applications MTR, iPerf3, wget & Python3 along with the Flask & gevent Python modules.
+A Debian installer has been created to simplify the install and removal processes. 
 
 ### Optional Hardware
 When installed on a Raspberry Pi you can install additional hardware such as displays and buttons to operate the unit.  
@@ -30,11 +29,13 @@ _Note: Hold the buttons down for 1 second before releasing to ensure proper oper
 ### Installing Kootnet Network Testers
 1. If using Raspberry Pis, ensure Raspbian is running on both of them, otherwise skip to step 2.  
 Fresh Raspbian Installs Recommended [Download Raspbian Here](https://www.raspberrypi.org/downloads/)
-2. Run the following command in a Terminal.
+2. Download the [Kootnet Network Testers Installer](http://kootenay-networks.com/installers/KootnetNetworkTesters.deb) 
+and double click it. 
 
-```wget http://kootenay-networks.com/utils/koot_net_eth_testers/kootnet_testers_installer_http.sh && sudo bash kootnet_testers_installer_http.sh```
+*Note*: If you only have terminal access, run the following terminal command instead  
+```wget -O KootnetNetworkTesters.deb http://kootenay-networks.com/installers/KootnetNetworkTesters.deb && sudo apt-get update && sudo apt-get -y install ./KootnetNetworkTesters.deb```
 
-3. Once the script has finished, open the "Kootnet Network Testers" shortcut in your Operating Systems application
+3. Open the "Kootnet Network Testers" shortcut in your Operating Systems application
 menu to configure and use the Tester. On the Raspberry Pi, the shortcut is located in the Accessories menu.
 
 Optional: If you cannot find the menu shortcut, you can open a web browser like Firefox or Chrome and goto
