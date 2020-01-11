@@ -1,0 +1,13 @@
+#!/bin/bash
+INSTALL_DIR="/opt/kootnet-network-testers"
+PYTHON_VENV_DIR="/opt/kootnet-network-testers/env"
+# Install needed Python virtual environment & dependencies
+if [[ ! -f ${PYTHON_VENV_DIR}/bin/python ]]; then
+  python3 -m venv --system-site-packages ${PYTHON_VENV_DIR}
+fi
+${PYTHON_VENV_DIR}/bin/python3 -m pip install -U pip
+${PYTHON_VENV_DIR}/bin/pip3 install -r ${INSTALL_DIR}/requirements.txt
+systemctl daemon-reload
+systemctl enable KootnetNetworkTestersServer.service
+systemctl restart KootnetNetworkTestersServer.service
+cd || exit 0

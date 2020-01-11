@@ -102,8 +102,8 @@ class CreateHardwareAccess:
         cli_results = app_variables.previous_mtr_results
         if cli_results != "Error Connecting to Remote Test Server":
             mtr_results_list = self._get_real_lines_mtr(cli_results)
-            message = "MTR Results\nDest: " + current_config.remote_tester_ip + "\n\n  " + \
-                      mtr_results_list[0][2] + "  " + mtr_results_list[0][5] + "  " + mtr_results_list[0][7] + "\n"
+            message = "MTR Results\nDest: " + current_config.remote_tester_ip + "\n  " + \
+                      mtr_results_list[0][2] + "  " + mtr_results_list[0][5] + "  " + mtr_results_list[0][7] + "\n\n"
 
             for line in mtr_results_list[1:]:
                 message += "  IP: " + line[1] + \
