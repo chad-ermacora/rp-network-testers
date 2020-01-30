@@ -1,7 +1,4 @@
-netifaces
 requests
-RPi.GPIO
-spidev
 Pillow
 Flask
 Flask-Compress
