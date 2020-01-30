@@ -1,9 +1,9 @@
 Package: kootnet-network-testers
-Version: 1.2-5
+Version: 1.2-7
 Section: utils
 Priority: extra
 Architecture: all
-Depends: python3, python3-venv, bash, wget, mtr, iperf3
+Depends: python3, python3-venv, python3-dev, bash, wget, mtr, iperf3
 Recommends: fonts-freefont-ttf, fake-hwclock
 Maintainer: Chad Ermacora <chad.e@linux.com>
 Homepage: https://github.com/chad-ermacora/rp-network-testers

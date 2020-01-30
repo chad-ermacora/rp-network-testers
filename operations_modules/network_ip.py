@@ -16,8 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import os
 import socket
-import netifaces
 from ipaddress import ip_address as _check_ip_address
 from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_raspberry_pi_model
@@ -57,16 +57,14 @@ def get_ip_from_socket():
 
 
 def get_dhcpcd_ip(wireless=False):
-    if running_on_rpi:
-        try:
-            if wireless:
-                # netifaces.ifaddresses('wlan0')
-                address = netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
-            else:
-                address = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
-            return address
-        except Exception as error:
-            print("Interface is Inactive: " + str(error))
+    try:
+        if wireless:
+            address = os.popen("ip addr show wlan0").read().split("inet ")[1].split("/")[0]
+        else:
+            address = os.popen("ip addr show eth0").read().split("inet ")[1].split("/")[0]
+        return address
+    except Exception as error:
+        print("Interface is Inactive: " + str(error))
     return "Inactive"
 
 
