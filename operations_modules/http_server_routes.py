@@ -182,7 +182,7 @@ def update_program_development():
 
 @http_routes.route("/ReStart")
 def restart_program():
-    app_generic_functions.thread_function(os.system, args="systemctl restart KootnetEthServer")
+    app_generic_functions.thread_function(os.system, args="systemctl restart KootnetNetworkTestersServer")
     return render_template("message_return.html", URL="/", TextMessage="Re-Starting Program",
                            TextMessage2="You will automatically be redirected to home in 10 seconds")
 
