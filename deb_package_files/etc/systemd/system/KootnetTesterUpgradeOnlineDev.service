@@ -1,0 +1,12 @@
+[Unit]
+Description=KootNet Network Testers - HTTP Upgrade - Development
+
+[Service]
+Type=simple
+Restart=no
+User=root
+Group=root
+ExecStart=/bin/bash /opt/kootnet-network-testers/scripts/kootnet_testers_installer_http.sh dev
+
+[Install]
+WantedBy=multi-user.target

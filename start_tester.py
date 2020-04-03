@@ -19,8 +19,9 @@
 import os
 from time import sleep
 from operations_modules import file_locations
-from operations_modules import http_server
 from operations_modules import app_variables
+from operations_modules import http_server
+from operations_modules import schedule_server
 from operations_modules.config_primary import current_config
 from operations_modules.app_generic_functions import CreateMonitoredThread
 from operations_modules.interaction_server import CreateInteractiveServer
@@ -54,5 +55,8 @@ if current_config.running_on_rpi:
 else:
     part_1_msg = "\nInteractive Hardware only supported on Raspberry Pis - "
     print(part_1_msg + "Interactive Hardware Server Disabled")
+
+schedule_server.start_scheduled_runs()
+
 while True:
     sleep(600)

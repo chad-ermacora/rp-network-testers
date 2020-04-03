@@ -24,11 +24,11 @@ from operations_modules.app_generic_functions import get_file_content
 flask_http_ip = ""
 flask_http_port = 10066
 
-# Cached results from the previous test run
-previous_mtr_start_text = ""
-previous_iperf_start_text = ""
-previous_mtr_results = False
-previous_iperf_results = False
+# Cached results from last test run
+web_mtr_results = ""
+web_iperf_results = ""
+raw_mtr_results = ""
+raw_iperf_results = ""
 
 # Monitored Thread placeholders. Replaced with class instances that have function and variables access
 http_server = None

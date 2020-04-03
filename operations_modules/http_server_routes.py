@@ -92,13 +92,6 @@ def html_root():
     if current_config.local_wireless_dhcp:
         wireless_dhcp = "checked"
 
-    mtr_results = ""
-    if app_variables.previous_mtr_results:
-        mtr_results = app_variables.previous_mtr_start_text + str(app_variables.previous_mtr_results)
-    iperf_results = ""
-    if app_variables.previous_iperf_results:
-        iperf_results = app_variables.previous_iperf_start_text + str(app_variables.previous_iperf_results)
-
     wifi_type_wpa = ""
     wifi_type_none = ""
     if current_config.wifi_security_type == "":
@@ -137,14 +130,21 @@ def html_root():
                            FreeDiskSpace=app_generic_functions.get_disk_free_percent(),
                            RemoteTesterStatus=remote_tester_online_status,
                            RemoteTesterStatusColor=remote_tester_colour,
-                           Results_MTR=mtr_results,
-                           Results_iPerf=iperf_results,
+                           Results_MTR=app_variables.web_mtr_results,
+                           Results_iPerf=app_variables.web_iperf_results,
                            CheckediPerfServer=iperf_server_enabled,
                            InteractiveIP=current_config.local_ethernet_ip,
                            ServerIP=current_config.remote_tester_ip,
                            iPerfPort=current_config.iperf_port,
+                           iPerfRunOptions=current_config.iperf_run_options,
                            MTRCount=current_config.mtr_run_count,
                            CheckedWaveShare27EInk=wave_share_27_enabled,
+                           EnableScheduleRunEveryChecked="unchecked",
+                           ScheduleRunMinutes=0,
+                           ScheduleRunHours=0,
+                           ScheduleRunDays=0,
+                           EnableScheduleRunOnceChecked="unchecked",
+                           ScheduleRunOnceDateTime="",
                            EthernetCheckedDHCP=ethernet_dhcp,
                            EthernetIPv4Address=get_dhcpcd_ip(),
                            EthernetIPv4Subnet=current_config.local_ethernet_subnet,
@@ -166,7 +166,7 @@ def html_root():
 
 @http_routes.route("/UpdateProgram")
 def update_program():
-    app_generic_functions.thread_function(os.system, args="bash " + file_locations.http_upgrade_script)
+    os.system("systemctl start KootnetTesterUpgradeOnline.service")
     return render_template("message_return.html", URL="/",
                            TextMessage="Standard Upgrade in Progress",
                            TextMessage2="Please wait ...")
@@ -174,7 +174,7 @@ def update_program():
 
 @http_routes.route("/UpdateProgramDev")
 def update_program_development():
-    app_generic_functions.thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")
+    os.system("systemctl start KootnetTesterUpgradeOnlineDev.service")
     return render_template("message_return.html", URL="/",
                            TextMessage="Development Upgrade in Progress",
                            TextMessage2="Please wait ...")
@@ -225,10 +225,13 @@ def edit_configuration():
         if app_generic_functions.hostname_is_valid(new_hostname):
             os.system("hostnamectl set-hostname " + new_hostname)
 
+    current_config.is_iperf_server = 0
     if request.form.get("checkbox_iperf_server") is not None:
         current_config.is_iperf_server = 1
-    else:
-        current_config.is_iperf_server = 0
+
+    current_config.iperf_run_options = "-O 1"
+    if request.form.get("iperf_run_options") is not None:
+        current_config.iperf_run_options = request.form.get("iperf_run_options").strip()
 
     if ip_address_validation_check(request.form.get("remote_test_server_ip")):
         current_config.remote_tester_ip = str(request.form.get("remote_test_server_ip"))

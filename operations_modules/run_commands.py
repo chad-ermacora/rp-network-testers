@@ -49,7 +49,7 @@ def run_command(command_num):
                 start_iperf()
                 display_msg = hardware_access.get_iperf_message()
             elif current_config.button_function_level == 1:
-                thread_function(os.system, args="bash " + file_locations.http_upgrade_script)
+                os.system("systemctl start KootnetTesterUpgradeOnline.service")
                 display_msg = hardware_access.get_upgrade_message()
             elif current_config.button_function_level == 2:
                 display_msg = "Shutting Down\n\nPlease Wait 15 Seconds\nBefore Powering Down ..."
@@ -58,7 +58,7 @@ def run_command(command_num):
             if current_config.button_function_level == 0:
                 display_msg = "Nothing Yet"
             elif current_config.button_function_level == 1:
-                thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")
+                os.system("systemctl start KootnetTesterUpgradeOnlineDev.service")
                 display_msg = hardware_access.get_upgrade_message(development_upgrade=True)
             elif current_config.button_function_level == 2:
                 display_msg = "Nothing Yet"
@@ -87,7 +87,8 @@ def start_all_tests():
 
 def start_mtr():
     current_config.tests_running = True
-    app_variables.previous_mtr_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
+    mtr_text_results = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n" + \
+                       current_config.get_mtr_command_str() + "\n\n"
     try:
         print("\nRunning MTR CLI: " + current_config.get_mtr_command_str() + "\n")
         temp_lines = get_subprocess_str_output(current_config.get_mtr_command_str()).strip().split("\n")
@@ -95,41 +96,44 @@ def start_mtr():
         new_str = ""
         for line in temp_lines:
             new_str += line + "\n"
-        app_variables.previous_mtr_results = new_str.strip()[:-2]
+        mtr_text_results += new_str.strip()[:-2]
+        app_variables.raw_mtr_results = new_str.strip()[:-2]
         print("MTR CLI Done\n")
     except Exception as error:
         print("MTR Command Error: " + str(error))
-        temp_lines = []
-    if len(temp_lines) < 3:
-        app_variables.previous_mtr_results = "Error Connecting to Remote Test Server"
+        mtr_text_results += "Error Connecting to Remote Test Server"
+        app_variables.raw_mtr_results = "Error Connecting to Remote Test Server"
+    app_variables.web_mtr_results = mtr_text_results
     current_config.tests_running = False
     save_mtr_results_to_file()
 
 
 def start_iperf():
     current_config.tests_running = True
-    app_variables.previous_iperf_start_text = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
+    iperf_text_results = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n" + \
+                         current_config.get_iperf_command_str() + "\n\n"
     try:
         print("\nRunning iPerf 3 CLI: " + current_config.get_iperf_command_str())
-        raw_iperf = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
-        app_variables.previous_iperf_results = raw_iperf
+        temp_results_text = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
+        iperf_text_results += temp_results_text
+        app_variables.raw_iperf_results = temp_results_text
         print("iPerf 3 CLI Done\n")
     except Exception as error:
         print("iPerf Command Error: " + str(error))
-        app_variables.previous_iperf_results = "Error Connecting to Remote Test Server"
+        iperf_text_results += "Error Connecting to Remote Test Server"
+        app_variables.raw_iperf_results = "Error Connecting to Remote Test Server"
     current_config.tests_running = False
+    app_variables.web_iperf_results = iperf_text_results
     save_iperf_results_to_file()
 
 
 def save_mtr_results_to_file():
     text_time_sec = str(time.time()).split(".")[0]
     new_file_location = file_locations.location_save_report_folder + "/mtr-" + text_time_sec + ".txt"
-    file_content = app_variables.previous_mtr_start_text + app_variables.previous_mtr_results
-    write_file_to_disk(new_file_location, file_content)
+    write_file_to_disk(new_file_location, app_variables.web_mtr_results)
 
 
 def save_iperf_results_to_file():
     text_time_sec = str(time.time()).split(".")[0]
     new_file_location = file_locations.location_save_report_folder + "/iperf-" + text_time_sec + ".txt"
-    file_content = app_variables.previous_iperf_start_text + app_variables.previous_iperf_results
-    write_file_to_disk(new_file_location, file_content)
+    write_file_to_disk(new_file_location, app_variables.web_iperf_results)

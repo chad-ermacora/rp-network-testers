@@ -99,7 +99,7 @@ class CreateHardwareAccess:
         return message
 
     def get_mtr_message(self):
-        cli_results = app_variables.previous_mtr_results
+        cli_results = app_variables.raw_mtr_results
         if cli_results != "Error Connecting to Remote Test Server":
             mtr_results_list = self._get_real_lines_mtr(cli_results)
             message = "MTR Results\nDest: " + current_config.remote_tester_ip + "\n  " + \
@@ -131,7 +131,7 @@ class CreateHardwareAccess:
         return real_first_list
 
     def get_iperf_message(self):
-        cli_results = app_variables.previous_iperf_results
+        cli_results = app_variables.raw_iperf_results
         if cli_results != "Error Connecting to Remote Test Server":
             iperf_results_lines = cli_results.strip().split("\n")
             print(cli_results)

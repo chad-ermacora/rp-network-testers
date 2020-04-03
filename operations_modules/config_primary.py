@@ -36,7 +36,7 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "1.2.10"
+        self.app_version = "1.2.14"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
         self.running_on_rpi = False
@@ -46,8 +46,22 @@ class CreateConfiguration:
         self.tests_running = False
         self.is_iperf_server = 1
         self.iperf_port = "9000"
+        self.iperf_run_options = "-O 1"
         self.mtr_run_count = "10"
         self.remote_tester_ip = "8.8.8.8"
+
+        self.schedule_run_on_boot = True
+
+        self.schedule_run_1_enabled = 0
+        self.schedule_run_2_enabled = 0
+        self.schedule_run_3_enabled = 0
+        self.schedule_run_4_enabled = 0
+        self.schedule_run_1_at_time = ""
+        self.schedule_run_2_at_time = ""
+        self.schedule_run_3_at_time = ""
+        self.schedule_run_4_at_time = ""
+
+        self.schedule_run_every_minutes = 0
 
         self.local_ethernet_dhcp = 1
         self.local_ethernet_adapter_name = "eth0"
@@ -112,7 +126,7 @@ class CreateConfiguration:
         return "mtr -c " + self.mtr_run_count + " -r -n " + self.remote_tester_ip
 
     def get_iperf_command_str(self):
-        return "iperf3 -c " + self.remote_tester_ip + " -O 1 -p " + self.iperf_port
+        return "iperf3 -c " + self.remote_tester_ip + " " + self.iperf_run_options.strip() + " -p " + self.iperf_port
 
     def write_wpa_supplicant_wifi_settings_to_file(self):
         wpa_supplicant_template = app_variables.wpa_supplicant_file_content_template

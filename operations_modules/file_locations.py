@@ -23,7 +23,6 @@ script_folder_path = os.path.dirname(sys.argv[0])
 enable_fake_hw_clock_script = script_folder_path + "/scripts/enable_fake_hw_clock.sh"
 config_file_location = script_folder_path + "/config.txt"
 installed_hardware_file_location = script_folder_path + "/installed_hardware.txt"
-http_upgrade_script = script_folder_path + "/scripts/kootnet_testers_installer_http.sh"
 
 dhcpcd_config_file = "/etc/dhcpcd.conf"
 dhcpcd_config_file_template = script_folder_path + "/operations_modules/extras/dhcpcd_template.conf"
