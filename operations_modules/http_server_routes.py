@@ -78,6 +78,28 @@ def html_root():
         tests_running_msg = "Running Tests Please Wait ..."
         button_disabled = "disabled"
 
+    ip = current_config.remote_tester_ip
+    port = app_variables.flask_http_port
+    remote_tester_online_status = app_generic_functions.check_tester_online_status(ip, port)
+    remote_tester_colour = "#B71C1C"
+    if remote_tester_online_status == "Online":
+        remote_tester_colour = "darkgreen"
+
+    return render_template("index.html",
+                           TestsRunning=tests_running_msg,
+                           MTRChecked=app_variables.html_mtr_checked,
+                           iPerfChecked=app_variables.html_iperf_checked,
+                           DisabledButton=button_disabled,
+                           RemoteTesterStatus=remote_tester_online_status,
+                           RemoteTesterStatusColor=remote_tester_colour,
+                           Results_MTR=app_variables.web_mtr_results,
+                           Results_iPerf=app_variables.web_iperf_results,
+                           ConfigurationTabs=_get_configuration_tabs(),
+                           NetworkingTabs=_get_networking_tabs(),
+                           AboutSystemTabs=_get_about_system_tabs())
+
+
+def _get_configuration_tabs():
     iperf_server_enabled = ""
     if current_config.is_iperf_server:
         iperf_server_enabled = "checked"
@@ -85,6 +107,23 @@ def html_root():
     if current_config.installed_interactive_hw["WaveShare27"]:
         wave_share_27_enabled = "checked"
 
+    return render_template("configuration_tabs.html",
+                           IPHostname=str(gethostname()),
+                           CheckediPerfServer=iperf_server_enabled,
+                           ServerIP=current_config.remote_tester_ip,
+                           iPerfPort=current_config.iperf_port,
+                           iPerfRunOptions=current_config.iperf_run_options,
+                           MTRCount=current_config.mtr_run_count,
+                           CheckedWaveShare27EInk=wave_share_27_enabled,
+                           EnableScheduleRunEveryChecked="unchecked",
+                           ScheduleRunMinutes=0,
+                           ScheduleRunHours=0,
+                           ScheduleRunDays=0,
+                           EnableScheduleRunOnceChecked="unchecked",
+                           ScheduleRunOnceDateTime="")
+
+
+def _get_networking_tabs():
     ethernet_dhcp = ""
     if current_config.local_ethernet_dhcp:
         ethernet_dhcp = "checked"
@@ -103,48 +142,7 @@ def html_root():
     if current_config.running_on_rpi:
         wifi_country_code_disable = ""
 
-    ip = current_config.remote_tester_ip
-    port = app_variables.flask_http_port
-    remote_tester_online_status = app_generic_functions.check_tester_online_status(ip, port)
-    remote_tester_colour = "#B71C1C"
-    if remote_tester_online_status == "Online":
-        remote_tester_colour = "darkgreen"
-
-    remote_ip = current_config.remote_tester_ip
-    remote_port = app_variables.flask_http_port
-    remote_version = str(app_generic_functions.get_remote_data("http://" + remote_ip + ":" + str(remote_port) +
-                                                               "/Version"))[2:-1]
-    if 3 > len(remote_version) or len(remote_version) > 14:
-        remote_version = "NA"
-    return render_template("index.html",
-                           RemoteIPandPort=current_config.remote_tester_ip + ":" + str(app_variables.flask_http_port),
-                           RemoteVersion=remote_version,
-                           TestsRunning=tests_running_msg,
-                           MTRChecked=app_variables.html_mtr_checked,
-                           iPerfChecked=app_variables.html_iperf_checked,
-                           IPHostname=str(gethostname()),
-                           DisabledButton=button_disabled,
-                           OSVersion=app_generic_functions.get_os_name_version(),
-                           InternetIPAddress=get_ip_from_socket(),
-                           KootnetVersion=current_config.app_version,
-                           FreeDiskSpace=app_generic_functions.get_disk_free_percent(),
-                           RemoteTesterStatus=remote_tester_online_status,
-                           RemoteTesterStatusColor=remote_tester_colour,
-                           Results_MTR=app_variables.web_mtr_results,
-                           Results_iPerf=app_variables.web_iperf_results,
-                           CheckediPerfServer=iperf_server_enabled,
-                           InteractiveIP=current_config.local_ethernet_ip,
-                           ServerIP=current_config.remote_tester_ip,
-                           iPerfPort=current_config.iperf_port,
-                           iPerfRunOptions=current_config.iperf_run_options,
-                           MTRCount=current_config.mtr_run_count,
-                           CheckedWaveShare27EInk=wave_share_27_enabled,
-                           EnableScheduleRunEveryChecked="unchecked",
-                           ScheduleRunMinutes=0,
-                           ScheduleRunHours=0,
-                           ScheduleRunDays=0,
-                           EnableScheduleRunOnceChecked="unchecked",
-                           ScheduleRunOnceDateTime="",
+    return render_template("network_tabs.html",
                            EthernetCheckedDHCP=ethernet_dhcp,
                            EthernetIPv4Address=get_dhcpcd_ip(),
                            EthernetIPv4Subnet=current_config.local_ethernet_subnet,
@@ -162,6 +160,25 @@ def html_root():
                            CheckedWiFiSecurityWPA1=wifi_type_wpa,
                            CheckedWiFiSecurityNone1=wifi_type_none,
                            SSID1=current_config.wifi_ssid)
+
+
+def _get_about_system_tabs():
+    remote_ip_and_port = current_config.remote_tester_ip + ":" + str(app_variables.flask_http_port)
+    remote_ip = current_config.remote_tester_ip
+    remote_port = app_variables.flask_http_port
+    remote_version = str(app_generic_functions.get_remote_data("http://" + remote_ip + ":" + str(remote_port) +
+                                                               "/Version"))[2:-1]
+
+    if 3 > len(remote_version) or len(remote_version) > 14:
+        remote_version = "NA"
+
+    return render_template("about_system_tabs.html",
+                           KootnetVersion=current_config.app_version,
+                           OSVersion=app_generic_functions.get_os_name_version(),
+                           InternetIPAddress=get_ip_from_socket(),
+                           FreeDiskSpace=app_generic_functions.get_disk_free_percent(),
+                           RemoteVersion=remote_version,
+                           RemoteIPandPort=remote_ip_and_port)
 
 
 @http_routes.route("/UpdateProgram")

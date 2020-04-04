@@ -1,0 +1,229 @@
+
+<div class="mui-tabs__pane" id="networking-tab">
+    <ul class="mui-tabs__bar">
+        <li class="mui--is-active"><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+                                      data-mui-controls="networking-eth-tab">
+            Ethernet TCP/IP
+        </a></li>
+
+        <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+               data-mui-controls="networking-wifi-tab">
+            Wireless TCP/IP
+        </a></li>
+
+        <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+               data-mui-controls="wifi-connection-tab">
+            Wireless Connection
+        </a></li>
+    </ul>
+
+    <br>
+
+    <div class="mui-tabs__pane mui--is-active" id="networking-eth-tab">
+        <form class="mui-form" method="POST" style="min-height: 300px;" action="/EditEthernetIPv4">
+            <fieldset style="text-align: center">
+                <h2><u><a style="color: black;" href="/">Ethernet Configuration</a></u></h2>
+
+                <div class="mui-checkbox" style="display: inline-block;">
+                    <label class="container_checkbox">
+                        <input type="checkbox" id="ETH_IP_DHCP" name="ethernet_ip_dhcp"
+                               value="" {{ EthernetCheckedDHCP }}>
+                        DHCP
+                        <span class="checkmark_checkbox"></span>
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black">
+                        IPv4 Address
+                        <br>
+                        <input style="width: 125px" type="text" name="ethernet_ip_address"
+                               placeholder="eg. 192.168.10.11" minlength="7"
+                               value="{{ EthernetIPv4Address }}" {{ EthernetIPv4AddressDisabled }}>
+                    </label>
+                </div>
+
+                <div class="mui-textfield" style="inset-inline-end: auto">
+                    <label style="color: black">
+                        <a style="color: black" target="_blank"
+                           href="https://en.wikipedia.org/wiki/Subnetwork#Subnetting">
+                            Subnet mask
+                        </a>
+                        <br>
+                        <input style="width: 50px" type="text" name="ethernet_ip_subnet"
+                               placeholder="eg. /24" minlength="2" maxlength="4"
+                               value="{{ EthernetIPv4Subnet }}" {{ EthernetIPv4SubnetDisabled }}>
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black">
+                        Gateway (Optional)
+                        <br>
+                        <input style="width: 125px" type="text" name="ethernet_ip_gateway"
+                               placeholder="eg. 192.168.10.1" minlength="7" maxlength="15"
+                               value="{{ EthernetIPGateway }}" {{ EthernetIPGatewayDisabled }}>
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black">
+                        Primary DNS (Optional)
+                        <br>
+                        <input style="width: 125px" type="text" name="ethernet_ip_dns1"
+                               placeholder="eg. 8.8.8.8" minlength="7" maxlength="15"
+                               value="{{ EthernetIPDNS1 }}" {{ EthernetIPDNS1Disabled }}>
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black">
+                        Secondary DNS (Optional)
+                        <br>
+                        <input style="width: 125px" type="text" name="ethernet_ip_dns2"
+                               placeholder="eg. 8.8.4.4" minlength="7" maxlength="15"
+                               value="{{ EthernetIPDNS2 }}" {{ EthernetIPDNS2Disabled }}>
+                    </label>
+                </div>
+
+                <br>
+
+                <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="mui-tabs__pane" id="networking-wifi-tab">
+        <form class="mui-form" method="POST" style="min-height: 300px;" action="/EditWifiIPv4">
+            <fieldset style="text-align: center">
+                <h2><u><a style="color: black" href="/">Wireless Configuration</a></u></h2>
+
+                <div class="mui-checkbox" style="display: inline-block;">
+                    <label class="container_checkbox">
+                        <input type="checkbox" id="WIFI_IP_DHCP" name="wifi_ip_dhcp" value="" {{ WirelessCheckedDHCP }}>
+                        DHCP
+                        <span class="checkmark_checkbox"></span>
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black;">
+                        IPv4 Address
+                        <br>
+                        <input style="width: 125px;" type="text" name="wifi_ip_address"
+                               placeholder="eg. 192.168.10.11" minlength="7"
+                               value="{{ WirelessIPv4Address }}" {{ WirelessIPv4AddressDisabled }}>
+                    </label>
+                </div>
+
+                <div class="mui-textfield" style="inset-inline-end: auto;">
+                    <label style="color: black;">
+                        <a style="color: black;" target="_blank"
+                           href="https://en.wikipedia.org/wiki/Subnetwork#Subnetting">
+                            Subnet mask
+                        </a>
+                        <br>
+                        <input style="width: 50px;" type="text" name="wifi_ip_subnet"
+                               placeholder="eg. /24" minlength="2" maxlength="4"
+                               value="{{ WirelessIPv4Subnet }}" {{ WirelessIPv4SubnetDisabled }}>
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black;">
+                        Gateway (Optional)
+                        <br>
+                        <input style="width: 125px;" type="text" name="wifi_ip_gateway"
+                               placeholder="eg. 192.168.10.1" minlength="7" maxlength="15"
+                               value="{{ WirelessIPGateway }}" {{ WirelessIPGatewayDisabled }}>
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black">
+                        Primary DNS (Optional)
+                        <br>
+                        <input style="width: 125px" type="text" name="wifi_ip_dns1"
+                               placeholder="eg. 8.8.8.8" minlength="7" maxlength="15"
+                               value="{{ WirelessIPDNS1 }}" {{ WirelessIPDNS1Disabled }}>
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black">
+                        Secondary DNS (Optional)
+                        <br>
+                        <input style="width: 125px" type="text" name="wifi_ip_dns2"
+                               placeholder="eg. 8.8.4.4" minlength="7" maxlength="15"
+                               value="{{ WirelessIPDNS2 }}" {{ WirelessIPDNS2Disabled }}>
+                    </label>
+                </div>
+
+                <br>
+
+                <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="mui-tabs__pane" id="wifi-connection-tab">
+        <form class="mui-form" method="POST" style="min-height: 300px;"
+              action="/EditWifiConnection">
+            <fieldset style="text-align: center">
+                <h2><u><a style="color: black;" href="/">Automatic Wireless Connection</a></u></h2>
+
+                <label>
+                    <a style="color: black" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank">
+                        Two Character Country Code (RPi Only)
+                    </a>
+                    <br>
+                    <input type="text" style="width: 25px;" maxlength="2" minlength="2"
+                           name="country_code" value="{{ WirelessCountryCode }}" required {{ WifiCountryCodeDisabled }}>
+                </label>
+
+                <br>
+                <br>
+
+                <label>Wireless Security</label>
+
+                <div class="mui-radio">
+                    <label class="container_radio">
+                        <input type="radio" name="wifi_security1" value="" {{ CheckedWiFiSecurityWPA1 }}>
+                        Secured (WEP/WPA/WPA2)
+                    </label>
+
+                    <br>
+
+                    <label class="container_radio">
+                        <input type="radio" name="wifi_security1" value="None" {{ CheckedWiFiSecurityNone1 }}>
+                        Open (None)
+                    </label>
+                </div>
+
+                <div class="mui-textfield">
+                    <label style="color: black">
+                        Wireless Network Name (SSID)
+                        <br>
+                        <input style="width: 150px;" type="text" name="ssid1" maxlength="32"
+                               placeholder="eg. MyWirelessNetwork" value="{{ SSID1 }}">
+                    </label>
+                </div>
+
+                <br>
+
+                <div class="mui-textfield">
+                    <label style="color: black;">
+                        Wireless Key
+                        <br>
+                        <input style="width: 175px;" type="password" name="wifi_key1"
+                               placeholder="eg. $00p3rS3curz" minlength="8" maxlength="63" value="">
+                    </label>
+                </div>
+
+                <br>
+
+                <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+            </fieldset>
+        </form>
+    </div>
+</div>
