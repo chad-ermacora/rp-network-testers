@@ -1,4 +1,23 @@
 
+<style>
+    .mui-col-md-3 {
+        background-color: #00ffff;
+        color: black;
+        width: 150px;
+    }
+
+    .mui-col-md-4 {
+        background-color: #0BB10D;
+        color: black;
+        width: 250px;
+    }
+
+    .advanced-controls {
+        display: none;
+        overflow: hidden;
+    }
+</style>
+
 <div class="mui-tabs__pane" id="about-tab">
     <br>
     <div class="mui-container-fluid" style="align-items: center;">
@@ -88,3 +107,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById("advanced-controls").addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "inline-block") {
+            content.style.display = "none";
+        } else {
+            content.style.display = "inline-block";
+        }
+    });
+</script>

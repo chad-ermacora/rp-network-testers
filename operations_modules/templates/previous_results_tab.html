@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2><u><strong><a style="text-decoration: underline; color: red;" href="/">
+    Return to Main
+</a></strong></u></h2>
+
+<button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-light-blue"
+        onclick="window.location.href = '/DownloadTestResultsZip';">
+    Download All Test Results
+</button>
+
+<br>
+<br>
+
+<div style="display: inline-block;">
+    <form style="display: inline-block;" method="POST" action="/PreviousResults">
+        <button type="submit" class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white">
+            Back
+        </button>
+        <input type="hidden" name="button_function" value="back">
+    </form>
+
+    <form style="display: inline-block;" method="POST" action="/PreviousResults">
+        <button type="submit" class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white">
+            Next
+        </button>
+        <input type="hidden" name="button_function" value="next">
+    </form>
+</div>
+
+<div style="display: inline-block; padding-left: 75px;">
+    <label>
+        <input style="width: 40px;" type="number" name="current_results_num" form="custom_results_num"
+               value="{{ CurrentResultSelection }}" min="1" max="{{ LastResultNumber }}">
+    </label>
+
+    <label style="color: white;">
+        out of
+        <input style="width: 40px" type="number" name="last_note_num"
+               value="{{ LastResultNumber }}" disabled>
+    </label>
+
+    <div style=" display: inline-block;">
+        <form style="padding-left: 25px; display: inline-block;" id="custom_results_num"
+              method="POST" action="/PreviousResults">
+            <button class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white"
+                    type="submit">
+                Go
+            </button>
+            <input type="hidden" name="button_function" value="custom_note_number">
+        </form>
+    </div>
+</div>
+
+<br>
+
+<div style="max-width: 750px;">
+    <label for="displayed_results" style="color: white;">Test File: {{ CurrentlyDisplayedResultName }}</label>
+    <br>
+    <textarea id="displayed_results" rows="35" cols="75" style="color: greenyellow; background-color: black;">{{ DisplayedResults }}</textarea>
+</div>
+
+{% endblock %}

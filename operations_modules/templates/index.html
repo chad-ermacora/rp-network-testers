@@ -42,22 +42,6 @@
         background-color: #00B0FF;
     }
 
-    .mui-col-md-3 {
-        background-color: #00ffff;
-        color: black;
-        width: 150px;
-    }
-
-    .mui-col-md-4 {
-        background-color: #0BB10D;
-        color: black;
-        width: 250px;
-    }
-
-    .advanced-controls {
-        display: none;
-        overflow: hidden;
-    }
 </style>
 
 <ul class="mui-tabs__bar">
@@ -67,13 +51,8 @@
     </a></li>
 
     <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
-                                  data-mui-controls="previous-tests-tab">
-        View Previous Results
-    </a></li>
-
-    <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
            data-mui-controls="configuration-tab">
-        Configuration
+        Configurations
     </a></li>
 
     <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab" data-mui-controls="networking-tab">
@@ -93,6 +72,8 @@
         <form class="mui-form" method="POST" action="/StartTests">
             <fieldset style="text-align: center; color: black;">
                 <h3><u><strong><a style="color: black;" href="/">Run Tests & View Results</a></strong></u></h3>
+
+                <h4><a style="color: black;" href="/ViewPreviousResults">View Previous Test Results</a></h4>
 
                 <h4><strong>Remote Tester Status</strong>
                     <div style="color: {{ RemoteTesterStatusColor }}">
@@ -130,17 +111,6 @@
     </div>
 </div>
 
-<div class="mui-tabs__pane" id="previous-tests-tab">
-    <br>
-    <div class="mui-container-fluid">
-        <form class="mui-form" method="POST" action="/StartTests">
-            <fieldset style="text-align: center; color: black;">
-                <h3><u><strong><a style="color: black;" href="/">Previous Test Results</a></strong></u></h3>
-            </fieldset>
-        </form>
-    </div>
-</div>
-
 {{ ConfigurationTabs|safe }}
 
 {{ NetworkingTabs|safe }}
@@ -166,16 +136,6 @@
 </script>
 
 <script>
-    document.getElementById("advanced-controls").addEventListener("click", function () {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.display === "inline-block") {
-            content.style.display = "none";
-        } else {
-            content.style.display = "inline-block";
-        }
-    });
-
     jQuery('#ETH_IP_DHCP').change(function () {
         if (jQuery(this).prop('checked')) {
             document.getElementsByName("ethernet_ip_address")[0].disabled = true;

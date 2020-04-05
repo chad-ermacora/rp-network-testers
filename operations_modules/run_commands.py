@@ -131,9 +131,13 @@ def save_mtr_results_to_file():
     text_time_sec = str(time.time()).split(".")[0]
     new_file_location = file_locations.location_save_report_folder + "/mtr-" + text_time_sec + ".txt"
     write_file_to_disk(new_file_location, app_variables.web_mtr_results)
+    app_variables.previous_results_file_locations = app_variables.get_previous_results_file_names()
+    app_variables.previous_results_total = len(app_variables.previous_results_file_locations)
 
 
 def save_iperf_results_to_file():
     text_time_sec = str(time.time()).split(".")[0]
     new_file_location = file_locations.location_save_report_folder + "/iperf-" + text_time_sec + ".txt"
     write_file_to_disk(new_file_location, app_variables.web_iperf_results)
+    app_variables.previous_results_file_locations = app_variables.get_previous_results_file_names()
+    app_variables.previous_results_total = len(app_variables.previous_results_file_locations)

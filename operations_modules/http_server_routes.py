@@ -17,6 +17,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
+import time
+import datetime
+from io import BytesIO
+from zipfile import ZipInfo, ZipFile, ZIP_DEFLATED
 from socket import gethostname
 from flask import request, Blueprint, render_template, send_file
 from operations_modules import file_locations
@@ -99,6 +103,19 @@ def html_root():
                            AboutSystemTabs=_get_about_system_tabs())
 
 
+@http_routes.route("/ViewPreviousResults")
+def get_previous_results_page():
+    current_file_name = "None"
+    if len(app_variables.previous_results_file_locations) > 0:
+        current_file_name = app_variables.previous_results_file_locations[app_variables.previous_result_selected - 1]
+        current_file_name = current_file_name.split("/")[-1]
+    return render_template("previous_results_tab.html",
+                           CurrentResultSelection=app_variables.previous_result_selected,
+                           LastResultNumber=str(app_variables.previous_results_total),
+                           CurrentlyDisplayedResultName=str(current_file_name),
+                           DisplayedResults=app_variables.previous_result_selected_cached)
+
+
 def _get_configuration_tabs():
     iperf_server_enabled = ""
     if current_config.is_iperf_server:
@@ -179,6 +196,53 @@ def _get_about_system_tabs():
                            FreeDiskSpace=app_generic_functions.get_disk_free_percent(),
                            RemoteVersion=remote_version,
                            RemoteIPandPort=remote_ip_and_port)
+
+
+@http_routes.route("/PreviousResults", methods=["GET", "POST"])
+def previous_results():
+    if request.method == "POST":
+        if request.form.get("button_function"):
+            button_operation = request.form.get("button_function")
+            if button_operation == "next":
+                app_variables.previous_result_selected += 1
+                if app_variables.previous_result_selected > app_variables.previous_results_total:
+                    app_variables.previous_result_selected = 1
+            elif button_operation == "back":
+                app_variables.previous_result_selected -= 1
+                if app_variables.previous_result_selected < 1:
+                    app_variables.previous_result_selected = app_variables.previous_results_total
+            elif button_operation == "custom_note_number":
+                custom_current_note = request.form.get("current_results_num")
+                if app_variables.previous_results_total > 0:
+                    app_variables.previous_result_selected = int(custom_current_note)
+    app_variables.previous_result_selected_cached = app_variables.get_selected_previous_result()
+    return get_previous_results_page()
+
+
+@http_routes.route("/DownloadTestResultsZip")
+def download_test_results_zip():
+    if len(app_variables.previous_results_file_locations) > 0:
+        date_time = datetime.date.today().strftime("D%dM%mY%Y")
+        return_zip_file = BytesIO()
+        zip_name = "TestResults_" + gethostname() + "_" + date_time + ".zip"
+        file_meta_data_list = []
+        names_of_files = []
+        file_to_zip = []
+        for file_location in app_variables.previous_results_file_locations:
+            file_to_zip.append(app_generic_functions.get_file_content(file_location))
+            names_of_files.append(file_location.split("/")[-1])
+
+        for name in names_of_files:
+            name_data = ZipInfo(name)
+            name_data.date_time = time.localtime(time.time())[:6]
+            name_data.compress_type = ZIP_DEFLATED
+            file_meta_data_list.append(name_data)
+        with ZipFile(return_zip_file, "w") as zip_file:
+            for file_meta_data, file_content in zip(file_meta_data_list, file_to_zip):
+                zip_file.writestr(file_meta_data, file_content)
+        return_zip_file.seek(0)
+        return send_file(return_zip_file, as_attachment=True, attachment_filename=zip_name)
+    return render_template("message_return.html", URL="/", TextMessage="No Results Found")
 
 
 @http_routes.route("/UpdateProgram")
