@@ -20,6 +20,7 @@ from time import sleep
 from flask import Flask
 from flask_compress import Compress
 from gevent.pywsgi import WSGIServer
+from operations_modules.logger import primary_logger
 from operations_modules import http_server_routes
 from operations_modules.app_variables import flask_http_ip, flask_http_port
 
@@ -34,6 +35,6 @@ class CreateHTTPServer:
             http_server = WSGIServer((flask_http_ip, flask_http_port), app)
             http_server.serve_forever()
         except Exception as error:
-            print("\nError Starting HTTP Server: " + str(error) + "\n")
+            primary_logger.error("HTTP Server error: " + str(error))
             while True:
                 sleep(600)

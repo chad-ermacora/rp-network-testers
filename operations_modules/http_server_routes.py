@@ -23,6 +23,7 @@ from io import BytesIO
 from zipfile import ZipInfo, ZipFile, ZIP_DEFLATED
 from socket import gethostname
 from flask import request, Blueprint, render_template, send_file
+from operations_modules.logger import primary_logger
 from operations_modules import file_locations
 from operations_modules import app_generic_functions
 from operations_modules import app_variables
@@ -159,7 +160,7 @@ def download_test_results_zip():
             return_zip_file.seek(0)
             return send_file(return_zip_file, as_attachment=True, attachment_filename=zip_name)
     except Exception as error:
-        print("Error zipping test results: " + str(error))
+        primary_logger.error("Error zipping test results: " + str(error))
     return render_template("message_return.html", URL="/", TextMessage="No Results Found")
 
 
@@ -442,7 +443,7 @@ def edit_wifi_connection():
 
 
 def set_html_config_wifi_connection(html_request):
-    print("Starting HTML Wireless Configuration Update")
+    primary_logger.debug("Starting HTML Wireless Configuration Update")
     current_config.wifi_country_code = html_request.form.get("country_code")
     current_config.wifi_ssid = html_request.form.get("ssid1")
     current_config.wifi_security_type = html_request.form.get("wifi_security1")
@@ -450,7 +451,8 @@ def set_html_config_wifi_connection(html_request):
 
 
 def set_html_config_ipv4(html_request, wireless_type=False):
-    print("Starting HTML IPv4 Configuration Update for Ethernet or Wireless.  Wireless = " + str(wireless_type))
+    log_msg = "Starting HTML IPv4 Configuration Update for Ethernet or Wireless."
+    primary_logger.debug(log_msg + " Wireless = " + str(wireless_type))
     if wireless_type:
         current_config.local_wireless_ip = html_request.form.get("wifi_ip_address")
         current_config.local_wireless_subnet = html_request.form.get("wifi_ip_subnet")

@@ -30,23 +30,24 @@ import logging
 from logging.handlers import RotatingFileHandler
 from operations_modules import file_locations
 
-if not os.path.exists(os.path.dirname(file_locations.log_directory)):
-    os.makedirs(os.path.dirname(file_locations.log_directory))
+if not os.path.exists(file_locations.log_directory):
+    os.makedirs(file_locations.log_directory)
 
+# Log levels include DEBUG, INFO, WARNING, ERROR & CRITICAL
+logging_level = logging.INFO
 max_log_lines_return = 250
-logging_level = logging.DEBUG
 
 
-def initialize_logger():
+def initialize_logger(logger):
     formatter = logging.Formatter("%(asctime)s - %(levelname)s:  %(message)s", "%Y-%m-%d %H:%M:%S")
     file_handler_main = RotatingFileHandler(file_locations.primary_log, maxBytes=256000, backupCount=5)
     file_handler_main.setFormatter(formatter)
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
 
-    primary_logger.addHandler(file_handler_main)
-    primary_logger.addHandler(stream_handler)
-    primary_logger.setLevel(logging_level)
+    logger.addHandler(file_handler_main)
+    logger.addHandler(stream_handler)
+    logger.setLevel(logging_level)
 
 
 def get_number_of_log_entries(log_file):
@@ -77,4 +78,4 @@ def clear_primary_log():
 
 
 primary_logger = logging.getLogger("PrimaryLog")
-initialize_logger()
+initialize_logger(primary_logger)

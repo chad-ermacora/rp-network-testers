@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from operations_modules.logger import primary_logger
 
 
 class CreateHardwareAccess:
@@ -28,22 +29,27 @@ class CreateHardwareAccess:
 
     @staticmethod
     def display_message(text_message):
+        print("Display message Accessed")
         pass
 
     @staticmethod
     def get_button_functions_message(function_level=0):
+        print("Get button functions Pressed")
         return ""
 
     @staticmethod
     def get_mtr_message(cli_results):
+        print("Get MTR message Pressed")
         return ""
 
     @staticmethod
     def get_iperf_message(cli_results, cli_ok=True):
+        print("Get iPerf 3 message Pressed")
         return ""
 
     @staticmethod
     def get_sys_info_message():
+        print("System Info Pressed")
         return ""
 
     @staticmethod

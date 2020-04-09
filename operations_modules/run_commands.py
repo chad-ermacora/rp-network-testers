@@ -18,6 +18,7 @@
 """
 import os
 import time
+from operations_modules.logger import primary_logger
 from operations_modules.config_primary import current_config
 from operations_modules import file_locations
 from operations_modules import app_variables
@@ -28,7 +29,7 @@ from operations_modules.hardware_access import hardware_access
 
 def run_command(command_num):
     if hardware_access.display_in_use:
-        print("\nDisplay In Use, skipping Command.  Try again in a few seconds.\n")
+        primary_logger.debug("Display In Use, skipping Command.  Try again in a few seconds.")
     else:
         display_msg = ""
         if command_num == 0:
@@ -38,7 +39,7 @@ def run_command(command_num):
                 display_msg = hardware_access.get_mtr_message()
             elif current_config.button_function_level == 1:
                 display_msg = hardware_access.get_sys_info_message()
-                print(display_msg)
+                primary_logger.debug(display_msg)
             elif current_config.button_function_level == 2:
                 display_msg = "Shutting Down\nRemote Server\n\nPlease Wait 15 Seconds\nBefore Powering Down ..."
                 port = app_variables.flask_http_port
@@ -90,7 +91,7 @@ def start_mtr():
     mtr_text_results = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n" + \
                        current_config.get_mtr_command_str() + "\n\n"
     try:
-        print("\nRunning MTR CLI: " + current_config.get_mtr_command_str() + "\n")
+        primary_logger.info("Starting MTR Test: " + current_config.get_mtr_command_str())
         temp_lines = get_subprocess_str_output(current_config.get_mtr_command_str()).strip().split("\n")
         temp_lines = temp_lines[1:]
         new_str = ""
@@ -98,9 +99,9 @@ def start_mtr():
             new_str += line + "\n"
         mtr_text_results += new_str.strip()[:-2]
         app_variables.raw_mtr_results = new_str.strip()[:-2]
-        print("MTR CLI Done\n")
+        primary_logger.info("MTR Test Complete")
     except Exception as error:
-        print("MTR Command Error: " + str(error))
+        primary_logger.error("MTR Command Error: " + str(error))
         mtr_text_results += "Error Connecting to Remote Test Server"
         app_variables.raw_mtr_results = "Error Connecting to Remote Test Server"
     app_variables.web_mtr_results = mtr_text_results
@@ -113,13 +114,13 @@ def start_iperf():
     iperf_text_results = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n" + \
                          current_config.get_iperf_command_str() + "\n\n"
     try:
-        print("\nRunning iPerf 3 CLI: " + current_config.get_iperf_command_str())
+        primary_logger.info("Starting iPerf 3 Test: " + current_config.get_iperf_command_str())
         temp_results_text = get_subprocess_str_output(current_config.get_iperf_command_str())[2:-2]
         iperf_text_results += temp_results_text
         app_variables.raw_iperf_results = temp_results_text
-        print("iPerf 3 CLI Done\n")
+        primary_logger.info("iPerf 3 Test Complete")
     except Exception as error:
-        print("iPerf Command Error: " + str(error))
+        primary_logger.error("iPerf Command Error: " + str(error))
         iperf_text_results += "Error Connecting to Remote Test Server"
         app_variables.raw_iperf_results = "Error Connecting to Remote Test Server"
     current_config.tests_running = False
@@ -128,16 +129,24 @@ def start_iperf():
 
 
 def save_mtr_results_to_file():
-    text_time_sec = str(time.time()).split(".")[0]
-    new_file_location = file_locations.location_save_report_folder + "/mtr-" + text_time_sec + ".txt"
-    write_file_to_disk(new_file_location, app_variables.web_mtr_results)
-    app_variables.previous_results_file_locations = app_variables.get_previous_results_file_names()
-    app_variables.previous_results_total = len(app_variables.previous_results_file_locations)
+    primary_logger.info("Saving MTR test results to file")
+    try:
+        text_time_sec = str(time.time()).split(".")[0]
+        new_file_location = file_locations.location_save_report_folder + "/mtr-" + text_time_sec + ".txt"
+        write_file_to_disk(new_file_location, app_variables.web_mtr_results)
+        app_variables.previous_results_file_locations = app_variables.get_previous_results_file_names()
+        app_variables.previous_results_total = len(app_variables.previous_results_file_locations)
+    except Exception as error:
+        primary_logger.error("Error saving MTR test results to file: " + str(error))
 
 
 def save_iperf_results_to_file():
-    text_time_sec = str(time.time()).split(".")[0]
-    new_file_location = file_locations.location_save_report_folder + "/iperf-" + text_time_sec + ".txt"
-    write_file_to_disk(new_file_location, app_variables.web_iperf_results)
-    app_variables.previous_results_file_locations = app_variables.get_previous_results_file_names()
-    app_variables.previous_results_total = len(app_variables.previous_results_file_locations)
+    primary_logger.info("Saving iPerf 3 test results to file")
+    try:
+        text_time_sec = str(time.time()).split(".")[0]
+        new_file_location = file_locations.location_save_report_folder + "/iperf-" + text_time_sec + ".txt"
+        write_file_to_disk(new_file_location, app_variables.web_iperf_results)
+        app_variables.previous_results_file_locations = app_variables.get_previous_results_file_names()
+        app_variables.previous_results_total = len(app_variables.previous_results_file_locations)
+    except Exception as error:
+        primary_logger.error("Error saving iPerf 3 test results to file: " + str(error))

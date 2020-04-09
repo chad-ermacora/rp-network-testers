@@ -17,17 +17,20 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from time import sleep
-from operations_modules.config_primary import current_config
+from operations_modules.logger import primary_logger
 from operations_modules import run_commands
+from operations_modules.config_primary import current_config
 from operations_modules.hardware_access import hardware_access
 
 
 class CreateInteractiveServer:
     def __init__(self):
         if current_config.using_dummy_access:
-            print("\nNo Interactive Hardware Detected.  Interactive Server Disabled.  Using Web Access Only.\n")
+            log_msg = "No Interactive Hardware Detected.  Interactive Server Disabled.  Using Web Access Only."
+            primary_logger.warning(log_msg)
             while True:
-                sleep(300)
+                sleep(600)
+
         while True:
             if current_config.tests_running:
                 sleep(1)

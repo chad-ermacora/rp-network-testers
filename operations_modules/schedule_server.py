@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from time import sleep
+from operations_modules.logger import primary_logger
 from operations_modules.config_primary import current_config
 from operations_modules import run_commands
 
@@ -32,7 +33,7 @@ def start_run_every_minutes():
         run_commands.start_iperf()
 
     if current_config.schedule_run_every_minutes < 5:
-        print("Scheduled times cannot be less then 5 minutes")
+        primary_logger.warning("Scheduled times cannot be less then 5 minutes")
         current_config.schedule_run_every_minutes = 5
 
     while True:
@@ -44,4 +45,4 @@ def start_run_every_minutes():
             else:
                 sleep(300)
         except Exception as error:
-            print("Problem Running Scheduled Test: " + str(error))
+            primary_logger.error("Error Running Scheduled Test: " + str(error))
