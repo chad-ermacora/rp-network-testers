@@ -57,6 +57,7 @@ previous_results_total = len(previous_results_file_locations)
 http_server = None
 interactive_hw_server = None
 iperf3_server = None
+scheduled_test_run_server = None
 
 # Cached variables from disk
 dhcpcd_config_file_content = ""

@@ -36,9 +36,12 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "1.2.16"
+        self.app_version = "1.2.18"
         self.full_system_text = get_raspberry_pi_model()
         print("\nRunning on " + str(self.full_system_text))
+        print("Loading Installed Hardware Configuration from: " + file_locations.installed_hardware_file_location)
+        print("Loading Primary Configuration from: " + file_locations.config_file_location)
+        print("Reports Saving to: " + file_locations.location_save_report_folder + "\n")
         self.running_on_rpi = False
         if self.full_system_text[:12] == "Raspberry Pi":
             self.running_on_rpi = True
@@ -50,18 +53,12 @@ class CreateConfiguration:
         self.mtr_run_count = "10"
         self.remote_tester_ip = "8.8.8.8"
 
-        self.schedule_run_on_boot = True
+        self.schedule_run_on_boot = 1
+        self.schedule_run_every_minutes_enabled = 0
+        self.schedule_run_every_minutes = 0
 
         self.schedule_run_1_enabled = 0
-        self.schedule_run_2_enabled = 0
-        self.schedule_run_3_enabled = 0
-        self.schedule_run_4_enabled = 0
         self.schedule_run_1_at_time = ""
-        self.schedule_run_2_at_time = ""
-        self.schedule_run_3_at_time = ""
-        self.schedule_run_4_at_time = ""
-
-        self.schedule_run_every_minutes = 0
 
         self.local_ethernet_dhcp = 1
         self.local_ethernet_adapter_name = "eth0"
@@ -211,8 +208,6 @@ class CreateConfiguration:
     def load_installed_hardware_from_file(self):
         """ Loads Installed Hardware configuration from local disk. """
         if os.path.isfile(file_locations.installed_hardware_file_location):
-            log_msg = "Loading Installed Hardware Configuration from: "
-            print(log_msg + file_locations.installed_hardware_file_location)
             try:
                 config_file_lines = get_file_content(file_locations.installed_hardware_file_location).split("\n")
                 config_list = []
@@ -242,7 +237,6 @@ class CreateConfiguration:
     def load_config_from_file(self):
         """ Loads Primary configuration from local disk and set's accordingly. """
         if os.path.isfile(file_locations.config_file_location):
-            print("Loading Primary Configuration from: " + file_locations.config_file_location)
             try:
                 config_file_lines = get_file_content(file_locations.config_file_location).split("\n")
                 config_list = []
@@ -254,6 +248,23 @@ class CreateConfiguration:
                     self.remote_tester_ip = config_list[2]
                     self.iperf_port = config_list[3]
                     self.mtr_run_count = config_list[4]
+                    if len(config_list) > 4:
+                        if config_list[5].strip() == "0":
+                            self.schedule_run_every_minutes = 0
+                        else:
+                            self.schedule_run_every_minutes = int(config_list[5])
+                        if len(config_list) > 5:
+                            if config_list[6].strip() == "0":
+                                self.schedule_run_on_boot = 0
+                            else:
+                                self.schedule_run_on_boot = int(config_list[6])
+                                if self.schedule_run_every_minutes < 5:
+                                    self.schedule_run_every_minutes = 5
+                            if len(config_list) > 6:
+                                if config_list[7].strip() == "0":
+                                    self.schedule_run_every_minutes_enabled = 0
+                                else:
+                                    self.schedule_run_every_minutes_enabled = int(config_list[7])
                 except Exception as error:
                     print("Error loading config settings.  Writing new Configuration: " + str(error))
                     self.write_config_to_file()
@@ -272,7 +283,12 @@ class CreateConfiguration:
                         str(self.is_iperf_server) + " = Start iPerf 3 Server on Boot\n" + \
                         str(self.remote_tester_ip) + " = Remote Test Server IP\n" + \
                         str(self.iperf_port) + " = Local & Remote iPerf Server Port\n" + \
-                        str(self.mtr_run_count) + " = Number of MTR Runs\n"
+                        str(self.mtr_run_count) + " = Number of MTR Runs\n" + \
+                        str(self.schedule_run_every_minutes) + \
+                        " = Minutes to sleep between running scheduled tests (0 disables)\n" + \
+                        str(self.schedule_run_on_boot) + " = Run tests on boot if scheduled tests are enabled\n" + \
+                        str(self.schedule_run_every_minutes_enabled) + \
+                        " = Enable Run Every X Minutes\n"
         return return_config
 
 

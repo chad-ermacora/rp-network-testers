@@ -122,16 +122,24 @@
 
     <div class="mui-tabs__pane" id="schedule-tests-tab">
         <div class="mui-container-fluid">
-            <form class="mui-form" method="POST" action="/ChangeMe">
+            <form class="mui-form" method="POST" action="/ScheduleTests">
                 <fieldset style="text-align: center;">
                     <h3><u><strong><a style="color: black;" href="/">Schedule Repeating Tests</a></strong></u></h3>
+
+                    <div class="mui-checkbox" style="display: inline-block;">
+                        <label style="color: black;">
+                            <input type="checkbox" name="enable_schedule_system_boot"
+                                   {{ EnableScheduleSystemBootChecked }}>
+                            Run Scheduled Tests on System Boot
+                        </label>
+                    </div>
 
                     <h4 style="color: black;"><b><u>Run Every</u></b></h4>
 
                     <div class="mui-checkbox" style="display: inline-block;">
                         <label style="color: black;">
-                            <input type="checkbox" name="enable_schedule_run_every"
-                                   value="" {{ EnableScheduleRunEveryChecked }} disabled>
+                            <input type="checkbox" id="ENABLE_SCHEDULE_RUN_EVERY_X" name="enable_schedule_run_every"
+                                   {{ EnableScheduleRunEveryChecked }}>
                             Enable Run Every X Schedule
                         </label>
                     </div>
@@ -165,7 +173,7 @@
                     <div class="mui-checkbox" style="display: inline-block;">
                         <label style="color: black;">
                             <input type="checkbox" name="enable_schedule_run_once"
-                                   value="" {{ EnableScheduleRunOnceChecked }} disabled>
+                                   {{ EnableScheduleRunOnceChecked }} disabled>
                             Enable Run Once Schedule
                         </label>
                     </div>
@@ -174,7 +182,7 @@
                         <label style="color: black;">
                             Run Once at Time
                             <input type="datetime-local" name="schedule_run_once_at_date_time"
-                                   value="{{ ScheduleRunOnceDateTime }}">
+                                   value="{{ ScheduleRunOnceDateTime }}" disabled>
                         </label>
                     </div>
 
@@ -186,3 +194,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    jQuery('#ENABLE_SCHEDULE_RUN_EVERY_X').change(function () {
+        if (jQuery(this).prop('checked')) {
+            document.getElementsByName("schedule_run_minutes")[0].disabled = false;
+            document.getElementsByName("schedule_run_hours")[0].disabled = false;
+            document.getElementsByName("schedule_run_days")[0].disabled = false;
+        } else {
+            document.getElementsByName("schedule_run_minutes")[0].disabled = true;
+            document.getElementsByName("schedule_run_hours")[0].disabled = true;
+            document.getElementsByName("schedule_run_days")[0].disabled = true;
+        }
+    });
+</script>

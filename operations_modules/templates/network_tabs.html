@@ -227,3 +227,37 @@
         </form>
     </div>
 </div>
+
+<script>
+    jQuery('#ETH_IP_DHCP').change(function () {
+        if (jQuery(this).prop('checked')) {
+            document.getElementsByName("ethernet_ip_address")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_subnet")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_gateway")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_dns1")[0].disabled = true;
+            document.getElementsByName("ethernet_ip_dns2")[0].disabled = true;
+        } else {
+            document.getElementsByName("ethernet_ip_address")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_subnet")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_gateway")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_dns1")[0].disabled = false;
+            document.getElementsByName("ethernet_ip_dns2")[0].disabled = false;
+        }
+    });
+
+    jQuery('#WIFI_IP_DHCP').change(function () {
+        if (jQuery(this).prop('checked')) {
+            document.getElementsByName("wifi_ip_address")[0].disabled = true;
+            document.getElementsByName("wifi_ip_subnet")[0].disabled = true;
+            document.getElementsByName("wifi_ip_gateway")[0].disabled = true;
+            document.getElementsByName("wifi_ip_dns1")[0].disabled = true;
+            document.getElementsByName("wifi_ip_dns2")[0].disabled = true;
+        } else {
+            document.getElementsByName("wifi_ip_address")[0].disabled = false;
+            document.getElementsByName("wifi_ip_subnet")[0].disabled = false;
+            document.getElementsByName("wifi_ip_gateway")[0].disabled = false;
+            document.getElementsByName("wifi_ip_dns1")[0].disabled = false;
+            document.getElementsByName("wifi_ip_dns2")[0].disabled = false;
+        }
+    });
+</script>

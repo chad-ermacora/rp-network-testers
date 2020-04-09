@@ -30,6 +30,15 @@
             document.getElementsByName("wifi_ip_dns1")[0].disabled = false;
             document.getElementsByName("wifi_ip_dns2")[0].disabled = false;
         }
+        if (jQuery('#ENABLE_SCHEDULE_RUN_EVERY_X').prop('checked')) {
+            document.getElementsByName("schedule_run_minutes")[0].disabled = false;
+            document.getElementsByName("schedule_run_hours")[0].disabled = false;
+            document.getElementsByName("schedule_run_days")[0].disabled = false;
+        } else {
+            document.getElementsByName("schedule_run_minutes")[0].disabled = true;
+            document.getElementsByName("schedule_run_hours")[0].disabled = true;
+            document.getElementsByName("schedule_run_days")[0].disabled = true;
+        }
     };
 </script>
 
@@ -73,7 +82,7 @@
             <fieldset style="text-align: center; color: black;">
                 <h3><u><strong><a style="color: black;" href="/">Run Tests & View Results</a></strong></u></h3>
 
-                <h4><a style="color: black;" href="/ViewPreviousResults">View Previous Test Results</a></h4>
+                <h4><a style="color: black;" href="/PreviousResults">View Previous Test Results</a></h4>
 
                 <h4><strong>Remote Tester Status</strong>
                     <div style="color: {{ RemoteTesterStatusColor }}">
@@ -133,40 +142,6 @@
     function refresh_page_timed() {
         window.location = "/";
     }
-</script>
-
-<script>
-    jQuery('#ETH_IP_DHCP').change(function () {
-        if (jQuery(this).prop('checked')) {
-            document.getElementsByName("ethernet_ip_address")[0].disabled = true;
-            document.getElementsByName("ethernet_ip_subnet")[0].disabled = true;
-            document.getElementsByName("ethernet_ip_gateway")[0].disabled = true;
-            document.getElementsByName("ethernet_ip_dns1")[0].disabled = true;
-            document.getElementsByName("ethernet_ip_dns2")[0].disabled = true;
-        } else {
-            document.getElementsByName("ethernet_ip_address")[0].disabled = false;
-            document.getElementsByName("ethernet_ip_subnet")[0].disabled = false;
-            document.getElementsByName("ethernet_ip_gateway")[0].disabled = false;
-            document.getElementsByName("ethernet_ip_dns1")[0].disabled = false;
-            document.getElementsByName("ethernet_ip_dns2")[0].disabled = false;
-        }
-    });
-
-    jQuery('#WIFI_IP_DHCP').change(function () {
-        if (jQuery(this).prop('checked')) {
-            document.getElementsByName("wifi_ip_address")[0].disabled = true;
-            document.getElementsByName("wifi_ip_subnet")[0].disabled = true;
-            document.getElementsByName("wifi_ip_gateway")[0].disabled = true;
-            document.getElementsByName("wifi_ip_dns1")[0].disabled = true;
-            document.getElementsByName("wifi_ip_dns2")[0].disabled = true;
-        } else {
-            document.getElementsByName("wifi_ip_address")[0].disabled = false;
-            document.getElementsByName("wifi_ip_subnet")[0].disabled = false;
-            document.getElementsByName("wifi_ip_gateway")[0].disabled = false;
-            document.getElementsByName("wifi_ip_dns1")[0].disabled = false;
-            document.getElementsByName("wifi_ip_dns2")[0].disabled = false;
-        }
-    });
 </script>
 
 {% endblock %}

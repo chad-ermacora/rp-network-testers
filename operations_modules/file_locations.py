@@ -20,6 +20,8 @@ import os
 import sys
 
 script_folder_path = os.path.dirname(sys.argv[0])
+log_directory = script_folder_path + "/logs"
+primary_log = log_directory + "/network_tester_log.txt"
 enable_fake_hw_clock_script = script_folder_path + "/scripts/enable_fake_hw_clock.sh"
 config_file_location = script_folder_path + "/config.txt"
 installed_hardware_file_location = script_folder_path + "/installed_hardware.txt"
