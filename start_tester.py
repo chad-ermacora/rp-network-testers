@@ -55,5 +55,6 @@ if current_config.running_on_rpi:
     app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="HW Server")
     hardware_access.display_message(hardware_access.get_button_functions_message())
 
+primary_logger.info("Program initializations complete")
 while True:
     sleep(600)
