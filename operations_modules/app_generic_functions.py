@@ -56,6 +56,7 @@ class CreateMonitoredThread:
             monitored_thread = Thread(target=self.function)
         monitored_thread.daemon = True
         monitored_thread.start()
+        primary_logger.debug(self.thread_name + " started")
 
         while True:
             time.sleep(30)

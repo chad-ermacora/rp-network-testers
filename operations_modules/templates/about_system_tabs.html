@@ -16,6 +16,11 @@
         display: none;
         overflow: hidden;
     }
+
+    .view-logs {
+        display: none;
+        overflow: hidden;
+    }
 </style>
 
 <div class="mui-tabs__pane" id="about-tab">
@@ -105,11 +110,37 @@
             <br>
             <br>
         </div>
+
+        <button type="button" class="mui-btn mui-btn--raised" id="view-logs" style="display: block;">
+            View Recent Log Entries
+        </button>
+
+        <div class="mui-container-fluid view-logs">
+            <br>
+            <div style="max-width: 750px;">
+                <label for="displayed_results" style="color: white;">
+                    Primary Log Entries: {{ NumberOfLogLines }}/{{ TotalLogLines }}
+                </label>
+                <br>
+                <textarea id="displayed_results" rows="25" cols="75" style="color: greenyellow;
+                background-color: black;" disabled>{{ LogEntries }}</textarea>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     document.getElementById("advanced-controls").addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "inline-block") {
+            content.style.display = "none";
+        } else {
+            content.style.display = "inline-block";
+        }
+    });
+
+    document.getElementById("view-logs").addEventListener("click", function () {
         this.classList.toggle("active");
         var content = this.nextElementSibling;
         if (content.style.display === "inline-block") {

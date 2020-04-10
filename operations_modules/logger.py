@@ -35,7 +35,7 @@ if not os.path.exists(file_locations.log_directory):
 
 # Log levels include DEBUG, INFO, WARNING, ERROR & CRITICAL
 logging_level = logging.INFO
-max_log_lines_return = 250
+max_log_lines_return = 100
 
 
 def initialize_logger(logger):
@@ -50,16 +50,16 @@ def initialize_logger(logger):
     logger.setLevel(logging_level)
 
 
-def get_number_of_log_entries(log_file):
+def get_number_of_log_entries():
     """ Opens provided log file location and returns the amount of log entries in it. """
-    with open(log_file, "r") as log_content:
+    with open(file_locations.primary_log, "r") as log_content:
         log_lines = log_content.readlines()
         return len(log_lines)
 
 
-def get_sensor_log(log_file):
-    """ Opens provided log file location and returns its content. """
-    with open(log_file, "r") as log_content:
+def get_sensor_log():
+    """ Opens log file and returns 'max_log_lines_return' of it's content in reverse order. """
+    with open(file_locations.primary_log, "r") as log_content:
         log_lines = log_content.readlines()
         if max_log_lines_return:
             log_lines = log_lines[-max_log_lines_return:]

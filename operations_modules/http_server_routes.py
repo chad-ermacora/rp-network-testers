@@ -23,7 +23,7 @@ from io import BytesIO
 from zipfile import ZipInfo, ZipFile, ZIP_DEFLATED
 from socket import gethostname
 from flask import request, Blueprint, render_template, send_file
-from operations_modules.logger import primary_logger
+from operations_modules.logger import primary_logger, get_sensor_log, get_number_of_log_entries, max_log_lines_return
 from operations_modules import file_locations
 from operations_modules import app_generic_functions
 from operations_modules import app_variables
@@ -266,11 +266,15 @@ def _get_about_system_tabs():
     remote_ip_and_port = current_config.remote_tester_ip + ":" + str(app_variables.flask_http_port)
     remote_ip = current_config.remote_tester_ip
     remote_port = app_variables.flask_http_port
-    remote_version = str(app_generic_functions.get_remote_data("http://" + remote_ip + ":" + str(remote_port) +
-                                                               "/Version"))[2:-1]
+    remote_data_command = "http://" + remote_ip + ":" + str(remote_port) + "/Version"
+    remote_version = str(app_generic_functions.get_remote_data(remote_data_command))[2:-1]
 
     if 3 > len(remote_version) or len(remote_version) > 14:
         remote_version = "NA"
+
+    displayed_log_lines = get_number_of_log_entries()
+    if displayed_log_lines > max_log_lines_return:
+        displayed_log_lines = str(max_log_lines_return)
 
     return render_template("about_system_tabs.html",
                            KootnetVersion=current_config.app_version,
@@ -278,7 +282,10 @@ def _get_about_system_tabs():
                            InternetIPAddress=get_ip_from_socket(),
                            FreeDiskSpace=app_generic_functions.get_disk_free_percent(),
                            RemoteVersion=remote_version,
-                           RemoteIPandPort=remote_ip_and_port)
+                           RemoteIPandPort=remote_ip_and_port,
+                           NumberOfLogLines=displayed_log_lines,
+                           TotalLogLines=str(get_number_of_log_entries()),
+                           LogEntries=get_sensor_log())
 
 
 @http_routes.route("/UpdateProgram")
