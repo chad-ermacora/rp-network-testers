@@ -17,8 +17,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
+import time
+import datetime
+from io import BytesIO
+from zipfile import ZipInfo, ZipFile, ZIP_DEFLATED
 from socket import gethostname
 from flask import request, Blueprint, render_template, send_file
+from operations_modules.logger import primary_logger, get_sensor_log, get_number_of_log_entries, max_log_lines_return
 from operations_modules import file_locations
 from operations_modules import app_generic_functions
 from operations_modules import app_variables
@@ -78,6 +83,88 @@ def html_root():
         tests_running_msg = "Running Tests Please Wait ..."
         button_disabled = "disabled"
 
+    ip = current_config.remote_tester_ip
+    port = app_variables.flask_http_port
+    remote_tester_online_status = app_generic_functions.check_tester_online_status(ip, port)
+    remote_tester_colour = "#B71C1C"
+    if remote_tester_online_status == "Online":
+        remote_tester_colour = "darkgreen"
+
+    return render_template("index.html",
+                           TestsRunning=tests_running_msg,
+                           MTRChecked=app_variables.html_mtr_checked,
+                           iPerfChecked=app_variables.html_iperf_checked,
+                           DisabledButton=button_disabled,
+                           RemoteTesterStatus=remote_tester_online_status,
+                           RemoteTesterStatusColor=remote_tester_colour,
+                           Results_MTR=app_variables.web_mtr_results,
+                           Results_iPerf=app_variables.web_iperf_results,
+                           ConfigurationTabs=_get_configuration_tabs(),
+                           NetworkingTabs=_get_networking_tabs(),
+                           AboutSystemTabs=_get_about_system_tabs())
+
+
+@http_routes.route("/PreviousResults", methods=["GET", "POST"])
+def previous_results():
+    if request.method == "POST":
+        if request.form.get("button_function"):
+            button_operation = request.form.get("button_function")
+            if button_operation == "next":
+                app_variables.previous_result_selected += 1
+                if app_variables.previous_result_selected > app_variables.previous_results_total:
+                    app_variables.previous_result_selected = 1
+            elif button_operation == "back":
+                app_variables.previous_result_selected -= 1
+                if app_variables.previous_result_selected < 1:
+                    app_variables.previous_result_selected = app_variables.previous_results_total
+            elif button_operation == "custom_note_number":
+                custom_current_note = request.form.get("current_results_num")
+                if app_variables.previous_results_total > 0:
+                    app_variables.previous_result_selected = int(custom_current_note)
+    app_variables.previous_result_selected_cached = app_variables.get_selected_previous_result()
+    current_file_name = "None"
+    if len(app_variables.previous_results_file_locations) > 0:
+        current_file_name = app_variables.previous_results_file_locations[app_variables.previous_result_selected - 1]
+        current_file_name = current_file_name.split("/")[-1]
+    return render_template("previous_results_tab.html",
+                           CurrentResultSelection=app_variables.previous_result_selected,
+                           LastResultNumber=str(app_variables.previous_results_total),
+                           CurrentlyDisplayedResultName=str(current_file_name),
+                           DisplayedResults=app_variables.previous_result_selected_cached)
+
+
+@http_routes.route("/DownloadTestResultsZip")
+def download_test_results_zip():
+    try:
+        if len(app_variables.previous_results_file_locations) > 0:
+            date_time = datetime.date.today().strftime("D%dM%mY%Y")
+            return_zip_file = BytesIO()
+            zip_name = "TestResults_" + gethostname() + "_" + date_time + ".zip"
+            file_meta_data_list = []
+            names_of_files = []
+            file_to_zip = []
+            file_creation_dates = []
+            for file_location in app_variables.previous_results_file_locations:
+                file_to_zip.append(app_generic_functions.get_file_content(file_location))
+                names_of_files.append(file_location.split("/")[-1])
+                file_creation_dates.append(time.localtime(os.path.getmtime(file_location)))
+
+            for name, modification_date in zip(names_of_files, file_creation_dates):
+                name_data = ZipInfo(name)
+                name_data.date_time = modification_date
+                name_data.compress_type = ZIP_DEFLATED
+                file_meta_data_list.append(name_data)
+            with ZipFile(return_zip_file, "w") as zip_file:
+                for file_meta_data, file_content in zip(file_meta_data_list, file_to_zip):
+                    zip_file.writestr(file_meta_data, file_content)
+            return_zip_file.seek(0)
+            return send_file(return_zip_file, as_attachment=True, attachment_filename=zip_name)
+    except Exception as error:
+        primary_logger.error("Error zipping test results: " + str(error))
+    return render_template("message_return.html", URL="/", TextMessage="No Results Found")
+
+
+def _get_configuration_tabs():
     iperf_server_enabled = ""
     if current_config.is_iperf_server:
         iperf_server_enabled = "checked"
@@ -85,19 +172,64 @@ def html_root():
     if current_config.installed_interactive_hw["WaveShare27"]:
         wave_share_27_enabled = "checked"
 
+    run_scheduled_tests_on_boot = "unchecked"
+    if current_config.schedule_run_on_boot:
+        run_scheduled_tests_on_boot = "checked"
+    scheduled_tests_every_minutes = "unchecked"
+    if current_config.schedule_run_every_minutes_enabled:
+        scheduled_tests_every_minutes = "checked"
+    scheduled_tests_once = "unchecked"
+    if current_config.schedule_run_1_enabled:
+        scheduled_tests_once = "checked"
+
+    return render_template("configuration_tabs.html",
+                           IPHostname=str(gethostname()),
+                           CheckediPerfServer=iperf_server_enabled,
+                           ServerIP=current_config.remote_tester_ip,
+                           iPerfPort=current_config.iperf_port,
+                           iPerfRunOptions=current_config.iperf_run_options,
+                           MTRCount=current_config.mtr_run_count,
+                           CheckedWaveShare27EInk=wave_share_27_enabled,
+                           EnableScheduleSystemBootChecked=run_scheduled_tests_on_boot,
+                           EnableScheduleRunEveryChecked=scheduled_tests_every_minutes,
+                           ScheduleRunMinutes=((current_config.schedule_run_every_minutes % 1440) % 60),
+                           ScheduleRunHours=(current_config.schedule_run_every_minutes % 1440) // 60,
+                           ScheduleRunDays=current_config.schedule_run_every_minutes // 1440,
+                           EnableScheduleRunOnceChecked=scheduled_tests_once,
+                           ScheduleRunOnceDateTime="")
+
+
+@http_routes.route("/ScheduleTests", methods=["GET", "POST"])
+def scheduled_tests():
+    if request.method == "POST":
+        current_config.schedule_run_on_boot = 0
+        if request.form.get("enable_schedule_system_boot") is not None:
+            current_config.schedule_run_on_boot = 1
+        if request.form.get("enable_schedule_run_every") is not None:
+            current_config.schedule_run_every_minutes_enabled = 1
+            temp_minutes = 0
+            if int(request.form.get("schedule_run_minutes")) > 0:
+                temp_minutes += int(request.form.get("schedule_run_minutes"))
+            if int(request.form.get("schedule_run_hours")) > 0:
+                temp_minutes += int(request.form.get("schedule_run_hours")) * 60
+            if int(request.form.get("schedule_run_days")) > 0:
+                temp_minutes += int(request.form.get("schedule_run_days")) * 60 * 24
+            if temp_minutes < 5:
+                temp_minutes = 5
+            current_config.schedule_run_every_minutes = temp_minutes
+        else:
+            current_config.schedule_run_every_minutes_enabled = 0
+        current_config.write_config_to_file()
+    return html_root()
+
+
+def _get_networking_tabs():
     ethernet_dhcp = ""
     if current_config.local_ethernet_dhcp:
         ethernet_dhcp = "checked"
     wireless_dhcp = ""
     if current_config.local_wireless_dhcp:
         wireless_dhcp = "checked"
-
-    mtr_results = ""
-    if app_variables.previous_mtr_results:
-        mtr_results = app_variables.previous_mtr_start_text + str(app_variables.previous_mtr_results)
-    iperf_results = ""
-    if app_variables.previous_iperf_results:
-        iperf_results = app_variables.previous_iperf_start_text + str(app_variables.previous_iperf_results)
 
     wifi_type_wpa = ""
     wifi_type_none = ""
@@ -110,41 +242,7 @@ def html_root():
     if current_config.running_on_rpi:
         wifi_country_code_disable = ""
 
-    ip = current_config.remote_tester_ip
-    port = app_variables.flask_http_port
-    remote_tester_online_status = app_generic_functions.check_tester_online_status(ip, port)
-    remote_tester_colour = "#B71C1C"
-    if remote_tester_online_status == "Online":
-        remote_tester_colour = "darkgreen"
-
-    remote_ip = current_config.remote_tester_ip
-    remote_port = app_variables.flask_http_port
-    remote_version = str(app_generic_functions.get_remote_data("http://" + remote_ip + ":" + str(remote_port) +
-                                                               "/Version"))[2:-1]
-    if 3 > len(remote_version) or len(remote_version) > 14:
-        remote_version = "NA"
-    return render_template("index.html",
-                           RemoteIPandPort=current_config.remote_tester_ip + ":" + str(app_variables.flask_http_port),
-                           RemoteVersion=remote_version,
-                           TestsRunning=tests_running_msg,
-                           MTRChecked=app_variables.html_mtr_checked,
-                           iPerfChecked=app_variables.html_iperf_checked,
-                           IPHostname=str(gethostname()),
-                           DisabledButton=button_disabled,
-                           OSVersion=app_generic_functions.get_os_name_version(),
-                           InternetIPAddress=get_ip_from_socket(),
-                           KootnetVersion=current_config.app_version,
-                           FreeDiskSpace=app_generic_functions.get_disk_free_percent(),
-                           RemoteTesterStatus=remote_tester_online_status,
-                           RemoteTesterStatusColor=remote_tester_colour,
-                           Results_MTR=mtr_results,
-                           Results_iPerf=iperf_results,
-                           CheckediPerfServer=iperf_server_enabled,
-                           InteractiveIP=current_config.local_ethernet_ip,
-                           ServerIP=current_config.remote_tester_ip,
-                           iPerfPort=current_config.iperf_port,
-                           MTRCount=current_config.mtr_run_count,
-                           CheckedWaveShare27EInk=wave_share_27_enabled,
+    return render_template("network_tabs.html",
                            EthernetCheckedDHCP=ethernet_dhcp,
                            EthernetIPv4Address=get_dhcpcd_ip(),
                            EthernetIPv4Subnet=current_config.local_ethernet_subnet,
@@ -164,9 +262,35 @@ def html_root():
                            SSID1=current_config.wifi_ssid)
 
 
+def _get_about_system_tabs():
+    remote_ip_and_port = current_config.remote_tester_ip + ":" + str(app_variables.flask_http_port)
+    remote_ip = current_config.remote_tester_ip
+    remote_port = app_variables.flask_http_port
+    remote_data_command = "http://" + remote_ip + ":" + str(remote_port) + "/Version"
+    remote_version = str(app_generic_functions.get_remote_data(remote_data_command))[2:-1]
+
+    if 3 > len(remote_version) or len(remote_version) > 14:
+        remote_version = "NA"
+
+    displayed_log_lines = get_number_of_log_entries()
+    if displayed_log_lines > max_log_lines_return:
+        displayed_log_lines = str(max_log_lines_return)
+
+    return render_template("about_system_tabs.html",
+                           KootnetVersion=current_config.app_version,
+                           OSVersion=app_generic_functions.get_os_name_version(),
+                           InternetIPAddress=get_ip_from_socket(),
+                           FreeDiskSpace=app_generic_functions.get_disk_free_percent(),
+                           RemoteVersion=remote_version,
+                           RemoteIPandPort=remote_ip_and_port,
+                           NumberOfLogLines=displayed_log_lines,
+                           TotalLogLines=str(get_number_of_log_entries()),
+                           LogEntries=get_sensor_log())
+
+
 @http_routes.route("/UpdateProgram")
 def update_program():
-    app_generic_functions.thread_function(os.system, args="bash " + file_locations.http_upgrade_script)
+    os.system("systemctl start KootnetTesterUpgradeOnline.service")
     return render_template("message_return.html", URL="/",
                            TextMessage="Standard Upgrade in Progress",
                            TextMessage2="Please wait ...")
@@ -174,7 +298,7 @@ def update_program():
 
 @http_routes.route("/UpdateProgramDev")
 def update_program_development():
-    app_generic_functions.thread_function(os.system, args="bash " + file_locations.http_upgrade_script + " dev")
+    os.system("systemctl start KootnetTesterUpgradeOnlineDev.service")
     return render_template("message_return.html", URL="/",
                            TextMessage="Development Upgrade in Progress",
                            TextMessage2="Please wait ...")
@@ -225,10 +349,13 @@ def edit_configuration():
         if app_generic_functions.hostname_is_valid(new_hostname):
             os.system("hostnamectl set-hostname " + new_hostname)
 
+    current_config.is_iperf_server = 0
     if request.form.get("checkbox_iperf_server") is not None:
         current_config.is_iperf_server = 1
-    else:
-        current_config.is_iperf_server = 0
+
+    current_config.iperf_run_options = "-O 1"
+    if request.form.get("iperf_run_options") is not None:
+        current_config.iperf_run_options = request.form.get("iperf_run_options").strip()
 
     if ip_address_validation_check(request.form.get("remote_test_server_ip")):
         current_config.remote_tester_ip = str(request.form.get("remote_test_server_ip"))
@@ -323,7 +450,7 @@ def edit_wifi_connection():
 
 
 def set_html_config_wifi_connection(html_request):
-    print("Starting HTML Wireless Configuration Update")
+    primary_logger.debug("Starting HTML Wireless Configuration Update")
     current_config.wifi_country_code = html_request.form.get("country_code")
     current_config.wifi_ssid = html_request.form.get("ssid1")
     current_config.wifi_security_type = html_request.form.get("wifi_security1")
@@ -331,7 +458,8 @@ def set_html_config_wifi_connection(html_request):
 
 
 def set_html_config_ipv4(html_request, wireless_type=False):
-    print("Starting HTML IPv4 Configuration Update for Ethernet or Wireless.  Wireless = " + str(wireless_type))
+    log_msg = "Starting HTML IPv4 Configuration Update for Ethernet or Wireless."
+    primary_logger.debug(log_msg + " Wireless = " + str(wireless_type))
     if wireless_type:
         current_config.local_wireless_ip = html_request.form.get("wifi_ip_address")
         current_config.local_wireless_subnet = html_request.form.get("wifi_ip_subnet")

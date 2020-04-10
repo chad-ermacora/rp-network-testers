@@ -18,26 +18,31 @@
 """
 from time import sleep
 from operations_modules.logger import primary_logger
-from operations_modules import run_commands
 from operations_modules.config_primary import current_config
-from operations_modules.hardware_access import hardware_access
+from operations_modules import run_commands
 
 
-class CreateInteractiveServer:
-    def __init__(self):
-        if current_config.using_dummy_access:
-            log_msg = "No Interactive Hardware Detected.  Interactive Server Disabled.  Using Web Access Only."
-            primary_logger.warning(log_msg)
-            while True:
-                sleep(600)
+def _start_run_at_date(run_on_date_time):
+    if current_config.schedule_run_on_boot:
+        pass
 
-        while True:
-            if current_config.tests_running:
-                sleep(1)
-            count = 0
-            for key_state in hardware_access.get_key_states():
-                if not key_state:
-                    run_commands.run_command(count)
-                    break
-                count += 1
-            sleep(1)
+
+def start_run_every_minutes():
+    if current_config.schedule_run_on_boot:
+        run_commands.start_mtr()
+        run_commands.start_iperf()
+
+    if current_config.schedule_run_every_minutes < 5:
+        primary_logger.warning("Scheduled times cannot be less then 5 minutes")
+        current_config.schedule_run_every_minutes = 5
+
+    while True:
+        try:
+            if current_config.schedule_run_every_minutes_enabled:
+                sleep(current_config.schedule_run_every_minutes * 60)
+                run_commands.start_mtr()
+                run_commands.start_iperf()
+            else:
+                sleep(300)
+        except Exception as error:
+            primary_logger.error("Error Running Scheduled Test: " + str(error))

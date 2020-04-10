@@ -1,0 +1,153 @@
+
+<style>
+    .mui-col-md-3 {
+        background-color: #00ffff;
+        color: black;
+        width: 150px;
+    }
+
+    .mui-col-md-4 {
+        background-color: #0BB10D;
+        color: black;
+        width: 250px;
+    }
+
+    .advanced-controls {
+        display: none;
+        overflow: hidden;
+    }
+
+    .view-logs {
+        display: none;
+        overflow: hidden;
+    }
+</style>
+
+<div class="mui-tabs__pane" id="about-tab">
+    <br>
+    <div class="mui-container-fluid" style="align-items: center;">
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Software</b></div>
+            <div class="mui-col-md-4"><b>
+                <a href="https://github.com/chad-ermacora/rp-network-testers"
+                   target="_blank" style="color: black;">Kootnet Network Testers {{ KootnetVersion }}
+                </a></b></div>
+        </div>
+
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Operating System</b></div>
+            <div class="mui-col-md-4"><b>{{ OSVersion }}</b></div>
+        </div>
+
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>License</b></div>
+            <div class="mui-col-md-4"><b>
+                <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color: black;">
+                    GNU General Public License 3
+                </a></b></div>
+        </div>
+
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Internet IP</b></div>
+            <div class="mui-col-md-4"><b>{{ InternetIPAddress }}</b></div>
+        </div>
+
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-3"><b>Disk Space</b></div>
+            <div class="mui-col-md-4"><b>{{ FreeDiskSpace }} GBytes Free</b></div>
+        </div>
+
+        <br>
+
+        <div class="mui-row" style="padding-left: inherit;">
+            <div class="mui-col-md-4" style="background-color: #00ffff;"><b>Remote Test Server Version</b></div>
+            <div class="mui-col-md-3" style="background-color: #0BB10D"><b>{{ RemoteVersion }}</b></div>
+        </div>
+
+        <br>
+
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
+                onclick="window.open('http://{{ RemoteIPandPort }}', '_blank')">
+            Manage Remote Test Server
+        </button>
+
+        <br>
+
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
+                onclick="window.location.href = '/UpdateProgram';">
+            Standard Upgrade
+        </button>
+
+        <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-red-900"
+                onclick="window.location.href = '/Shutdown';">
+            Shutdown
+        </button>
+
+        <br>
+
+        <button type="button" class="mui-btn mui-btn--raised" id="advanced-controls" style="display: block;">
+            Advanced Controls
+        </button>
+
+        <div class="mui-container-fluid advanced-controls">
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-green"
+                    onclick="window.location.href = '/ReStart';">
+                Restart Program
+            </button>
+
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-yellow-900"
+                    onclick="window.location.href = '/Reboot';">
+                Restart System
+            </button>
+
+            <br>
+
+            <button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-light-blue"
+                    onclick="window.location.href = '/UpdateProgramDev';">
+                Development Upgrade
+            </button>
+
+            <br>
+            <br>
+        </div>
+
+        <button type="button" class="mui-btn mui-btn--raised" id="view-logs" style="display: block;">
+            View Recent Log Entries
+        </button>
+
+        <div class="mui-container-fluid view-logs">
+            <br>
+            <div style="max-width: 750px;">
+                <label for="displayed_results" style="color: white;">
+                    Primary Log Entries: {{ NumberOfLogLines }}/{{ TotalLogLines }}
+                </label>
+                <br>
+                <textarea id="displayed_results" rows="25" cols="75" style="color: greenyellow;
+                background-color: black;" disabled>{{ LogEntries }}</textarea>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("advanced-controls").addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "inline-block") {
+            content.style.display = "none";
+        } else {
+            content.style.display = "inline-block";
+        }
+    });
+
+    document.getElementById("view-logs").addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "inline-block") {
+            content.style.display = "none";
+        } else {
+            content.style.display = "inline-block";
+        }
+    });
+</script>

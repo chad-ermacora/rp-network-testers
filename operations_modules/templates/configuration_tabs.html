@@ -1,0 +1,210 @@
+
+<div class="mui-tabs__pane" id="configuration-tab">
+    <ul class="mui-tabs__bar">
+        <li class="mui--is-active"><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+                                      data-mui-controls="main-config-tab">
+            Main Configurations
+        </a></li>
+
+        <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab" data-mui-controls="hardware-tab">
+            Optional Hardware
+        </a></li>
+
+        <li><a style="color: red; background-color: #212121;" data-mui-toggle="tab"
+               data-mui-controls="schedule-tests-tab">
+            Schedule Test Runs
+        </a></li>
+    </ul>
+
+    <br>
+
+    <div class="mui-tabs__pane mui--is-active" id="main-config-tab">
+        <div class="mui-container-fluid">
+            <form class="mui-form" method="POST" action="/EditConfiguration">
+                <fieldset style="text-align: center;">
+                    <h3><u><strong><a style="color: black;" href="/">Configurations</a></strong></u></h3>
+
+                    <div class="mui-textfield">
+                        <label style="color: black">
+                            Local HostName
+                            <br>
+                            <input style="width: 200px;" type="text" id="ip_hostname" name="ip_hostname" required
+                                   placeholder="eg. Tester9932" minlength="2" maxlength="62" value="{{ IPHostname }}">
+                        </label>
+                    </div>
+
+                    <br>
+
+                    <div class="mui-checkbox" style="display: inline-block;">
+                        <label style="color: black;">
+                            <input type="checkbox" name="checkbox_iperf_server"
+                                   value="" {{ CheckediPerfServer }}>
+                            Enable iPerf 3 Server
+                        </label>
+                    </div>
+
+                    <br>
+
+                    <div class="mui-textfield">
+                        <label style="color: black;">
+                            <a style="color: black;" href="https://iperf.fr/iperf-doc.php#3doc"
+                               target="_blank">iPerf3 Run Options</a>
+                            <br>
+                            <input style="width: 125px;" type="text" maxlength="60" name="iperf_run_options"
+                                   value="{{ iPerfRunOptions }}" placeholder="Default: -O 1 ">
+                        </label>
+                    </div>
+
+                    <br>
+
+                    <div class="mui-textfield">
+                        <label style="color: black;">Remote Test Server IP
+                            <br>
+                            <input style="width: 125px;" type="text" maxlength="15" name="remote_test_server_ip"
+                                   value="{{ ServerIP }}" placeholder="eg. 192.168.10.11">
+                        </label>
+                    </div>
+
+                    <br>
+
+                    <div class="mui-textfield">
+                        <label style="color: black;">
+                            iPerf 3 Server Port #
+                            <br>
+                            <input style="width: 75px;" type="number" min="1" max="65535" name="iperf_port"
+                                   value="{{ iPerfPort }}">
+                        </label>
+                    </div>
+
+                    <br>
+
+                    <div class="mui-textfield">
+                        <label style="color: black;">
+                            MTR Run Count
+                            <br>
+                            <input style="width: 75px;" type="number" min="1" max="1000" name="mtr_run_count"
+                                   value="{{ MTRCount }}">
+                        </label>
+                    </div>
+
+                    <br>
+
+                    <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+
+                    <br>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <div class="mui-tabs__pane" id="hardware-tab">
+        <div class="mui-container-fluid">
+            <form class="mui-form" method="POST" action="/EditInstalledHardware">
+                <fieldset style="text-align: center;">
+                    <h3><u><strong><a style="color: black;" href="/">Installed Hardware</a></strong></u></h3>
+
+                    <div class="mui-checkbox" style="display: inline-block;">
+                        <label style="color: black;">
+                            <input type="checkbox" name="checkbox_waveshare_2_7_e_ink"
+                                   value="" {{ CheckedWaveShare27EInk }}>
+                            WaveShare 2.7" E-Ink Display (BW or RBW)
+                        </label>
+                    </div>
+
+                    <br>
+
+                    <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <div class="mui-tabs__pane" id="schedule-tests-tab">
+        <div class="mui-container-fluid">
+            <form class="mui-form" method="POST" action="/ScheduleTests">
+                <fieldset style="text-align: center;">
+                    <h3><u><strong><a style="color: black;" href="/">Schedule Repeating Tests</a></strong></u></h3>
+
+                    <div class="mui-checkbox" style="display: inline-block;">
+                        <label style="color: black;">
+                            <input type="checkbox" name="enable_schedule_system_boot"
+                                   {{ EnableScheduleSystemBootChecked }}>
+                            Run Scheduled Tests on System Boot
+                        </label>
+                    </div>
+
+                    <h4 style="color: black;"><b><u>Run Every</u></b></h4>
+
+                    <div class="mui-checkbox" style="display: inline-block;">
+                        <label style="color: black;">
+                            <input type="checkbox" id="ENABLE_SCHEDULE_RUN_EVERY_X" name="enable_schedule_run_every"
+                                   {{ EnableScheduleRunEveryChecked }}>
+                            Enable Run Every X Schedule
+                        </label>
+                    </div>
+
+                    <div class="mui-textfield">
+                        <label style="color: black;">
+                            Minutes
+                            <input style="width: 50px;" type="number" name="schedule_run_minutes" min="0" max="59"
+                                   value="{{ ScheduleRunMinutes }}">
+                        </label>
+                    </div>
+
+                    <div class="mui-textfield">
+                        <label style="color: black;">
+                            Hours
+                            <input style="width: 50px;" type="number" name="schedule_run_hours" min="0" max="59"
+                                   value="{{ ScheduleRunHours }}">
+                        </label>
+                    </div>
+
+                    <div class="mui-textfield">
+                        <label style="color: black;">
+                            Days
+                            <input style="width: 50px;" type="number" name="schedule_run_days" min="0"
+                                   value="{{ ScheduleRunDays }}">
+                        </label>
+                    </div>
+
+                    <h4 style="color: black;"><b><u>Run Once *WIP</u></b></h4>
+
+                    <div class="mui-checkbox" style="display: inline-block;">
+                        <label style="color: black;">
+                            <input type="checkbox" name="enable_schedule_run_once"
+                                   {{ EnableScheduleRunOnceChecked }} disabled>
+                            Enable Run Once Schedule
+                        </label>
+                    </div>
+
+                    <div class="mui-textfield">
+                        <label style="color: black;">
+                            Run Once at Time
+                            <input type="datetime-local" name="schedule_run_once_at_date_time"
+                                   value="{{ ScheduleRunOnceDateTime }}" disabled>
+                        </label>
+                    </div>
+
+                    <br>
+
+                    <button type="submit" class="mui-btn mui-btn--raised">Save Settings</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    jQuery('#ENABLE_SCHEDULE_RUN_EVERY_X').change(function () {
+        if (jQuery(this).prop('checked')) {
+            document.getElementsByName("schedule_run_minutes")[0].disabled = false;
+            document.getElementsByName("schedule_run_hours")[0].disabled = false;
+            document.getElementsByName("schedule_run_days")[0].disabled = false;
+        } else {
+            document.getElementsByName("schedule_run_minutes")[0].disabled = true;
+            document.getElementsByName("schedule_run_hours")[0].disabled = true;
+            document.getElementsByName("schedule_run_days")[0].disabled = true;
+        }
+    });
+</script>

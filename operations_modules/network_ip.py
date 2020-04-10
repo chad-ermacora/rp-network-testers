@@ -19,6 +19,7 @@
 import os
 import socket
 from ipaddress import ip_address as _check_ip_address
+from operations_modules.logger import primary_logger
 from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_raspberry_pi_model
 
@@ -51,7 +52,7 @@ def get_ip_from_socket():
         ip_address = (s.getsockname()[0])
         s.close()
     except Exception as error:
-        print("Get IP Failed: " + str(error))
+        primary_logger.warning("Error getting IP address: " + str(error))
         ip_address = "0.0.0.0"
     return ip_address
 
@@ -64,7 +65,7 @@ def get_dhcpcd_ip(wireless=False):
             address = os.popen("ip addr show eth0").read().split("inet ")[1].split("/")[0]
         return address
     except Exception as error:
-        print("Interface is Inactive: " + str(error))
+        primary_logger.debug("Interface is Inactive: " + str(error))
     return "Inactive"
 
 
@@ -162,7 +163,7 @@ def ip_address_validation_check(ip_address):
             return True
         return False
     except Exception as error:
-        print(str(error))
+        primary_logger.warning("IP validation check error: " + str(error))
         return False
 
 

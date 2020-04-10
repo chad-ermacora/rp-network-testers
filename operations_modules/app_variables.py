@@ -16,24 +16,48 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import os
 from operations_modules import file_locations
 from operations_modules.app_generic_functions import get_file_content
+
+
+def get_previous_results_file_names():
+    """ Returns a list of file locations of all previous results """
+    for (root_path, directory_names, file_names) in os.walk(file_locations.location_save_report_folder):
+        temp_file_locations = []
+        for file_name in sorted(file_names):
+            temp_file_locations.append(os.path.join(root_path, file_name))
+        return temp_file_locations
+
+
+def get_selected_previous_result():
+    if len(previous_results_file_locations) > 0:
+        return get_file_content(previous_results_file_locations[previous_result_selected - 1])
+    return "No Previous Results Found"
 
 
 # Flask HTTP Server Variables
 flask_http_ip = ""
 flask_http_port = 10066
 
-# Cached results from the previous test run
-previous_mtr_start_text = ""
-previous_iperf_start_text = ""
-previous_mtr_results = False
-previous_iperf_results = False
+# Cached results from last test run
+web_mtr_results = ""
+web_iperf_results = ""
+raw_mtr_results = ""
+raw_iperf_results = ""
+
+# Previous Results variables
+previous_result_selected = 1
+previous_results_file_locations = get_previous_results_file_names()
+previous_result_selected_cached = get_selected_previous_result()
+previous_results_total = len(previous_results_file_locations)
+
 
 # Monitored Thread placeholders. Replaced with class instances that have function and variables access
 http_server = None
 interactive_hw_server = None
 iperf3_server = None
+scheduled_test_run_server = None
 
 # Cached variables from disk
 dhcpcd_config_file_content = ""

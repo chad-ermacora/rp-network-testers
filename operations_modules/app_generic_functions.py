@@ -22,10 +22,11 @@ import time
 import subprocess
 from threading import Thread
 from operations_modules import file_locations
+from operations_modules.logger import primary_logger
 try:
     import requests
 except Exception as import_error:
-    print("Problem Importing Requests: " + str(import_error))
+    primary_logger.error("Problem Importing Requests: " + str(import_error))
 
 
 class CreateMonitoredThread:
@@ -46,7 +47,7 @@ class CreateMonitoredThread:
             monitored_thread.daemon = True
             monitored_thread.start()
         except Exception as error:
-            print(str(error))
+            primary_logger.warning("Error starting program thread " + self.thread_name + ": " + str(error))
 
     def _worker_thread_and_monitor(self):
         if self.args is not None:
@@ -55,6 +56,7 @@ class CreateMonitoredThread:
             monitored_thread = Thread(target=self.function)
         monitored_thread.daemon = True
         monitored_thread.start()
+        primary_logger.debug(self.thread_name + " started")
 
         while True:
             time.sleep(30)
@@ -71,7 +73,7 @@ class CreateMonitoredThread:
                     self.is_running = True
                 else:
                     log_msg = self.thread_name + " has attempted to restart " + str(self.current_restart_count)
-                    print(log_msg + " Times.  No further restart attempts will be made.")
+                    primary_logger.critical(log_msg + " Times.  No further restart attempts will be made.")
                     while True:
                         time.sleep(600)
 
@@ -100,19 +102,19 @@ def get_os_name_version():
                 os_release_name = name_and_value[1].strip()[1:-1]
         return os_release_name
     except Exception as error:
-        print("Linux System - Unable to get Raspbian OS Version: " + str(error))
+        primary_logger.error("Linux System - Unable to get Raspbian OS Version: " + str(error))
         return "Error retrieving OS information"
 
 
-def get_file_content(load_file, open_type="r"):
+def get_file_content(file_location, open_type="r"):
     """ Loads provided file and returns it's content. """
-    if os.path.isfile(load_file):
+    if os.path.isfile(file_location):
         try:
-            loaded_file = open(load_file, open_type)
+            loaded_file = open(file_location, open_type)
             file_content = loaded_file.read()
             loaded_file.close()
         except Exception as error:
-            print(str(error))
+            primary_logger.error("Unable to open file " + file_location + ": " + str(error))
             file_content = ""
         return file_content
 
@@ -124,7 +126,7 @@ def write_file_to_disk(file_location, file_content, open_type="w"):
         write_file.write(file_content)
         write_file.close()
     except Exception as error:
-        print("Write to Disk Error: " + str(error))
+        primary_logger.error("Unable to write to file " + file_location + ": " + str(error))
 
 
 def check_tester_online_status(ip, port):
@@ -135,7 +137,7 @@ def check_tester_online_status(ip, port):
         if html_request_response.status_code == 200:
             return "Online"
     except Exception as error:
-        print(str(error))
+        primary_logger.debug("Error checking remote tester @ " + str(ip) + ": " + str(error))
         return "Offline"
     return "Offline"
 
@@ -144,10 +146,10 @@ def send_command(url):
     """ Sends command URL using requests. """
     try:
         requests.get(url=url, timeout=5, headers={'Connection': 'close'})
-        print("Command '" + url + "' OK")
+        primary_logger.debug(str(url) + " sent OK")
         return True
     except Exception as error:
-        print(str(error))
+        primary_logger.warning("Error sending '" + str(url) + "': " + str(error))
         return False
 
 
@@ -157,7 +159,7 @@ def get_remote_data(url):
         tmp_data = requests.get(url=url, timeout=0.5)
         return_data = tmp_data.content
     except Exception as error:
-        print("Remote Data grab Error: " + str(error))
+        primary_logger.debug("Unable to retrieve remote data: " + str(error))
         return_data = "NA"
     return return_data
 
@@ -183,7 +185,7 @@ def get_disk_free_percent():
         free_bytes = statvfs.f_frsize * statvfs.f_bfree
         return_disk_usage = str(round(free_bytes / 1_000_000_000, 3))
     except Exception as error:
-        print("Linux System - Get Disk Usage % Error: " + str(error))
+        primary_logger.error("Linux System - Get Disk Usage % Error: " + str(error))
         return_disk_usage = "Error"
     return return_disk_usage
 

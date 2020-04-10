@@ -19,6 +19,7 @@
 import os
 from time import strftime
 from PIL import Image, ImageDraw, ImageFont
+from operations_modules.logger import primary_logger
 from operations_modules import file_locations
 from operations_modules import app_variables
 from operations_modules.config_primary import current_config
@@ -38,9 +39,9 @@ class CreateHardwareAccess:
 
         try:
             os.system("raspi-config nonint do_spi 0")
-            print("\nEnabled SPI for WaveShare 2.7 E-Paper\n")
+            primary_logger.debug("Enabled SPI for WaveShare 2.7 E-Paper")
         except Exception as error:
-            print("\nError Enabling SPI for WaveShare 2.7 E-Paper: " + str(error) + "\n")
+            primary_logger.error("Error Enabling SPI for WaveShare 2.7 E-Paper: " + str(error))
 
         self.display_in_use = False
 
@@ -74,7 +75,7 @@ class CreateHardwareAccess:
         draw = ImageDraw.Draw(display_image)
         font18 = ImageFont.truetype(file_locations.location_truetype_font, 16)
         draw.text((2, 0), text_message, font=font18, fill=0)
-        print(text_message)
+        primary_logger.debug(text_message)
         self.esp.display(self.esp.getbuffer(display_image))
         self.display_in_use = False
 
@@ -99,7 +100,7 @@ class CreateHardwareAccess:
         return message
 
     def get_mtr_message(self):
-        cli_results = app_variables.previous_mtr_results
+        cli_results = app_variables.raw_mtr_results
         if cli_results != "Error Connecting to Remote Test Server":
             mtr_results_list = self._get_real_lines_mtr(cli_results)
             message = "MTR Results\nDest: " + current_config.remote_tester_ip + "\n  " + \
@@ -131,10 +132,9 @@ class CreateHardwareAccess:
         return real_first_list
 
     def get_iperf_message(self):
-        cli_results = app_variables.previous_iperf_results
+        cli_results = app_variables.raw_iperf_results
         if cli_results != "Error Connecting to Remote Test Server":
             iperf_results_lines = cli_results.strip().split("\n")
-            print(cli_results)
             try:
                 send_results_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-4].split(" "))
                 receive_line_list = self._get_mtr_or_iperf_real_list(iperf_results_lines[-3].split(" "))
@@ -148,7 +148,7 @@ class CreateHardwareAccess:
                           str(send_results_list[-4]) + " " + str(send_results_list[-3]) + "\n" + \
                           " Over: " + str(receive_line_list[-7]) + " " + str(receive_line_list[-6])
             except Exception as error:
-                print("iPerf Display Error: " + str(error))
+                primary_logger.error("WaveShare iPerf Display Error: " + str(error))
                 message = " iPerf3 Failed\n Remote Test Server\n Offline Or Bad Network\n"
         else:
             message = " iPerf3 Failed\n Remote Test Server\n Offline Or Bad Network\n"

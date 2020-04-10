@@ -18,9 +18,11 @@
 """
 import os
 from time import sleep
+from operations_modules.logger import primary_logger
 from operations_modules import file_locations
-from operations_modules import http_server
 from operations_modules import app_variables
+from operations_modules import http_server
+from operations_modules import schedule_server
 from operations_modules.config_primary import current_config
 from operations_modules.app_generic_functions import CreateMonitoredThread
 from operations_modules.interaction_server import CreateInteractiveServer
@@ -35,24 +37,24 @@ def start_iperf_server():
     os.system("/usr/bin/iperf3 -s -p " + current_config.iperf_port)
 
 
-print("Reports Saving to: " + file_locations.location_save_report_folder + "\n")
-if current_config.running_on_rpi:
-    enable_fake_hw_clock()
-
+primary_logger.info(" -- Starting HTTP Server on port " + str(app_variables.flask_http_port))
 app_variables.http_server = CreateMonitoredThread(http_server.CreateHTTPServer, thread_name="HTTP Server")
-print(" -- HTTP Server Started on port " + str(http_server.flask_http_port))
+
+if current_config.schedule_run_every_minutes and current_config.schedule_run_every_minutes_enabled:
+    primary_logger.info(" -- Starting Scheduled Tests Server ")
+    schedule_function = schedule_server.start_run_every_minutes
+    app_variables.scheduled_test_run_server = CreateMonitoredThread(schedule_function, thread_name="Scheduled Server")
 
 if current_config.is_iperf_server:
-    thread_name = "iPerf3 Server"
-    print(" -- iPerf 3 Server started on port " + current_config.iperf_port)
-    app_variables.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name=thread_name)
+    primary_logger.info(" -- Starting iPerf 3 Server on port " + current_config.iperf_port)
+    app_variables.iperf3_server = CreateMonitoredThread(start_iperf_server, thread_name="iPerf3 Server")
+
 if current_config.running_on_rpi:
-    thread_name = "Interactive Server"
-    print(" -- Interactive Hardware Server started")
-    app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name=thread_name)
+    enable_fake_hw_clock()
+    primary_logger.info(" -- Starting Interactive Hardware Server")
+    app_variables.interactive_hw_server = CreateMonitoredThread(CreateInteractiveServer, thread_name="HW Server")
     hardware_access.display_message(hardware_access.get_button_functions_message())
-else:
-    part_1_msg = "\nInteractive Hardware only supported on Raspberry Pis - "
-    print(part_1_msg + "Interactive Hardware Server Disabled")
+
+primary_logger.info("Program initializations complete")
 while True:
     sleep(600)

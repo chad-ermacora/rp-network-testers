@@ -18,6 +18,7 @@
 """
 import os
 import shutil
+from operations_modules.logger import primary_logger
 from operations_modules import file_locations
 from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_file_content, write_file_to_disk, get_raspberry_pi_model
@@ -36,9 +37,10 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "1.2.8"
+        self.app_version = "1.3.1"
         self.full_system_text = get_raspberry_pi_model()
-        print("\nRunning on " + str(self.full_system_text))
+        primary_logger.debug("Running on " + str(self.full_system_text))
+        primary_logger.info("Test Results Saving to: " + file_locations.location_save_report_folder)
         self.running_on_rpi = False
         if self.full_system_text[:12] == "Raspberry Pi":
             self.running_on_rpi = True
@@ -46,8 +48,16 @@ class CreateConfiguration:
         self.tests_running = False
         self.is_iperf_server = 1
         self.iperf_port = "9000"
+        self.iperf_run_options = "-O 1"
         self.mtr_run_count = "10"
         self.remote_tester_ip = "8.8.8.8"
+
+        self.schedule_run_on_boot = 1
+        self.schedule_run_every_minutes_enabled = 0
+        self.schedule_run_every_minutes = 0
+
+        self.schedule_run_1_enabled = 0
+        self.schedule_run_1_at_time = ""
 
         self.local_ethernet_dhcp = 1
         self.local_ethernet_adapter_name = "eth0"
@@ -87,7 +97,7 @@ class CreateConfiguration:
             self.wifi_security_type = network_wifi.get_wifi_security_type()
             self.wifi_pass_key = network_wifi.get_wifi_psk()
         except Exception as error:
-            print("Unable to get Wireless information from wpa_supplicant.conf: " + str(error))
+            primary_logger.warning("Unable to get Wireless information from wpa_supplicant.conf: " + str(error))
 
     def load_dhcpcd_conf_from_file(self):
         try:
@@ -106,13 +116,13 @@ class CreateConfiguration:
             self.local_wireless_dns1 = network_ip.get_dns(dns_server=0, wireless=True)
             self.local_wireless_dns2 = network_ip.get_dns(dns_server=1, wireless=True)
         except Exception as error:
-            print("Unable to get IP information from dhcpcd.conf: " + str(error))
+            primary_logger.warning("Unable to get IP information from dhcpcd.conf: " + str(error))
 
     def get_mtr_command_str(self):
         return "mtr -c " + self.mtr_run_count + " -r -n " + self.remote_tester_ip
 
     def get_iperf_command_str(self):
-        return "iperf3 -c " + self.remote_tester_ip + " -O 1 -p " + self.iperf_port
+        return "iperf3 -c " + self.remote_tester_ip + " " + self.iperf_run_options.strip() + " -p " + self.iperf_port
 
     def write_wpa_supplicant_wifi_settings_to_file(self):
         wpa_supplicant_template = app_variables.wpa_supplicant_file_content_template
@@ -196,24 +206,21 @@ class CreateConfiguration:
 
     def load_installed_hardware_from_file(self):
         """ Loads Installed Hardware configuration from local disk. """
+        log_msg = "Loading Installed Hardware Configuration from: " + file_locations.installed_hardware_file_location
+        primary_logger.debug(log_msg)
         if os.path.isfile(file_locations.installed_hardware_file_location):
-            log_msg = "Loading Installed Hardware Configuration from: "
-            print(log_msg + file_locations.installed_hardware_file_location)
             try:
                 config_file_lines = get_file_content(file_locations.installed_hardware_file_location).split("\n")
                 config_list = []
                 for line in config_file_lines:
                     config_list.append(line.split("=")[0].strip())
 
-                try:
-                    self.installed_interactive_hw["WaveShare27"] = int(config_list[1])
-                except Exception as error:
-                    print("Error loading Installed Hardware config: " + str(error))
-                    self.write_installed_hardware_to_file()
+                self.installed_interactive_hw["WaveShare27"] = int(config_list[1])
             except Exception as error:
-                print("Unable to load Installed Hardware configuration File: " + str(error))
+                primary_logger.error("Unable to load Installed Hardware configuration File: " + str(error))
+                self.write_installed_hardware_to_file()
         else:
-            print("No Installed Hardware Configuration file found, saving default")
+            primary_logger.warning("No Installed Hardware Configuration file found, saving default")
             self.write_installed_hardware_to_file()
 
     def write_installed_hardware_to_file(self):
@@ -227,26 +234,41 @@ class CreateConfiguration:
 
     def load_config_from_file(self):
         """ Loads Primary configuration from local disk and set's accordingly. """
+        primary_logger.debug("Loading Primary Configuration from: " + file_locations.config_file_location)
         if os.path.isfile(file_locations.config_file_location):
-            print("Loading Primary Configuration from: " + file_locations.config_file_location)
             try:
                 config_file_lines = get_file_content(file_locations.config_file_location).split("\n")
                 config_list = []
                 for line in config_file_lines:
                     config_list.append(line.split("=")[0].strip())
 
-                try:
-                    self.is_iperf_server = int(config_list[1])
-                    self.remote_tester_ip = config_list[2]
-                    self.iperf_port = config_list[3]
-                    self.mtr_run_count = config_list[4]
-                except Exception as error:
-                    print("Error loading config settings.  Writing new Configuration: " + str(error))
-                    self.write_config_to_file()
+                self.is_iperf_server = int(config_list[1])
+                self.remote_tester_ip = config_list[2]
+                self.iperf_port = config_list[3]
+                self.mtr_run_count = config_list[4]
+                if len(config_list) > 4:
+                    if config_list[5].strip() == "0":
+                        self.schedule_run_every_minutes = 0
+                    else:
+                        self.schedule_run_every_minutes = int(config_list[5])
+                    if len(config_list) > 5:
+                        if config_list[6].strip() == "0":
+                            self.schedule_run_on_boot = 0
+                        else:
+                            self.schedule_run_on_boot = int(config_list[6])
+                            if self.schedule_run_every_minutes < 5:
+                                self.schedule_run_every_minutes = 5
+                        if len(config_list) > 6:
+                            if config_list[7].strip() == "0":
+                                self.schedule_run_every_minutes_enabled = 0
+                            else:
+                                self.schedule_run_every_minutes_enabled = int(config_list[7])
+
             except Exception as error:
-                print("Unable to load Configuration File: " + str(error))
+                primary_logger.error("Unable to load Configuration File, saving default: " + str(error))
+                self.write_config_to_file()
         else:
-            print("No Configuration file found, saving default")
+            primary_logger.warning("No Configuration file found, saving default")
             self.write_config_to_file()
 
     def write_config_to_file(self):
@@ -258,7 +280,12 @@ class CreateConfiguration:
                         str(self.is_iperf_server) + " = Start iPerf 3 Server on Boot\n" + \
                         str(self.remote_tester_ip) + " = Remote Test Server IP\n" + \
                         str(self.iperf_port) + " = Local & Remote iPerf Server Port\n" + \
-                        str(self.mtr_run_count) + " = Number of MTR Runs\n"
+                        str(self.mtr_run_count) + " = Number of MTR Runs\n" + \
+                        str(self.schedule_run_every_minutes) + \
+                        " = Minutes to sleep between running scheduled tests (0 disables)\n" + \
+                        str(self.schedule_run_on_boot) + " = Run tests on boot if scheduled tests are enabled\n" + \
+                        str(self.schedule_run_every_minutes_enabled) + \
+                        " = Enable Run Every X Minutes\n"
         return return_config
 
 
