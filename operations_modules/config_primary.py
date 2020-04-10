@@ -37,7 +37,7 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "1.2.20"
+        self.app_version = "1.3.1"
         self.full_system_text = get_raspberry_pi_model()
         primary_logger.debug("Running on " + str(self.full_system_text))
         primary_logger.info("Test Results Saving to: " + file_locations.location_save_report_folder)

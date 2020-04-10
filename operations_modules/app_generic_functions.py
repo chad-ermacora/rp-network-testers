@@ -137,7 +137,7 @@ def check_tester_online_status(ip, port):
         if html_request_response.status_code == 200:
             return "Online"
     except Exception as error:
-        primary_logger.error("Error checking remote tester @ " + str(ip) + ": " + str(error))
+        primary_logger.debug("Error checking remote tester @ " + str(ip) + ": " + str(error))
         return "Offline"
     return "Offline"
 
@@ -159,7 +159,7 @@ def get_remote_data(url):
         tmp_data = requests.get(url=url, timeout=0.5)
         return_data = tmp_data.content
     except Exception as error:
-        primary_logger.warning("Unable to retrieve remote data: " + str(error))
+        primary_logger.debug("Unable to retrieve remote data: " + str(error))
         return_data = "NA"
     return return_data
 
