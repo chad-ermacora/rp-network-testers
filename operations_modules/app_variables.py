@@ -25,7 +25,7 @@ def get_previous_results_file_names():
     """ Returns a list of file locations of all previous results """
     for (root_path, directory_names, file_names) in os.walk(file_locations.location_save_report_folder):
         temp_file_locations = []
-        for file_name in file_names:
+        for file_name in sorted(file_names):
             temp_file_locations.append(os.path.join(root_path, file_name))
         return temp_file_locations
 
