@@ -32,8 +32,8 @@ class CreateInteractiveServer:
                 sleep(600)
 
         while True:
-            if current_config.tests_running:
-                sleep(1)
+            while current_config.mtr_running or current_config.iperf_running:
+                sleep(2)
             count = 0
             for key_state in hardware_access.get_key_states():
                 if not key_state:
