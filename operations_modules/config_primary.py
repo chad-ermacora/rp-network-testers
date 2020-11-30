@@ -37,7 +37,7 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "1.3.1"
+        self.app_version = "1.4.0"
         self.full_system_text = get_raspberry_pi_model()
         primary_logger.debug("Running on " + str(self.full_system_text))
         primary_logger.info("Test Results Saving to: " + file_locations.location_save_report_folder)
@@ -45,7 +45,9 @@ class CreateConfiguration:
         if self.full_system_text[:12] == "Raspberry Pi":
             self.running_on_rpi = True
 
-        self.tests_running = False
+        self.mtr_running = False
+        self.iperf_running = False
+
         self.is_iperf_server = 1
         self.iperf_port = "9000"
         self.iperf_run_options = "-O 1"
@@ -56,8 +58,8 @@ class CreateConfiguration:
         self.schedule_run_every_minutes_enabled = 0
         self.schedule_run_every_minutes = 0
 
-        self.schedule_run_1_enabled = 0
-        self.schedule_run_1_at_time = ""
+        self.schedule_run_once_enabled = 0
+        self.schedule_run_once_at_time = ""
 
         self.local_ethernet_dhcp = 1
         self.local_ethernet_adapter_name = "eth0"
@@ -263,6 +265,12 @@ class CreateConfiguration:
                                 self.schedule_run_every_minutes_enabled = 0
                             else:
                                 self.schedule_run_every_minutes_enabled = int(config_list[7])
+                            if len(config_list) > 7:
+                                if config_list[8].strip() == "0":
+                                    self.schedule_run_once_enabled = 0
+                                else:
+                                    self.schedule_run_once_enabled = int(config_list[8])
+                                self.schedule_run_once_at_time = config_list[9]
 
             except Exception as error:
                 primary_logger.error("Unable to load Configuration File, saving default: " + str(error))
@@ -282,10 +290,12 @@ class CreateConfiguration:
                         str(self.iperf_port) + " = Local & Remote iPerf Server Port\n" + \
                         str(self.mtr_run_count) + " = Number of MTR Runs\n" + \
                         str(self.schedule_run_every_minutes) + \
-                        " = Minutes to sleep between running scheduled tests (0 disables)\n" + \
+                        " = Minutes to sleep between running scheduled tests\n" + \
                         str(self.schedule_run_on_boot) + " = Run tests on boot if scheduled tests are enabled\n" + \
-                        str(self.schedule_run_every_minutes_enabled) + \
-                        " = Enable Run Every X Minutes\n"
+                        str(self.schedule_run_every_minutes_enabled) + " = Enable Run Every X Minutes\n" + \
+                        str(self.schedule_run_once_enabled) + " = Enable Run at Scheduled Date & Time\n" + \
+                        str(self.schedule_run_once_at_time) + " = Schedule to run at Date & Time\n"
+
         return return_config
 
 
