@@ -40,10 +40,17 @@ def start_iperf_server():
 primary_logger.info(" -- Starting HTTP Server on port " + str(app_variables.flask_http_port))
 app_variables.http_server = CreateMonitoredThread(http_server.CreateHTTPServer, thread_name="HTTP Server")
 
-if current_config.schedule_run_every_minutes and current_config.schedule_run_every_minutes_enabled:
-    primary_logger.info(" -- Starting Scheduled Tests Server ")
+if current_config.schedule_run_every_minutes_enabled:
+    primary_logger.info(" -- Starting Repeating Scheduled Tests Server ")
+    thread_name = "Repeating Scheduled Server"
     schedule_function = schedule_server.start_run_every_minutes
-    app_variables.scheduled_test_run_server = CreateMonitoredThread(schedule_function, thread_name="Scheduled Server")
+    app_variables.repeating_tests_server = CreateMonitoredThread(schedule_function, thread_name=thread_name)
+
+if current_config.schedule_run_once_enabled:
+    primary_logger.info(" -- Starting Scheduled Run Once Tests Server ")
+    thread_name = "Run Once Scheduled Server"
+    schedule_function = schedule_server.start_run_at_date
+    app_variables.run_once_test_server = CreateMonitoredThread(schedule_function, thread_name=thread_name)
 
 if current_config.is_iperf_server:
     primary_logger.info(" -- Starting iPerf 3 Server on port " + current_config.iperf_port)

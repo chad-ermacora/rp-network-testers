@@ -79,7 +79,7 @@ def get_app_version():
 def html_root():
     tests_running_msg = ""
     button_disabled = ""
-    if current_config.tests_running:
+    if current_config.mtr_running or current_config.iperf_running:
         tests_running_msg = "Running Tests Please Wait ..."
         button_disabled = "disabled"
 
@@ -109,34 +109,72 @@ def previous_results():
     if request.method == "POST":
         if request.form.get("button_function"):
             button_operation = request.form.get("button_function")
-            if button_operation == "next":
-                app_variables.previous_result_selected += 1
-                if app_variables.previous_result_selected > app_variables.previous_results_total:
-                    app_variables.previous_result_selected = 1
-            elif button_operation == "back":
-                app_variables.previous_result_selected -= 1
-                if app_variables.previous_result_selected < 1:
-                    app_variables.previous_result_selected = app_variables.previous_results_total
-            elif button_operation == "custom_note_number":
-                custom_current_note = request.form.get("current_results_num")
-                if app_variables.previous_results_total > 0:
-                    app_variables.previous_result_selected = int(custom_current_note)
-    app_variables.previous_result_selected_cached = app_variables.get_selected_previous_result()
-    current_file_name = "None"
-    if len(app_variables.previous_results_file_locations) > 0:
-        current_file_name = app_variables.previous_results_file_locations[app_variables.previous_result_selected - 1]
-        current_file_name = current_file_name.split("/")[-1]
+            if not current_config.mtr_running and not current_config.iperf_running:
+                _button_adjustments(button_operation)
+
+    current_mtr_file_name = "None"
+    current_iperf_file_name = "None"
+    if len(app_variables.previous_mtr_results_file_locations) > 0:
+        if len(app_variables.previous_mtr_results_file_locations) == 1:
+            app_variables.previous_mtr_result_selected = 1
+        current_mtr_file_name = app_variables.previous_mtr_results_file_locations[app_variables.previous_mtr_result_selected - 1]
+        current_mtr_file_name = current_mtr_file_name.split("/")[-1]
+    else:
+        app_variables.previous_mtr_result_selected = 0
+    if len(app_variables.previous_iperf_results_file_locations) > 0:
+        if len(app_variables.previous_iperf_results_file_locations) == 1:
+            app_variables.previous_iperf_result_selected = 1
+        current_iperf_file_name = app_variables.previous_iperf_results_file_locations[app_variables.previous_iperf_result_selected - 1]
+        current_iperf_file_name = current_iperf_file_name.split("/")[-1]
+    else:
+        app_variables.previous_iperf_result_selected = 0
     return render_template("previous_results_tab.html",
-                           CurrentResultSelection=app_variables.previous_result_selected,
-                           LastResultNumber=str(app_variables.previous_results_total),
-                           CurrentlyDisplayedResultName=str(current_file_name),
-                           DisplayedResults=app_variables.previous_result_selected_cached)
+                           CurrentMTRResultSelection=app_variables.previous_mtr_result_selected,
+                           LastMTRResultNumber=str(app_variables.previous_mtr_results_total),
+                           CurrentlyDisplayedMTRResultName=str(current_mtr_file_name),
+                           MTRResults=app_variables.previous_mtr_result_selected_cached,
+                           CurrentiPerfResultSelection=app_variables.previous_iperf_result_selected,
+                           LastiPerfResultNumber=str(app_variables.previous_iperf_results_total),
+                           CurrentlyDisplayediPerfResultName=str(current_iperf_file_name),
+                           iPerfResults=app_variables.previous_iperf_result_selected_cached)
+
+
+def _button_adjustments(button_operation):
+    if button_operation == "mtr_next":
+        app_variables.previous_mtr_result_selected += 1
+        if app_variables.previous_mtr_result_selected > app_variables.previous_mtr_results_total:
+            app_variables.previous_mtr_result_selected = 1
+    elif button_operation == "mtr_back":
+        app_variables.previous_mtr_result_selected -= 1
+        if app_variables.previous_mtr_result_selected < 1:
+            app_variables.previous_mtr_result_selected = app_variables.previous_mtr_results_total
+    elif button_operation == "mtr_custom":
+        custom_mtr_current_note = request.form.get("current_mtr_results_num")
+        if app_variables.previous_mtr_results_total > 0:
+            app_variables.previous_mtr_result_selected = int(custom_mtr_current_note)
+    elif button_operation == "iperf_next":
+        app_variables.previous_iperf_result_selected += 1
+        if app_variables.previous_iperf_result_selected > app_variables.previous_iperf_results_total:
+            app_variables.previous_iperf_result_selected = 1
+    elif button_operation == "iperf_back":
+        app_variables.previous_iperf_result_selected -= 1
+        if app_variables.previous_iperf_result_selected < 1:
+            app_variables.previous_iperf_result_selected = app_variables.previous_iperf_results_total
+    elif button_operation == "iperf_custom":
+        custom_iperf_current_note = request.form.get("current_iperf_results_num")
+        if app_variables.previous_iperf_results_total > 0:
+            app_variables.previous_iperf_result_selected = int(custom_iperf_current_note)
+
+    if button_operation[:3] == "mtr":
+        app_variables.previous_mtr_result_selected_cached = app_variables.get_selected_previous_result()
+    else:
+        app_variables.previous_iperf_result_selected_cached = app_variables.get_selected_previous_result(test_type="iperf")
 
 
 @http_routes.route("/DownloadTestResultsZip")
 def download_test_results_zip():
     try:
-        if len(app_variables.previous_results_file_locations) > 0:
+        if len(app_variables.previous_mtr_results_file_locations) > 0:
             date_time = datetime.date.today().strftime("D%dM%mY%Y")
             return_zip_file = BytesIO()
             zip_name = "TestResults_" + gethostname() + "_" + date_time + ".zip"
@@ -144,7 +182,9 @@ def download_test_results_zip():
             names_of_files = []
             file_to_zip = []
             file_creation_dates = []
-            for file_location in app_variables.previous_results_file_locations:
+            previous_mtr_results_file_locations = app_variables.previous_mtr_results_file_locations
+            previous_iperf_results_file_locations = app_variables.previous_iperf_results_file_locations
+            for file_location in (previous_mtr_results_file_locations + previous_iperf_results_file_locations):
                 file_to_zip.append(app_generic_functions.get_file_content(file_location))
                 names_of_files.append(file_location.split("/")[-1])
                 file_creation_dates.append(time.localtime(os.path.getmtime(file_location)))
@@ -164,6 +204,30 @@ def download_test_results_zip():
     return render_template("message_return.html", URL="/", TextMessage="No Results Found")
 
 
+@http_routes.route("/ClearAllTestResults")
+def clear_previous_test_results():
+    message1 = "Previous test results cleared"
+    message2 = ""
+    try:
+        previous_mtr_results_file_locations = app_variables.previous_mtr_results_file_locations
+        previous_iperf_results_file_locations = app_variables.previous_iperf_results_file_locations
+        for file_location in (previous_mtr_results_file_locations + previous_iperf_results_file_locations):
+            os.remove(file_location)
+        app_variables.previous_mtr_results_file_locations = app_variables.get_previous_results_file_names()
+        app_variables.previous_mtr_result_selected = 1
+        app_variables.previous_mtr_results_total = len(app_variables.previous_mtr_results_file_locations)
+        app_variables.previous_mtr_result_selected_cached = app_variables.get_selected_previous_result()
+        app_variables.previous_iperf_results_file_locations = app_variables.get_previous_results_file_names(test_type="iperf")
+        app_variables.previous_iperf_result_selected = 1
+        app_variables.previous_iperf_results_total = len(app_variables.previous_iperf_results_file_locations)
+        app_variables.previous_iperf_result_selected_cached = app_variables.get_selected_previous_result(test_type="iperf")
+    except Exception as error:
+        primary_logger.error("Error clearing test results: " + str(error))
+        message1 = "Error clearing previous test results"
+        message2 = str(error)
+    return render_template("message_return.html", URL="/", TextMessage=message1, TextMessage2=message2)
+
+
 def _get_configuration_tabs():
     iperf_server_enabled = ""
     if current_config.is_iperf_server:
@@ -179,7 +243,7 @@ def _get_configuration_tabs():
     if current_config.schedule_run_every_minutes_enabled:
         scheduled_tests_every_minutes = "checked"
     scheduled_tests_once = "unchecked"
-    if current_config.schedule_run_1_enabled:
+    if current_config.schedule_run_once_enabled:
         scheduled_tests_once = "checked"
 
     return render_template("configuration_tabs.html",
@@ -195,8 +259,9 @@ def _get_configuration_tabs():
                            ScheduleRunMinutes=((current_config.schedule_run_every_minutes % 1440) % 60),
                            ScheduleRunHours=(current_config.schedule_run_every_minutes % 1440) // 60,
                            ScheduleRunDays=current_config.schedule_run_every_minutes // 1440,
+                           UTCNow=str(datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M")),
                            EnableScheduleRunOnceChecked=scheduled_tests_once,
-                           ScheduleRunOnceDateTime="")
+                           ScheduleRunOnceDateTime=current_config.schedule_run_once_at_time)
 
 
 @http_routes.route("/ScheduleTests", methods=["GET", "POST"])
@@ -219,6 +284,17 @@ def scheduled_tests():
             current_config.schedule_run_every_minutes = temp_minutes
         else:
             current_config.schedule_run_every_minutes_enabled = 0
+
+        if request.form.get("enable_schedule_run_once") is not None:
+            current_config.schedule_run_once_enabled = 1
+        else:
+            current_config.schedule_run_once_enabled = 0
+
+        if request.form.get("schedule_run_once_at_date_time") is not None:
+            current_config.schedule_run_once_at_time = request.form.get("schedule_run_once_at_date_time")
+            current_config.write_config_to_file()
+            app_variables.restart_run_once_test_server = 1
+
         current_config.write_config_to_file()
     return html_root()
 

@@ -11,55 +11,108 @@
     Download All Test Results
 </button>
 
-<br>
-<br>
+<button class="mui-btn mui-btn--raised mui--bg-color-indigo-900 mui--color-red-900"
+        onclick="ClearAllTestResults()">
+    Clear All Test Results
+</button>
+
+<br><br>
 
 <div style="display: inline-block;">
-    <form style="display: inline-block;" method="POST" action="/PreviousResults">
-        <button type="submit" class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white">
-            Back
-        </button>
-        <input type="hidden" name="button_function" value="back">
+    <form method="POST" action="/PreviousResults">
+        <div style="display: inline-block;">
+            <div style="display: inline-block;">
+                <button type="submit" class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white"
+                onclick="onClick('mtr_back')">
+                    Back
+                </button>
+
+                <button type="submit" class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white"
+                onclick="onClick('mtr_next')">
+                    Next
+                </button>
+            </div>
+
+            <div style="display: inline-block; padding-left: 75px;">
+                <label>
+                    <input style="width: 40px;" type="number" name="current_mtr_results_num"
+                           value="{{ CurrentMTRResultSelection }}" min="0" max="{{ LastMTRResultNumber }}">
+                </label>
+
+                <label style="color: white;">
+                    out of
+                    <input style="width: 40px;" type="number" name="last_mtr_note_num"
+                           value="{{ LastMTRResultNumber }}" disabled>
+                </label>
+
+                <div style="display: inline-block; padding-left: 25px;">
+                    <button class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white"
+                            type="submit" onclick="onClick('mtr_custom')">
+                        Go
+                    </button>
+                </div>
+            </div>
+
+            <br>
+
+            <label style="color: white;">MTR File: {{ CurrentlyDisplayedMTRResultName }}<br>
+                <textarea rows="35" cols="75" style="color: greenyellow; background-color: black;">{{ MTRResults }}</textarea>
+            </label>
+        </div>
+
+        <div style="display: inline-block;">
+            <div style="display: inline-block;">
+                <button type="submit" class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white"
+                onclick="onClick('iperf_back')">
+                    Back
+                </button>
+
+                <button type="submit" class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white"
+                onclick="onClick('iperf_next')">
+                    Next
+                </button>
+            </div>
+
+            <div style="display: inline-block; padding-left: 75px;">
+                <label>
+                    <input style="width: 40px;" type="number" name="current_iperf_results_num"
+                           value="{{ CurrentiPerfResultSelection }}" min="0" max="{{ LastiPerfResultNumber }}">
+                </label>
+
+                <label style="color: white;">
+                    out of
+                    <input style="width: 40px;" type="number" name="last_iperf_note_num"
+                           value="{{ LastiPerfResultNumber }}" disabled>
+                </label>
+
+                <div style="display: inline-block; padding-left: 25px;">
+                    <button class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white"
+                            type="submit" onclick="onClick('iperf_custom')">
+                        Go
+                    </button>
+
+                </div>
+            </div>
+            <br>
+            <label style="color: white;">iPerf3 File: {{ CurrentlyDisplayediPerfResultName }}<br>
+                <textarea rows="35" cols="75" style="color: greenyellow; background-color: black;">{{ iPerfResults }}</textarea>
+            </label>
+
+            <input type="hidden" name= "button_function" id="button_function" value="">
+        </div>
     </form>
-
-    <form style="display: inline-block;" method="POST" action="/PreviousResults">
-        <button type="submit" class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white">
-            Next
-        </button>
-        <input type="hidden" name="button_function" value="next">
-    </form>
 </div>
 
-<div style="display: inline-block; padding-left: 75px;">
-    <label>
-        <input style="width: 40px;" type="number" name="current_results_num" form="custom_results_num"
-               value="{{ CurrentResultSelection }}" min="1" max="{{ LastResultNumber }}">
-    </label>
+<script>
+    function onClick(new_button_function) {
+        document.getElementById("button_function").value = new_button_function
+    }
 
-    <label style="color: white;">
-        out of
-        <input style="width: 40px" type="number" name="last_note_num"
-               value="{{ LastResultNumber }}" disabled>
-    </label>
-
-    <div style=" display: inline-block;">
-        <form style="padding-left: 25px; display: inline-block;" id="custom_results_num"
-              method="POST" action="/PreviousResults">
-            <button class="mui-btn mui-btn--raised mui--bg-color-light-blue mui--color-white"
-                    type="submit">
-                Go
-            </button>
-            <input type="hidden" name="button_function" value="custom_note_number">
-        </form>
-    </div>
-</div>
-
-<br>
-
-<div style="max-width: 750px;">
-    <label for="displayed_results" style="color: white;">Test File: {{ CurrentlyDisplayedResultName }}</label>
-    <br>
-    <textarea id="displayed_results" rows="35" cols="75" style="color: greenyellow; background-color: black;">{{ DisplayedResults }}</textarea>
-</div>
-
+    function ClearAllTestResults() {
+            let r = confirm("This will remove all previous test results and cannot be undone. Run now?");
+            if (r === true) {
+                window.location = "/ClearAllTestResults"
+            }
+        }
+</script>
 {% endblock %}
