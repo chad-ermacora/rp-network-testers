@@ -37,7 +37,7 @@ static domain_name_servers={{ DNS1 }} {{ DNS2 }}
 
 class CreateConfiguration:
     def __init__(self):
-        self.app_version = "1.4.0"
+        self.app_version = "1.4.12"
         self.full_system_text = get_raspberry_pi_model()
         primary_logger.debug("Running on " + str(self.full_system_text))
         primary_logger.info("Test Results Saving to: " + file_locations.location_save_report_folder)
@@ -47,6 +47,7 @@ class CreateConfiguration:
 
         self.mtr_running = False
         self.iperf_running = False
+        self.internet_speed_test_running = False
 
         self.is_iperf_server = 1
         self.iperf_port = "9000"

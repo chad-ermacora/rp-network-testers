@@ -88,7 +88,7 @@ class CreateHardwareAccess:
                   "\n  IP: " + current_config.remote_tester_ip
         if function_level == 0:
             message += "\n\nPrimary Functions\n  1. Run MTR\n  2. Run iPerf3\n" + \
-                       "  3. Nothing\n  4. Change Functions"
+                       "  3. Run SpeedTest.net\n  4. Change Functions"
         elif function_level == 1:
             message += "\n\nSecondary Functions\n  1. System Information\n  2. Upgrade Program\n" + \
                        "  3. DEV Upgrade Program\n  4. Change Functions"
@@ -111,7 +111,7 @@ class CreateHardwareAccess:
                            "\n  " + line[2] + "  " + line[5] + "ms  " + line[7] + "ms\n"
         else:
             message = " MTR Failed\n Remote Test Server\n Offline Or Bad Network\n\n"
-        message += "\nDate: " + strftime("%d/%m/%y") + " (D/M/Y)\nTime: " + strftime("%H:%M")
+        message += "\nDate: " + strftime("%d/%m/%y %H:%M")
         return message
 
     def _get_real_lines_mtr(self, mtr_results):
@@ -152,7 +152,32 @@ class CreateHardwareAccess:
                 message = " iPerf3 Failed\n Remote Test Server\n Offline Or Bad Network\n"
         else:
             message = " iPerf3 Failed\n Remote Test Server\n Offline Or Bad Network\n"
-        message += "\n\nDate: " + strftime("%d/%m/%y") + " (D/M/Y)\nTime: " + strftime("%H:%M")
+        message += "\n\nDate: " + strftime("%d/%m/%y %H:%M")
+        return message
+
+    @staticmethod
+    def get_internet_speed_test_message():
+        cli_results = app_variables.raw_internet_speed_test_results
+        message = "SpeedTest.net Results\n\n"
+        if cli_results != "Error Connecting to Remote Test Server":
+            result_lines = app_variables.raw_internet_speed_test_results.split("\n")
+            for line in result_lines:
+                try:
+                    if line[:12] == "Testing from":
+                        ip_add = line.split("(")[1].split(")")[0]
+                        message += "Remote Server Info\nIP: " + ip_add + "\n"
+                    if line[:9] == "Hosted by":
+                        message += line[9:].split(":")[0].split("(")[0].strip().replace(" ", "\n") + "\n\n"
+                        message += "Ping: " + line[9:].split(":")[1] + "\n"
+                    if line[:9] == "Download:" or line[:7] == "Upload:":
+                        message += line.replace("Download", "Down").replace("Upload", "Up") + "\n"
+                except IndexError:
+                    primary_logger.error("Get SpeedTest.net Message: Index out of Range")
+                else:
+                    primary_logger.error("Get SpeedTest.net Message: Something Went Wrong?")
+        else:
+            message = " SpeedTest.net Failed\n Offline Or Bad Network\n"
+        message += "\nDate: " + strftime("%d/%m/%y %H:%M")
         return message
 
     @staticmethod
