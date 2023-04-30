@@ -32,6 +32,7 @@ from operations_modules.config_primary import current_config
 from operations_modules.network_wifi import check_html_wifi_settings
 from operations_modules.network_ip import check_html_network_settings, ip_address_validation_check, \
     get_ip_from_socket, get_dhcpcd_ip
+from speedtest_cli.speedtest import shell as speed_test_main
 
 http_routes = Blueprint("http_routes", __name__)
 
@@ -79,7 +80,7 @@ def get_app_version():
 def html_root():
     tests_running_msg = ""
     button_disabled = ""
-    if current_config.mtr_running or current_config.iperf_running:
+    if current_config.mtr_running or current_config.iperf_running or current_config.internet_speed_test_running:
         tests_running_msg = "Running Tests Please Wait ..."
         button_disabled = "disabled"
 
@@ -94,11 +95,13 @@ def html_root():
                            TestsRunning=tests_running_msg,
                            MTRChecked=app_variables.html_mtr_checked,
                            iPerfChecked=app_variables.html_iperf_checked,
+                           SpeedTestChecked=app_variables.html_internet_speed_checked,
                            DisabledButton=button_disabled,
                            RemoteTesterStatus=remote_tester_online_status,
                            RemoteTesterStatusColor=remote_tester_colour,
                            Results_MTR=app_variables.web_mtr_results,
                            Results_iPerf=app_variables.web_iperf_results,
+                           Results_SpeedTestNet=app_variables.web_internet_speed_test_results,
                            ConfigurationTabs=_get_configuration_tabs(),
                            NetworkingTabs=_get_networking_tabs(),
                            AboutSystemTabs=_get_about_system_tabs())
@@ -403,18 +406,19 @@ def shutdown_system():
 
 @http_routes.route("/StartTests", methods=["POST"])
 def start_tests():
-    if request.form.get("run_mtr") is not None and request.form.get("run_iperf") is not None:
+    app_variables.html_mtr_checked = ""
+    app_variables.html_iperf_checked = ""
+    app_variables.html_internet_speed_checked = ""
+
+    if request.form.get("run_mtr") is not None:
         app_variables.html_mtr_checked = "checked"
-        app_variables.html_iperf_checked = "checked"
-        app_generic_functions.thread_function(run_commands.start_all_tests)
-    elif request.form.get("run_mtr") is not None:
-        app_variables.html_mtr_checked = "checked"
-        app_variables.html_iperf_checked = ""
         app_generic_functions.thread_function(run_commands.start_mtr)
-    elif request.form.get("run_iperf") is not None:
+    if request.form.get("run_iperf") is not None:
         app_variables.html_iperf_checked = "checked"
-        app_variables.html_mtr_checked = ""
         app_generic_functions.thread_function(run_commands.start_iperf)
+    if request.form.get("run_internet_speed_tests") is not None:
+        app_variables.html_internet_speed_checked = "checked"
+        app_generic_functions.thread_function(run_commands.start_internet_speed_test_net)
     return html_root()
 
 

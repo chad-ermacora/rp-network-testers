@@ -25,6 +25,7 @@ from operations_modules import app_variables
 from operations_modules.app_generic_functions import get_subprocess_str_output, thread_function, \
     write_file_to_disk, send_command
 from operations_modules.hardware_access import hardware_access
+from speedtest_cli.speedtest import shell as speed_test_main
 
 
 def run_command(command_num):
@@ -57,7 +58,9 @@ def run_command(command_num):
                 thread_function(os.system, args="sleep 4 && shutdown now")
         elif command_num == 2:
             if current_config.button_function_level == 0:
-                display_msg = "Nothing Yet"
+                thread_function(hardware_access.display_message, args="Running SpeedTest.net Test\n\nPlease Wait ...")
+                start_internet_speed_test_net()
+                display_msg = hardware_access.get_internet_speed_test_message()
             elif current_config.button_function_level == 1:
                 os.system("systemctl start KootnetTesterUpgradeOnlineDev.service")
                 display_msg = hardware_access.get_upgrade_message(development_upgrade=True)
@@ -79,11 +82,6 @@ def _reset_buttons_in_sec(seconds):
     time.sleep(seconds)
     current_config.clear_button_counts()
     current_config.button_reset_running = False
-
-
-def start_all_tests():
-    start_mtr()
-    start_iperf()
 
 
 def start_mtr():
@@ -128,6 +126,30 @@ def start_iperf():
         current_config.iperf_running = False
         app_variables.web_iperf_results = iperf_text_results
         save_iperf_results_to_file()
+
+
+def start_internet_speed_test_net():
+    if not current_config.internet_speed_test_running:
+        current_config.internet_speed_test_running = True
+        test_file_location = file_locations.location_save_report_folder + "/internet_speed_test001.txt"
+
+        msg = "Ran at " + time.strftime("%d/%m/%y - %H:%M") + "\n(DD/MM/YY - HH:MM)\n\n"
+        app_variables.raw_internet_speed_test_results = msg
+        write_file_to_disk(test_file_location, msg, open_type="a")
+
+        try:
+            primary_logger.info("Starting SpeedTest.net Tests")
+            speed_test_main()
+            write_file_to_disk(test_file_location, "\n\n\n\n", open_type="a")
+            primary_logger.info("SpeedTest.net Tests Complete")
+        except Exception as error:
+            error_msg = "SpeedTest.net Command Error: " + str(error)
+            primary_logger.error(error_msg)
+            app_variables.raw_internet_speed_test_results += error_msg
+
+        current_config.internet_speed_test_running = False
+        web_results = app_variables.raw_internet_speed_test_results.replace("\n", "<br>")
+        app_variables.web_internet_speed_test_results = web_results
 
 
 def save_mtr_results_to_file():

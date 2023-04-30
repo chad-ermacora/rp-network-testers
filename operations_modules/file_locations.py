@@ -36,7 +36,7 @@ location_save_report_folder = script_folder_path + "/Kootnet_test_results"
 location_truetype_font = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
 
 # Flask HTTP files
-j_query_js = script_folder_path + "/operations_modules/extras/jquery-3.4.1.min.js"
+j_query_js = script_folder_path + "/operations_modules/extras/jquery-3.6.4.min.js"
 mui_min_css = script_folder_path + "/operations_modules/extras/mui.min-ver-0.9.43.css"
 mui_min_js = script_folder_path + "/operations_modules/extras/mui.min-ver-0.9.43.js"
 mui_colors_min_css = script_folder_path + "/operations_modules/extras/mui-colors.min-ver-0.9.43.css"

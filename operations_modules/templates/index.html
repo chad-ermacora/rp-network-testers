@@ -94,15 +94,22 @@
 
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" name="run_mtr" value="" {{ MTRChecked }}>
+                        <input type="checkbox" name="run_mtr" {{ MTRChecked }}>
                         Run MTR
                     </label>
                 </div>
 
                 <div class="mui-checkbox" style="display: inline-block;">
                     <label class="container_checkbox">
-                        <input type="checkbox" name="run_iperf" value="" {{ iPerfChecked }}>
+                        <input type="checkbox" name="run_iperf" {{ iPerfChecked }}>
                         Run iPerf 3
+                    </label>
+                </div>
+
+                <div class="mui-checkbox" style="display: inline-block;">
+                    <label class="container_checkbox">
+                        <input type="checkbox" name="run_internet_speed_tests" {{ SpeedTestChecked }}>
+                        Run SpeedTest.net
                     </label>
                 </div>
 
@@ -115,9 +122,11 @@
         <h3 id="blink_shadow" style="color: red; text-align: center;">{{ TestsRunning }}</h3>
 
         <fieldset style="text-align: center; color: greenyellow; white-space: pre-wrap;">
-            <h3 style="color: red;"><u>MTR Results</u></h3>{{ Results_MTR|safe }}
+            <h3 style="color: red;"><u>MTR Results</u></h3>{{ Results_MTR | safe }}
 
-            <h3 style="color: red;"><u>iPerf3 Results</u></h3>{{ Results_iPerf|safe }}
+            <h3 style="color: red;"><u>iPerf3 Results</u></h3>{{ Results_iPerf | safe }}
+
+            <h3 style="color: red;"><u>SpeedTest.net Results</u></h3>{{ Results_SpeedTestNet | safe }}
         </fieldset>
     </div>
 </div>

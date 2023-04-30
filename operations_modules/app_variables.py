@@ -52,8 +52,10 @@ flask_http_port = 10066
 # Cached results from last test run
 web_mtr_results = ""
 web_iperf_results = ""
+web_internet_speed_test_results = ""
 raw_mtr_results = ""
 raw_iperf_results = ""
+raw_internet_speed_test_results = ""
 
 # Previous MTR Results variables
 previous_mtr_result_selected = 1
@@ -85,3 +87,4 @@ wpa_supplicant_file_content_template = get_file_content(file_locations.wpa_suppl
 # Last state of Test checkboxes on the main HTML page
 html_mtr_checked = "checked"
 html_iperf_checked = "checked"
+html_internet_speed_checked = "checked"
